@@ -2,6 +2,10 @@
   <div class="common-layout">
     <el-container>
       <el-aside width="200px">
+        <el-icon>
+          <edit />
+        </el-icon>
+        <span>aaaa</span>
       </el-aside>
       <el-main>Main</el-main>
     </el-container>
