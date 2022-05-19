@@ -10,7 +10,7 @@ export default {
   },
   created() {
     let client = new mqttx();
-    console.log(client)
+    client.connect()
     // client.subscribe("a")
   }
 }

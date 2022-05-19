@@ -1,49 +1,31 @@
 const mqtt = require("mqtt");
 export class mqttx {
-  client = null;
-  mqttStatus = false;
-  options = {
-    host: "ws://127.0.0.1",
-    port: "9001",
-    reconnectPeriod: 1000,
-    connectTimeout: 10 * 1000,
-  };
-  constructor(host = this.options.host, port = this.options.port) {
-    this.options.host = host;
-    this.options.port = port;
-    this.client = mqtt.connect(this.options);
-    this.client.on("connected", this.connected);
-    this.client.on("message", this.message);
-    this.client.on("close", this.close);
+  constructor() {
+    this.client = null;
+    // TODO clientId 需要用户设置，这个设置可以作为middleserver进行数据读取的凭证
+    this.clientId = "AoA-module-management";
+    this.topic = "hello";
+    this.url = "ws://localhost:9001";
   }
-  connected() {
-    console.log("connect success");
+  // 连接并订阅
+  connect() {
+    this.client = mqtt.connect(this.url);
+    this.client.on("connect", () => {
+      this.subscribe(this.topic);
+    });
+    this.client.on("message", function (payload) {
+      console.info(`message:${payload}`);
+    });
   }
-  close() {
-    console.log("connect closed");
+  // 断开连接
+  disconnect() {
+    this.client.end();
   }
-  publish(topic, message) {
-    this.client.publish(topic, message, (error) =>
-      this.callback(error, "publish")
-    );
-  }
+  // 订阅
   subscribe(topic) {
-    this.client.subscribe(topic, { qos: 0 }, (error) =>
-      this.callback(error, "subscribe")
-    );
-  }
-  unsubscribe(topic) {
-    this.client.unsubscribe(topic, (error) =>
-      this.callback(error, "unsubscribe")
-    );
-  }
-  message(topic, payload, packet) {
-    console.log(
-      `Topic: ${topic}, Message: ${payload.toString()}, QoS: ${packet.qos}`
-    );
-  }
-  callback(error, message) {
-    if (error) console.error(message + "failed");
-    else console.info(message + "success");
+    this.client.subscribe(topic, { qos: 0 }, function (error) {
+      if (error) console.error("subscribe" + " failed");
+      else console.info("subscribe" + " success");
+    });
   }
 }
