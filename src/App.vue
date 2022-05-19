@@ -3,10 +3,15 @@
 </template>
 
 <script>
-
+import { mqttx } from './utils/mqttx'
 export default {
   name: 'App',
   components: {
+  },
+  created() {
+    let client = new mqttx();
+    console.log(client)
+    // client.subscribe("a")
   }
 }
 </script>
