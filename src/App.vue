@@ -1,5 +1,7 @@
 <template>
-  <div></div>
+  <div>
+    <el-button type="primary" @click="connect">connect</el-button>
+  </div>
 </template>
 
 <script>
@@ -9,9 +11,11 @@ export default {
   components: {
   },
   created() {
-    let client = new mqttx();
-    client.connect()
-    // client.subscribe("a")
+  },
+  methods: {
+    connect() {
+      mqttx.connect()
+    }
   }
 }
 </script>
