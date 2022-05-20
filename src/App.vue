@@ -2,20 +2,20 @@
   <div class="common-layout">
     <el-container>
       <el-aside width="200px">
-        <el-menu default-active="1" id="menu">
-          <el-menu-item index="1">
+        <el-menu default-active="/dashboard" id="menu" :router="true">
+          <el-menu-item index="/">
             <el-icon>
               <compass />
             </el-icon>
             <span>Dashboard</span>
           </el-menu-item>
-          <el-menu-item index="2">
+          <el-menu-item index="/station" @click="menu_click">
             <el-icon>
               <document />
             </el-icon>
             <span>基站配置</span>
           </el-menu-item>
-          <el-menu-item index="3">
+          <el-menu-item index="/tag">
             <el-icon>
               <position />
             </el-icon>
@@ -41,7 +41,7 @@ export default {
   methods: {
     connect() {
       mqttx.connect()
-    }
+    },
   }
 }
 </script>
