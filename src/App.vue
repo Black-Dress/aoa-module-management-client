@@ -9,7 +9,7 @@
             </el-icon>
             <span>Dashboard</span>
           </el-menu-item>
-          <el-menu-item index="/station" @click="menu_click">
+          <el-menu-item index="/station">
             <el-icon>
               <document />
             </el-icon>
