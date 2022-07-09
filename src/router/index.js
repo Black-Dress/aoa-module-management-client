@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import dashboard from "@/views/dash-board";
 import tag from "@/views/tag-view";
 import station from "@/views/station-view";
+import data from "@/views/data-view";
 const router = createRouter({
   routes: [
     {
@@ -18,6 +19,11 @@ const router = createRouter({
       path: "/station",
       name: "station",
       component: station,
+    },
+    {
+      path: "/data",
+      name: "data",
+      component: data,
     },
   ],
   history: createWebHashHistory(),

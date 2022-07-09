@@ -21,6 +21,12 @@
             </el-icon>
             <span>标签管理</span>
           </el-menu-item>
+          <el-menu-item index="/data">
+            <el-icon>
+              <DataBoard />
+            </el-icon>
+            <span>数据管理</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-main>
@@ -37,6 +43,7 @@ export default {
   components: {
   },
   created() {
+    this.connect()
   },
   methods: {
     connect() {
