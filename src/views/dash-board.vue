@@ -13,7 +13,7 @@
                     </el-select>
                 </el-col>
                 <el-col :span="17">
-                    <el-input v-model="curUrl" />
+                    <el-input v-model="curUrl" :placeholder="curUrl" />
                 </el-col>
                 <el-col :span="1">
                     <el-button id="start" type="primary" @click="connect()">连接</el-button>
@@ -54,7 +54,7 @@ export default {
     data: function () {
         return {
             mqttUrls: [],
-            curUrl: null,
+            curUrl: "",
             code: ""
         }
     },
