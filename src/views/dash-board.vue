@@ -6,17 +6,24 @@
                     <span style="float:left">MQTT服务器</span>
                 </el-col>
             </el-row>
-            <el-row :gutter="20">
+            <el-row :gutter="10">
                 <el-col :span="4">
                     <el-select v-model="curUrl" placeholder="URL">
                         <el-option v-for=" item in mqttUrls" :key="item.name" :label="item.name" :value="item.value" />
                     </el-select>
                 </el-col>
-                <el-col :span="17">
+                <el-col :span="15">
                     <el-input v-model="curUrl" :placeholder="curUrl" />
                 </el-col>
-                <el-col :span="1">
-                    <el-button id="start" type="primary" @click="connect()">连接</el-button>
+                <el-col :span="2">
+                    <el-button type="primary">
+                        <el-icon>
+                            <plus></plus>
+                        </el-icon>
+                    </el-button>
+                </el-col>
+                <el-col :span="3">
+                    <el-button id="start" type="primary" @click="connect()" style="width:90px">连接</el-button>
                 </el-col>
             </el-row>
         </div>
