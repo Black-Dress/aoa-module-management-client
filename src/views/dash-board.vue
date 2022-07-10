@@ -16,11 +16,33 @@
                     <el-input v-model="curUrl" :placeholder="curUrl" />
                 </el-col>
                 <el-col :span="2">
-                    <el-button type="primary">
+                    <el-button @click="addUrlDialogVisible = true">
                         <el-icon>
                             <plus></plus>
                         </el-icon>
                     </el-button>
+                    <el-dialog v-model="addUrlDialogVisible" title="添加新链接" width="300px">
+                        <el-row>
+                            <el-col>
+                                <el-form :v-model="newUrl">
+                                    <el-form-item label="名称" label-width="20%">
+                                        <el-input v-model="newUrl.name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="地址" label-width="20%">
+                                        <el-input v-model="newUrl.value"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="3">
+                            <el-col :span="12">
+                                <el-button @click="dialogCancel">取消</el-button>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-button type="primary" @click="addUrlDialogVisible = false">确认</el-button>
+                            </el-col>
+                        </el-row>
+                    </el-dialog>
                 </el-col>
                 <el-col :span="3">
                     <el-button id="start" type="primary" @click="connect()" style="width:90px">连接</el-button>
@@ -62,7 +84,12 @@ export default {
         return {
             mqttUrls: [],
             curUrl: "",
-            code: ""
+            code: "",
+            addUrlDialogVisible: false,
+            newUrl: {
+                name: '',
+                value: ''
+            },
         }
     },
     methods: {
@@ -72,9 +99,9 @@ export default {
         highlighter(code) {
             return highlight(code, languages.bash);
         },
-        updateUrl(val) {
-            console.log(val)
-            this.curUrl = val
+        dialogCancel() {
+            this.newUrl = {}
+            this.addUrlDialogVisible = false
         }
     }
 }

@@ -4,7 +4,7 @@
     "value": "ws://localhost:9001"
   },
   {
-    "name": "mqtt",
-    "value": "mqtt://localhost:9001"
+    "name": "test",
+    "value": "mqtt://test.mosquitto.org"
   }
 ]
