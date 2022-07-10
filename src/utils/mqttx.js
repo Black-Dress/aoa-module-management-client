@@ -4,7 +4,7 @@ export class mqttx {
     // TODO clientId 需要用户设置，这个设置可以作为middleserver进行数据读取的凭证
     clientId: "AoA-module-management",
     clean: true,
-    reconnectPeriod: 1000,
+    reconnectPeriod: 0,
     connectTimeout: 2000,
   };
   static topic = "hello";
@@ -17,8 +17,11 @@ export class mqttx {
     this.client.on("connect", () => {
       this.subscribe(this.topic);
     });
-    this.client.on("message", function (payload) {
+    this.client.on("message", (payload) => {
       console.info(`message:${payload}`);
+    });
+    this.client.on("error", () => {
+      console.error("client error ");
     });
   }
   // 断开连接
