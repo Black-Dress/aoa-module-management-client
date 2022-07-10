@@ -37,14 +37,11 @@
 </template>
 
 <script>
-import { mqttx } from './utils/mqttx'
 export default {
   name: 'App',
   components: {
   },
   created() {
-    mqttx.connect()
-    console.log("created")
   },
   methods: {
 

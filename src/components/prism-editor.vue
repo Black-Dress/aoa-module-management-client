@@ -1,25 +1,33 @@
 <template>
-    <prism-editor class="my-editor" v-model="code" :highlight="highlighter" line-numbers></prism-editor>
+    <prism-editor class="my-editor" :readonly="ariaReadonly" v-model="code" :highlight="highlighter" line-numbers>
+    </prism-editor>
 </template>
 <script>
 // import Prism Editor
 import { PrismEditor } from 'vue-prism-editor';
 import 'vue-prism-editor/dist/prismeditor.min.css'; // import the styles somewhere
-
 // import highlighting library (you can use any library you want just return html string)
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
-import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-bash'
 import 'prismjs/themes/prism-tomorrow.css'; // import syntax highlighting styles
+import { mqttx } from '@/utils/mqttx';
 export default {
     components: {
         PrismEditor,
     },
-    data: () => ({ code: 'console.log("Hello World")' }),
+    props: ['ariaReadonly'],
+    data: () => ({
+        code: ""
+    }),
     methods: {
         highlighter(code) {
-            return highlight(code, languages.js); // languages.<insert language> to return html with markup
+            return highlight(code, languages.bash); // languages.<insert language> to return html with markup
         },
+        connect() {
+            mqttx.connect()
+        }
+
     },
 }
 </script>
