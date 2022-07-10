@@ -1,7 +1,6 @@
 <template>
     <prism-editor class="my-editor" v-model="code" :highlight="highlighter" line-numbers></prism-editor>
 </template>
-
 <script>
 // import Prism Editor
 import { PrismEditor } from 'vue-prism-editor';
@@ -12,7 +11,6 @@ import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-tomorrow.css'; // import syntax highlighting styles
-
 export default {
     components: {
         PrismEditor,
@@ -23,9 +21,8 @@ export default {
             return highlight(code, languages.js); // languages.<insert language> to return html with markup
         },
     },
-};
+}
 </script>
-
 <style>
 /* required class */
 .my-editor {
