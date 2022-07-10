@@ -39,7 +39,7 @@
                                 <el-button @click="dialogCancel">取消</el-button>
                             </el-col>
                             <el-col :span="12">
-                                <el-button type="primary" @click="addUrlDialogVisible = false">确认</el-button>
+                                <el-button type="primary" @click="dialogConfirm">确认</el-button>
                             </el-col>
                         </el-row>
                     </el-dialog>
@@ -102,6 +102,12 @@ export default {
         dialogCancel() {
             this.newUrl = {}
             this.addUrlDialogVisible = false
+        },
+        dialogConfirm() {
+            this.mqttUrls.push(this.newUrl)
+            this.newUrl = {}
+            this.axios.
+                this.addUrlDialogVisible = false
         }
     }
 }
