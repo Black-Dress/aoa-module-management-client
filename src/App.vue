@@ -43,12 +43,11 @@ export default {
   components: {
   },
   created() {
-    this.connect()
+    mqttx.connect()
+    console.log("created")
   },
   methods: {
-    connect() {
-      mqttx.connect()
-    },
+
   }
 }
 </script>

@@ -34,6 +34,7 @@ export class mqttx {
       else console.info("subscribe" + " success");
     });
   }
+  // 重新连接
   static reconnect() {
     this.client.reconnect(this.options);
   }
