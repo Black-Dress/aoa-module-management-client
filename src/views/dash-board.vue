@@ -120,7 +120,7 @@ export default {
       ipcRenderer.on("mqtt", (event, data) => {
         this.mqttUrls = data;
       });
-      ipcRenderer.send("file", "mqtt");
+      ipcRenderer.send("read", "mqtt");
     },
     dialogCancel() {
       this.newUrl = {};

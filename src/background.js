@@ -3,7 +3,7 @@
 import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
-import { readFile } from "original-fs";
+import { readFile, writeFile } from "original-fs";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 // Scheme must be registered before the app is ready
@@ -56,6 +56,9 @@ app.on("ready", async () => {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
+  //注册事件
+  ipcMain.on("read", readHandle);
+  ipcMain.on("writeMqtt", writeMqtt);
   createWindow();
 });
 
@@ -73,12 +76,15 @@ if (isDevelopment) {
     });
   }
 }
-
-ipcMain.on("file", (event, arg) => {
+// 处理函数
+function readHandle(event, arg) {
   switch (arg) {
     case "mqtt":
       readFile("./src/config/mqtt.json", (err, data) => {
         event.sender.send("mqtt", JSON.parse(data));
       });
   }
-});
+}
+function writeMqtt(event, arg) {
+  writeFile("./src/config/mqtt.json", JSON.stringify(arg));
+}
