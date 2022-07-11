@@ -130,6 +130,7 @@ export default {
       this.mqttUrls.push(this.newUrl);
       this.newUrl = {};
       this.addUrlDialogVisible = false;
+      ipcRenderer.send("writeMqtt", JSON.stringify(this.mqttUrls));
     },
   },
 };

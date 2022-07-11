@@ -1,10 +1,1 @@
-[
-  {
-    "name": "default",
-    "value": "ws://localhost:9001"
-  },
-  {
-    "name": "test",
-    "value": "mqtt://test.mosquitto.org"
-  }
-]
+[{"name":"default","value":"ws://localhost:9001"},{"name":"test","value":"mqtt://test.mosquitto.org"},{"name":"aaa","value":"aaaa"}]

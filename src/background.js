@@ -86,5 +86,5 @@ function readHandle(event, arg) {
   }
 }
 function writeMqtt(event, arg) {
-  writeFile("./src/config/mqtt.json", JSON.stringify(arg));
+  writeFile("./src/config/mqtt.json", arg, () => {});
 }
