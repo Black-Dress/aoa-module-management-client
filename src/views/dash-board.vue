@@ -18,7 +18,11 @@
           </el-select>
         </el-col>
         <el-col :span="15">
-          <el-input v-model="curUrl" :placeholder="curUrl" />
+          <el-input
+            v-model="curUrl"
+            :placeholder="curUrl"
+            aria-readonly="true"
+          />
         </el-col>
         <el-col :span="2">
           <el-button @click="addUrlDialogVisible = true">
@@ -59,7 +63,7 @@
           <el-button
             id="start"
             type="primary"
-            @click="connect()"
+            @click="connect(curUrl)"
             style="width: 90px"
             >连接</el-button
           >
@@ -83,11 +87,13 @@
 <script>
 import { PrismEditor } from "vue-prism-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
+import { ElMessage } from "element-plus";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-bash";
 import "prismjs/themes/prism-tomorrow.css";
 import "vue-prism-editor/dist/prismeditor.min.css";
-// const axios = require("axios").default;
+// import { mqttx } from "@/utils/mqttx";
+import * as mqtt from "mqtt";
 const ipcRenderer = window.require("electron").ipcRenderer;
 
 export default {
@@ -111,7 +117,29 @@ export default {
     };
   },
   methods: {
-    connect() {},
+    connect(url) {
+      if (url == undefined || url == "") {
+        ElMessage({
+          message: "请选择mqtt服务器地址。",
+          type: "warning",
+        });
+        return;
+      }
+      // FIXME 为什么不能够使用mqtt协议
+      mqtt
+        .connect("mqtt://broker.emqx.io:1883/mqtt", {
+          // host: "broker.emqx.io",
+          // port: 1883,
+          protocol: "mqtt",
+          reconnectPeriod: 0,
+          clientId: "emqx_test",
+          username: "emqx_test",
+          password: "emqx_test",
+        })
+        .on("connect", () => {
+          console.log("success");
+        });
+    },
     highlighter(code) {
       return highlight(code, languages.plaintext, "bash");
     },

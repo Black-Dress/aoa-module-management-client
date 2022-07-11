@@ -1,1 +1,14 @@
-[{"name":"default","value":"ws://localhost:9001"},{"name":"test","value":"mqtt://test.mosquitto.org"},{"name":"aaa","value":"aaaa"}]
+[
+    {
+        "name": "default",
+        "value": "ws://localhost:9001"
+    },
+    {
+        "name": "test",
+        "value": "mqtt://broker.emqx.io:1883"
+    },
+    {
+        "name": "aaa",
+        "value": "aaaa"
+    }
+]
