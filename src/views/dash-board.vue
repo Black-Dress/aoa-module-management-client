@@ -34,7 +34,7 @@
           </el-row>
         </el-dialog>
       </el-row>
-      <el-row>
+      <el-row :gutter="5">
         <el-col :span="4">
           <el-select v-model="curUrl" placeholder="URL">
             <el-option
@@ -45,8 +45,8 @@
             />
           </el-select>
         </el-col>
-        <el-col :span="15">
-          <el-input v-model="curUrl" :placeholder="curUrl" />
+        <el-col :span="16">
+          <el-input v-model="curUrl" placeholder="ws://localhost:9001" />
         </el-col>
         <el-col :span="2">
           <el-button @click="addUrlDialogVisible = true">
@@ -83,7 +83,7 @@
             </el-row>
           </el-dialog>
         </el-col>
-        <el-col :span="3">
+        <el-col :span="2">
           <el-button id="start" type="primary" @click="connect(curUrl)"
             >连接</el-button
           >
