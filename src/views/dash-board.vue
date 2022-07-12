@@ -1,11 +1,9 @@
 <template>
   <div>
     <div>
-      <el-row :gutter="2" style="margin-bottom: 10px">
-        <el-col :span="4">
-          <span style="float: left">{{ clientId }}</span>
-        </el-col>
-        <el-col :span="4">
+      <el-row>
+        <el-col :span="2" style="padding: 9px">{{ clientId }}</el-col>
+        <el-col :span="2">
           <el-button @click="editIdDialogVisible = true"
             ><el-icon><Edit /></el-icon>
           </el-button>
@@ -36,7 +34,7 @@
           </el-row>
         </el-dialog>
       </el-row>
-      <el-row :gutter="2">
+      <el-row>
         <el-col :span="4">
           <el-select v-model="curUrl" placeholder="URL">
             <el-option
@@ -86,11 +84,7 @@
           </el-dialog>
         </el-col>
         <el-col :span="3">
-          <el-button
-            id="start"
-            type="primary"
-            @click="connect(curUrl)"
-            style="width: 90px"
+          <el-button id="start" type="primary" @click="connect(curUrl)"
             >连接</el-button
           >
         </el-col>
@@ -208,5 +202,8 @@ export default {
 /* optional class for removing the outline */
 .prism-editor__textarea:focus {
   outline: none;
+}
+.el-row {
+  height: 38px;
 }
 </style>
