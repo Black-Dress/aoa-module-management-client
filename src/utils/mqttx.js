@@ -1,33 +1,40 @@
 import * as mqtt from "mqtt";
+
 export class mqttx {
   static options = {
     // TODO clientId 需要用户设置，这个设置可以作为middleserver进行数据读取的凭证
-    // clientId: "AoA-module-management",
+    clientId: "AoA-module-management",
     clean: true,
     reconnectPeriod: 0,
-    connectTimeout: 2000,
-    clientId: "emqx_test",
-    username: "emqx_test",
-    password: "emqx_test",
+    connectTimeout: 1000,
   };
   static topic = "hello";
   static url = "";
   static client = null;
+  static res = "";
   // 连接并订阅
-  static connect(url) {
-    if (url != undefined || url != "") this.url = url;
+  static connect(
+    url = "ws://localhost:9001",
+    success = () => {
+      console.log("success");
+    },
+    fialed = () => {
+      console.log("fialed");
+    }
+  ) {
     this.disconnect();
-    console.log(this.url);
+    this.url = url;
     this.client = mqtt.connect(this.url, this.options);
+    // 注册事件函数
     this.client.on("connect", () => {
       this.subscribe(this.topic);
-      console.log("connect success");
+      success();
     });
     this.client.on("message", (payload) => {
       console.info(`message:${payload}`);
     });
     this.client.on("error", () => {
-      console.error("client error ");
+      fialed();
     });
   }
   // 断开连接
@@ -46,5 +53,10 @@ export class mqttx {
   // 重新连接
   static reconnect() {
     this.client.reconnect(this.options);
+  }
+  // 重新设置clientID
+  static setId(id = "default-id") {
+    this.options.clientId = id;
+    if (this.client && this.client.connected) this.connect();
   }
 }
