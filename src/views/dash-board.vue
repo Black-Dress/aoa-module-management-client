@@ -6,10 +6,35 @@
           <span style="float: left">{{ clientId }}</span>
         </el-col>
         <el-col :span="4">
-          <el-button
+          <el-button @click="editIdDialogVisible = true"
             ><el-icon><Edit /></el-icon>
           </el-button>
         </el-col>
+        <el-dialog
+          v-model="editIdDialogVisible"
+          title="修改客户端ID"
+          width="300px"
+        >
+          <el-row>
+            <el-col>
+              <el-form>
+                <el-form-item label="ID" label-width="20%">
+                  <el-input v-model="clientId"></el-input>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
+          <el-row :gutter="3">
+            <el-col :span="12">
+              <el-button @click="dialogCancel">取消</el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-button type="primary" @click="dialogConfirm()"
+                >确认</el-button
+              >
+            </el-col>
+          </el-row>
+        </el-dialog>
       </el-row>
       <el-row :gutter="2">
         <el-col :span="4">
@@ -53,7 +78,7 @@
                 <el-button @click="dialogCancel">取消</el-button>
               </el-col>
               <el-col :span="12">
-                <el-button type="primary" @click="dialogConfirm"
+                <el-button type="primary" @click="dialogConfirm()"
                   >确认</el-button
                 >
               </el-col>
@@ -111,6 +136,7 @@ export default {
       curUrl: "",
       code: "",
       addUrlDialogVisible: false,
+      editIdDialogVisible: false,
       newUrl: {
         name: "",
         value: "",
@@ -123,10 +149,12 @@ export default {
         ElMessage({ message: "请选择mqtt服务器地址。", type: "warning" });
         return;
       }
+      // 连接
       mqttx.connect(this.curUrl, () => {
         this.code = "connected success";
         ElMessage({ type: "success", message: "connect success" });
       });
+      // 参数设置
       mqttx.client.on("message", (payload) => {
         console.info(`message:${payload}`);
       });
@@ -142,15 +170,21 @@ export default {
       });
       ipcRenderer.send("read", "mqtt");
     },
+    editClientId() {
+      this.clientId;
+    },
     dialogCancel() {
       this.newUrl = {};
       this.addUrlDialogVisible = false;
+      this.editIdDialogVisible = false;
     },
     dialogConfirm() {
       this.mqttUrls.push(this.newUrl);
       this.newUrl = {};
       this.addUrlDialogVisible = false;
-      ipcRenderer.send("writeMqtt", JSON.stringify(this.mqttUrls));
+      this.editIdDialogVisible = false;
+      let res = { id: this.clientId, urls: this.mqttUrls };
+      ipcRenderer.send("writeMqtt", JSON.stringify(res));
     },
   },
 };

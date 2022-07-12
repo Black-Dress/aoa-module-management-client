@@ -30,9 +30,6 @@ export class mqttx {
       this.subscribe(this.topic);
       success();
     });
-    this.client.on("message", (payload) => {
-      console.info(`message:${payload}`);
-    });
     this.client.on("error", () => {
       fialed();
     });
