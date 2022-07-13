@@ -2,7 +2,6 @@ import * as mqtt from "mqtt";
 
 export class mqttx {
   static options = {
-    // TODO clientId 需要用户设置，这个设置可以作为middleserver进行数据读取的凭证
     clientId: "AoA-module-management",
     clean: true,
     reconnectPeriod: 0,
@@ -15,23 +14,22 @@ export class mqttx {
   // 连接并订阅
   static connect(
     url = "ws://localhost:9001",
-    success = () => {
-      console.log("success");
-    },
-    fialed = () => {
-      console.log("fialed");
-    }
+    success = () => {},
+    fialed = () => {}
   ) {
     this.disconnect();
     this.url = url;
-    this.client = mqtt.connect(this.url, this.options);
+    this.client = mqtt.connect(url, this.options);
+    setTimeout(() => {
+      if (this.client == undefined || this.client.connected == false) fialed();
+    }, 2000);
     // 注册事件函数
     this.client.on("connect", () => {
       this.subscribe(this.topic);
       success();
     });
-    this.client.on("error", () => {
-      fialed();
+    this.client.on("error", (err) => {
+      console.log("aaaaa", err);
     });
   }
   // 断开连接

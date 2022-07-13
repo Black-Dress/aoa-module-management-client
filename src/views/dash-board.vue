@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 style="text-align: left">AoA基站管理系统</h1>
     <div>
       <el-row>
         <el-col :span="2" style="padding: 9px">{{ clientId }}</el-col>
@@ -34,7 +35,7 @@
           </el-row>
         </el-dialog>
       </el-row>
-      <el-row :gutter="5">
+      <el-row>
         <el-col :span="4">
           <el-select v-model="curUrl" placeholder="URL">
             <el-option
@@ -143,14 +144,19 @@ export default {
         ElMessage({ message: "请选择mqtt服务器地址。", type: "warning" });
         return;
       }
-      // 连接
-      mqttx.connect(this.curUrl, () => {
+      // 定义成功连接失败连接函数
+      var success = function () {
         this.code = "connected success";
         ElMessage({ type: "success", message: "connect success" });
-      });
+      };
+      var failed = function () {
+        ElMessage({ type: "error", message: "connect failed" });
+      };
+      // 连接
+      mqttx.connect(this.curUrl, success, failed);
       // 参数设置
       mqttx.client.on("message", (payload) => {
-        console.info(`message:${payload}`);
+        this.code += JSON.parse(payload);
       });
     },
     highlighter(code) {
@@ -164,9 +170,6 @@ export default {
       });
       ipcRenderer.send("read", "mqtt");
     },
-    editClientId() {
-      this.clientId;
-    },
     dialogCancel() {
       this.newUrl = {};
       this.addUrlDialogVisible = false;
@@ -175,6 +178,7 @@ export default {
     dialogConfirm() {
       this.mqttUrls.push(this.newUrl);
       this.newUrl = {};
+      mqttx.setId(this.clientId);
       this.addUrlDialogVisible = false;
       this.editIdDialogVisible = false;
       let res = { id: this.clientId, urls: this.mqttUrls };
@@ -205,5 +209,10 @@ export default {
 }
 .el-row {
   height: 38px;
+}
+.el-col {
+  display: block;
+  margin-left: 0;
+  float: left;
 }
 </style>
