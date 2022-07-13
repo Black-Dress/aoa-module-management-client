@@ -1,1 +1,1 @@
-{"id":"MQTT","urls":[{"name":"default","value":"ws://localhost:9001"},{"name":"test","value":"mqtt://broker.emqx.io:1883"},{"name":"aaa","value":"aaaa"},{"name":"","value":""}]}
+{"id":"MQTT","urls":[{"name":"default","value":"ws://localhost:9001"},{"name":"emq","value":"mqtt://emq.mqtt.io:1883"}]}

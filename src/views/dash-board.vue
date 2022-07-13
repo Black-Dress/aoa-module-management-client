@@ -9,31 +9,6 @@
             ><el-icon><Edit /></el-icon>
           </el-button>
         </el-col>
-        <el-dialog
-          v-model="editIdDialogVisible"
-          title="修改客户端ID"
-          width="300px"
-        >
-          <el-row>
-            <el-col>
-              <el-form>
-                <el-form-item label="ID" label-width="20%">
-                  <el-input v-model="clientId"></el-input>
-                </el-form-item>
-              </el-form>
-            </el-col>
-          </el-row>
-          <el-row :gutter="3">
-            <el-col :span="12">
-              <el-button @click="dialogCancel">取消</el-button>
-            </el-col>
-            <el-col :span="12">
-              <el-button type="primary" @click="dialogConfirm()"
-                >确认</el-button
-              >
-            </el-col>
-          </el-row>
-        </el-dialog>
       </el-row>
       <el-row>
         <el-col :span="4">
@@ -42,50 +17,27 @@
               v-for="item in mqttUrls"
               :key="item.name"
               :label="item.name"
-              :value="item.value"
+              :value="item"
             />
           </el-select>
         </el-col>
-        <el-col :span="16">
-          <el-input v-model="curUrl" placeholder="ws://localhost:9001" />
+        <el-col :span="14">
+          <el-input v-model="curUrl.value" placeholder="ws://localhost:9001" />
         </el-col>
-        <el-col :span="2">
+        <el-col :span="4">
           <el-button @click="addUrlDialogVisible = true">
             <el-icon>
               <plus></plus>
             </el-icon>
           </el-button>
-          <el-dialog
-            v-model="addUrlDialogVisible"
-            title="添加新链接"
-            width="300px"
-          >
-            <el-row>
-              <el-col>
-                <el-form :v-model="newUrl">
-                  <el-form-item label="名称" label-width="20%">
-                    <el-input v-model="newUrl.name"></el-input>
-                  </el-form-item>
-                  <el-form-item label="地址" label-width="20%">
-                    <el-input v-model="newUrl.value"></el-input>
-                  </el-form-item>
-                </el-form>
-              </el-col>
-            </el-row>
-            <el-row :gutter="3">
-              <el-col :span="12">
-                <el-button @click="dialogCancel">取消</el-button>
-              </el-col>
-              <el-col :span="12">
-                <el-button type="primary" @click="dialogConfirm()"
-                  >确认</el-button
-                >
-              </el-col>
-            </el-row>
-          </el-dialog>
+          <el-button @click="rmUrls">
+            <el-icon>
+              <Minus />
+            </el-icon>
+          </el-button>
         </el-col>
         <el-col :span="2">
-          <el-button id="start" type="primary" @click="connect(curUrl)"
+          <el-button id="start" type="primary" @click="connect(curUrl.value)"
             >连接</el-button
           >
         </el-col>
@@ -104,6 +56,47 @@
       </el-row>
     </div>
   </div>
+  <el-dialog v-model="addUrlDialogVisible" title="添加新链接" width="300px">
+    <el-row>
+      <el-col>
+        <el-form :v-model="newUrl">
+          <el-form-item label="名称" label-width="20%">
+            <el-input v-model="newUrl.name"></el-input>
+          </el-form-item>
+          <el-form-item label="地址" label-width="20%">
+            <el-input v-model="newUrl.value"></el-input>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
+    <el-row :gutter="3">
+      <el-col :span="12">
+        <el-button @click="dialogCancel">取消</el-button>
+      </el-col>
+      <el-col :span="12">
+        <el-button type="primary" @click="dialogConfirm()">确认</el-button>
+      </el-col>
+    </el-row>
+  </el-dialog>
+  <el-dialog v-model="editIdDialogVisible" title="修改客户端ID" width="300px">
+    <el-row>
+      <el-col>
+        <el-form>
+          <el-form-item label="ID" label-width="20%">
+            <el-input v-model="clientId"></el-input>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
+    <el-row :gutter="3">
+      <el-col :span="12">
+        <el-button @click="dialogCancel">取消</el-button>
+      </el-col>
+      <el-col :span="12">
+        <el-button type="primary" @click="dialogConfirm()">确认</el-button>
+      </el-col>
+    </el-row>
+  </el-dialog>
 </template>
 <script>
 import { PrismEditor } from "vue-prism-editor";
@@ -127,15 +120,12 @@ export default {
   data: function () {
     return {
       mqttUrls: [],
-      clientId: "local-client",
-      curUrl: "",
+      clientId: "",
+      curUrl: { name: "", value: "" },
       code: "",
       addUrlDialogVisible: false,
       editIdDialogVisible: false,
-      newUrl: {
-        name: "",
-        value: "",
-      },
+      newUrl: { name: "", value: "" },
     };
   },
   methods: {
@@ -176,13 +166,30 @@ export default {
       this.editIdDialogVisible = false;
     },
     dialogConfirm() {
-      this.mqttUrls.push(this.newUrl);
-      this.newUrl = {};
+      if (this.newUrl.name != "") {
+        if (
+          this.mqttUrls.findIndex((item) => item.name == this.newUrl.name) != -1
+        ) {
+          ElMessage({ type: "warning", message: "不能使用相同名称" });
+        }
+        this.mqttUrls.push(this.newUrl);
+        this.newUrl = { name: "", value: "" };
+      }
       mqttx.setId(this.clientId);
       this.addUrlDialogVisible = false;
       this.editIdDialogVisible = false;
       let res = { id: this.clientId, urls: this.mqttUrls };
       ipcRenderer.send("writeMqtt", JSON.stringify(res));
+    },
+    rmUrls() {
+      var index = this.mqttUrls.findIndex(
+        (item) => item.name == this.curUrl.name
+      );
+      this.mqttUrls.splice(index, 1);
+      console.log(this.mqttUrls);
+      this.curUrl =
+        this.mqttUrls.length > 0 ? this.mqttUrls[0] : { name: "", value: "" };
+      this.dialogConfirm();
     },
   },
 };
@@ -206,9 +213,6 @@ export default {
 /* optional class for removing the outline */
 .prism-editor__textarea:focus {
   outline: none;
-}
-.el-row {
-  height: 38px;
 }
 .el-col {
   display: block;
