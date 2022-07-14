@@ -1,64 +1,70 @@
 <template>
   <div>
-    <h1 style="text-align: left">AoA基站管理系统</h1>
-    <div>
-      <el-row>
-        <el-col :span="2" style="padding: 9px">{{ clientId }}</el-col>
-        <el-col :span="2">
-          <el-button @click="editIdDialogVisible = true"
-            ><el-icon><Edit /></el-icon>
-          </el-button>
-        </el-col>
-      </el-row>
-      <el-row :gutter="5">
-        <el-col :span="3">
-          <el-select v-model="curUrl" placeholder="URL">
-            <el-option
-              v-for="item in mqttUrls"
-              :key="item.name"
-              :label="item.name"
-              :value="item"
+    <el-container>
+      <el-header>
+        <div><h1 style="text-align: left">AoA station management</h1></div>
+        <el-divider></el-divider>
+      </el-header>
+      <el-main>
+        <el-row class="main_row">
+          <el-col :span="2" style="padding: 9px">{{ clientId }}</el-col>
+          <el-col :span="2">
+            <el-button @click="editIdDialogVisible = true"
+              ><el-icon><Edit /></el-icon>
+            </el-button>
+          </el-col>
+        </el-row>
+        <el-row class="main_row" :gutter="5">
+          <el-col :span="3">
+            <el-select v-model="curUrl" placeholder="URL">
+              <el-option
+                v-for="item in mqttUrls"
+                :key="item.name"
+                :label="item.name"
+                :value="item"
+              />
+            </el-select>
+          </el-col>
+          <el-col :span="14">
+            <el-input
+              v-model="curUrl.value"
+              disabled
+              placeholder="ws://localhost:9001"
             />
-          </el-select>
-        </el-col>
-        <el-col :span="14">
-          <el-input
-            v-model="curUrl.value"
-            disabled
-            placeholder="ws://localhost:9001"
+          </el-col>
+          <el-col :span="4">
+            <el-button @click="addUrlDialogVisible = true">
+              <el-icon>
+                <plus></plus>
+              </el-icon>
+            </el-button>
+            <el-button @click="rmUrls">
+              <el-icon>
+                <Minus />
+              </el-icon>
+            </el-button>
+          </el-col>
+          <el-col :span="2">
+            <el-button id="start" type="primary" @click="connect(curUrl.value)"
+              >连接</el-button
+            >
+          </el-col>
+        </el-row>
+        <el-divider></el-divider>
+        <el-row class="main_row">
+          <prism-editor
+            class="my-editor"
+            :readonly="true"
+            v-model="code"
+            :highlight="highlighter"
+            line-numbers
           />
-        </el-col>
-        <el-col :span="4">
-          <el-button @click="addUrlDialogVisible = true">
-            <el-icon>
-              <plus></plus>
-            </el-icon>
-          </el-button>
-          <el-button @click="rmUrls">
-            <el-icon>
-              <Minus />
-            </el-icon>
-          </el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button id="start" type="primary" @click="connect(curUrl.value)"
-            >连接</el-button
-          >
-        </el-col>
-      </el-row>
-    </div>
-    <el-divider></el-divider>
-    <div>
-      <el-row>
-        <prism-editor
-          class="my-editor"
-          :readonly="true"
-          v-model="code"
-          :highlight="highlighter"
-          line-numbers
-        />
-      </el-row>
-    </div>
+        </el-row>
+      </el-main>
+    </el-container>
+
+    <div></div>
+    <div></div>
   </div>
   <el-dialog v-model="addUrlDialogVisible" title="添加新链接" width="300px">
     <el-row>
@@ -147,7 +153,7 @@ export default {
         ElMessage({ type: "error", message: "connect failed" });
       };
       // 连接
-      mqttx.connect(this.curUrl, success, failed);
+      mqttx.connect(this.curUrl.value, success, failed);
       // 参数设置
       mqttx.client.on("message", (payload) => {
         this.code += JSON.parse(payload);
@@ -222,5 +228,8 @@ export default {
   display: block;
   margin-left: 0;
   float: left;
+}
+.main_row {
+  margin-top: 10px;
 }
 </style>

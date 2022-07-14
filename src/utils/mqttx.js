@@ -19,7 +19,8 @@ export class mqttx {
   ) {
     this.disconnect();
     this.url = url;
-    this.client = mqtt.connect(url, this.options);
+    this.client = mqtt.connect(this.url, this.options);
+    // 连接失败
     setTimeout(() => {
       if (this.client == undefined || this.client.connected == false) fialed();
     }, 2000);
@@ -29,7 +30,7 @@ export class mqttx {
       success();
     });
     this.client.on("error", (err) => {
-      console.log("aaaaa", err);
+      console.log("client error", err);
     });
   }
   // 断开连接
