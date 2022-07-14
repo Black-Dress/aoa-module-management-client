@@ -10,8 +10,8 @@
           </el-button>
         </el-col>
       </el-row>
-      <el-row>
-        <el-col :span="4">
+      <el-row :gutter="5">
+        <el-col :span="3">
           <el-select v-model="curUrl" placeholder="URL">
             <el-option
               v-for="item in mqttUrls"
@@ -22,7 +22,11 @@
           </el-select>
         </el-col>
         <el-col :span="14">
-          <el-input v-model="curUrl.value" placeholder="ws://localhost:9001" />
+          <el-input
+            v-model="curUrl.value"
+            disabled
+            placeholder="ws://localhost:9001"
+          />
         </el-col>
         <el-col :span="4">
           <el-button @click="addUrlDialogVisible = true">
