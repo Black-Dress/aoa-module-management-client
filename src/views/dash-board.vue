@@ -189,7 +189,7 @@ export default {
       this.addUrlDialogVisible = false;
       this.editIdDialogVisible = false;
       let res = { id: this.clientId, urls: this.mqttUrls };
-      ipcRenderer.send("writeMqtt", JSON.stringify(res));
+      ipcRenderer.send("write", ["mqtt", JSON.stringify(res)]);
     },
     rmUrls() {
       var index = this.mqttUrls.findIndex(

@@ -58,7 +58,7 @@ app.on("ready", async () => {
   }
   //注册事件
   ipcMain.on("read", readHandle);
-  ipcMain.on("writeMqtt", writeMqtt);
+  ipcMain.on("write", writeHandle);
   createWindow();
 });
 
@@ -77,14 +77,28 @@ if (isDevelopment) {
   }
 }
 // 处理函数
+// 读文件
 function readHandle(event, arg) {
   switch (arg) {
     case "mqtt":
-      readFile("./src/config/mqtt.json", (err, data) => {
-        event.sender.send("mqtt", JSON.parse(data));
-      });
+      readFile("./src/config/mqtt.json", (err, data) =>
+        event.sender.send("mqtt", JSON.parse(data))
+      );
+      break;
+    case "station":
+      readFile("./src/config/station.json", (err, data) =>
+        event.sender.send("station", JSON.parse(data))
+      );
   }
 }
-function writeMqtt(event, arg) {
-  writeFile("./src/config/mqtt.json", arg, () => {});
+// 写文件
+function writeHandle(event, arg) {
+  switch (arg[0]) {
+    case "mqtt":
+      writeFile("./src/config/mqtt.json", arg[1], () => {});
+      break;
+    case "station":
+      writeFile("./src/config/station.json", arg[1], () => {});
+      break;
+  }
 }
