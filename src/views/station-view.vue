@@ -7,13 +7,14 @@
       </el-header>
       <el-main>
         <div style="float: left"></div>
+        <!-- TODO 添加分页，每页12个，每行4个 -->
         <el-row :gutter="10">
-          <el-col v-for="o in 3" :key="o" :span="6" :offset="0">
+          <el-col
+            v-for="station in stations.length > 4 ? 4 : stations.length"
+            :key="station.id"
+            :span="6"
+          >
             <el-card :body-style="{ padding: '0px' }">
-              <img
-                src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-                class="image"
-              />
               <div style="padding: 14px">
                 <span>Yummy hamburger</span>
                 <div class="bottom">
@@ -51,7 +52,6 @@ export default {
       this.stations = data;
     });
     ipcRenderer.send("read", "station");
-    console.log(this.stations);
   },
   methods: {},
 };
