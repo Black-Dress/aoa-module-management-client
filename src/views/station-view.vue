@@ -90,7 +90,7 @@ export default {
   },
   methods: {
     toStationDetil(id) {
-      console.log(id);
+      this.$router.push({ path: "details", params: { id: id } });
     },
   },
 };
