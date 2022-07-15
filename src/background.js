@@ -79,7 +79,7 @@ if (isDevelopment) {
 // 处理函数
 // 读文件
 function readHandle(event, arg) {
-  switch (arg) {
+  switch (arg[0]) {
     case "mqtt":
       readFile("./src/config/mqtt.json", (err, data) =>
         event.sender.send("mqtt", JSON.parse(data))

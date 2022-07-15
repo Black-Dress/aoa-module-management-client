@@ -168,7 +168,7 @@ export default {
         this.mqttUrls = data.urls;
         this.clientId = data.id;
       });
-      ipcRenderer.send("read", "mqtt");
+      ipcRenderer.send("read", ["mqtt"]);
     },
     dialogCancel() {
       this.newUrl = {};
