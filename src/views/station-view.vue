@@ -13,9 +13,22 @@
           :key="i"
         >
           <el-col v-for="(col, j) in row" :key="j" :span="6">
-            <el-card :body-style="{ padding: '0px' }" class="card">
-              <div style="padding: 14px">
-                <span>{{ col.id }}</span>
+            <el-card
+              :body-style="{ padding: '0px' }"
+              class="card"
+              shadow="hover"
+              @click="toStationDetil(col.id)"
+            >
+              <div style="padding: 10px">
+                <el-row>
+                  <h1>{{ col.name }}</h1>
+                </el-row>
+                <el-row>
+                  <code>IP addres: {{ col.net }}</code>
+                </el-row>
+                <el-row>
+                  <code>station id :{{ col.id }}</code>
+                </el-row>
               </div>
             </el-card>
           </el-col>
@@ -23,6 +36,7 @@
         <el-row justify="center" style="margin-top: 10px">
           <el-pagination
             layout="prev, pager, next"
+            background
             :total="total"
             :page-size="12"
             :pager-count="7"
@@ -74,7 +88,11 @@ export default {
     });
     ipcRenderer.send("read", ["station"]);
   },
-  methods: {},
+  methods: {
+    toStationDetil(id) {
+      console.log(id);
+    },
+  },
 };
 </script>
 <style>
@@ -82,7 +100,20 @@ export default {
   height: 430px;
 }
 .card {
-  height: 140px;
+  height: 130px;
   margin-bottom: 5px;
+}
+code {
+  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 5px;
+  border-radius: 5px;
+  max-height: 500px;
+}
+h1 {
+  font-size: 20px;
+  line-height: 2;
+  margin: 0;
 }
 </style>
