@@ -72,7 +72,7 @@
       title="add new station"
       width="400px"
     >
-      <el-form :v-model="newStation">
+      <el-form :model="newStation">
         <el-row>
           <el-col>
             <el-form-item label="id" label-width="20%">
@@ -106,12 +106,10 @@
       </el-form>
       <el-row :gutter="3">
         <el-col :span="12">
-          <el-button @click="addStationDialogVisible = false">取消</el-button>
+          <el-button @click="cancle">取消</el-button>
         </el-col>
         <el-col :span="12">
-          <el-button type="primary" @click="addStationDialogVisible = false">
-            确认
-          </el-button>
+          <el-button type="primary" @click="confirm"> 确认 </el-button>
         </el-col>
       </el-row>
     </el-dialog>
@@ -147,11 +145,7 @@ export default {
         id: "",
         name: "",
         net: "",
-        position: {
-          x: 0,
-          y: 0,
-          z: 0,
-        },
+        position: { x: 0, y: 0, z: 0 },
       },
       addStationDialogVisible: false,
     };
@@ -160,18 +154,27 @@ export default {
     ipcRenderer.on("station", (event, data) => {
       this.total = data.length;
       this.station_list = data;
-      for (let i = 0; i * 12 < data.length; i += 1) {
-        this.stations[i + 1] = [[], [], []];
-        let index = 0;
-        for (let j = 0; j < 12 && j + i * 12 < data.length; j += 1) {
-          if (j % 4 == 0 && j != 0) index += 1;
-          this.stations[i + 1][index].push(data[j + i * 12]);
-        }
-      }
+      this.stations = this.toStations();
     });
     ipcRenderer.send("read", ["station"]);
   },
   methods: {
+    toStations() {
+      let res = {};
+      for (let i = 0; i * 12 < this.station_list.length; i += 1) {
+        res[i + 1] = [[], [], []];
+        let index = 0;
+        for (
+          let j = 0;
+          j < 12 && j + i * 12 < this.station_list.length;
+          j += 1
+        ) {
+          if (j % 4 == 0 && j != 0) index += 1;
+          res[i + 1][index].push(this.station_list[j + i * 12]);
+        }
+      }
+      return res;
+    },
     toStationDetil(id) {
       this.$router.push({ name: "station-details", query: { id: id } });
     },
@@ -180,6 +183,40 @@ export default {
       this.station_list.splice((this.current_page - 1) * 12 + i * 4 + j, 1);
       ipcRenderer.send("write", ["station", JSON.stringify(this.station_list)]);
       this.total -= 1;
+    },
+    confirm() {
+      let l = this.station_list.length;
+      if (l % 12 == 0) {
+        this.stations[Number.parseInt(l / 12) + 1] = [
+          [this.newStation],
+          [],
+          [],
+        ];
+        this.current_page += 1;
+      } else {
+        this.stations[Number.parseInt(l / 12) + 1][(l % 12) % 3].push(
+          this.newStation
+        );
+      }
+      this.station_list.push(this.newStation);
+      this.total = this.station_list.length;
+      this.newStation = {
+        id: "",
+        name: "",
+        net: "",
+        position: { x: 0, y: 0, z: 0 },
+      };
+      this.addStationDialogVisible = false;
+      ipcRenderer.send("write", ["station", JSON.stringify(this.station_list)]);
+    },
+    cancle() {
+      this.newStation = {
+        id: "",
+        name: "",
+        net: "",
+        position: { x: 0, y: 0, z: 0 },
+      };
+      this.addStationDialogVisible = false;
     },
   },
 };
