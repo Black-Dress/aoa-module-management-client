@@ -1,11 +1,11 @@
 <template>
   <div>
-    <el-container>
+    <el-container style="height: 600px">
       <el-header>
         <div><h1 style="text-align: left">AoA station</h1></div>
         <el-divider></el-divider>
       </el-header>
-      <el-main style="margin-top: 10px">
+      <el-main style="margin-top: 10px; height: 410px">
         <el-row
           :gutter="10"
           v-for="(row, i) in this.stations[this.current_page]"

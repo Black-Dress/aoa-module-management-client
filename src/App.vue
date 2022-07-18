@@ -13,19 +13,19 @@
             <el-icon>
               <document />
             </el-icon>
-            <span>基站配置</span>
+            <span>stations</span>
           </el-menu-item>
           <el-menu-item index="/tag">
             <el-icon>
               <position />
             </el-icon>
-            <span>标签管理</span>
+            <span>tags</span>
           </el-menu-item>
           <el-menu-item index="/data">
             <el-icon>
               <DataBoard />
             </el-icon>
-            <span>数据管理</span>
+            <span>data</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
@@ -38,15 +38,11 @@
 
 <script>
 export default {
-  name: 'App',
-  components: {
-  },
-  created() {
-  },
-  methods: {
-
-  }
-}
+  name: "App",
+  components: {},
+  created() {},
+  methods: {},
+};
 </script>
 
 <style>
@@ -60,6 +56,6 @@ export default {
 }
 
 #menu {
-  height: 500px;
+  height: 600px;
 }
 </style>

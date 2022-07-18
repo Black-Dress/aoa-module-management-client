@@ -62,9 +62,6 @@
         </el-row>
       </el-main>
     </el-container>
-
-    <div></div>
-    <div></div>
   </div>
   <el-dialog v-model="addUrlDialogVisible" title="添加新链接" width="300px">
     <el-row>
