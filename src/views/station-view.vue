@@ -2,7 +2,18 @@
   <div>
     <el-container style="height: 600px">
       <el-header>
-        <div><h1 style="text-align: left">AoA station</h1></div>
+        <el-row justify="space-between">
+          <el-col :span="6" style="text-align: left">
+            <h1>AoA station</h1>
+          </el-col>
+          <el-col :span="4">
+            <el-button type="primary" @click="addStationDialogVisible = true">
+              <el-icon>
+                <plus />
+              </el-icon>
+            </el-button>
+          </el-col>
+        </el-row>
         <el-divider></el-divider>
       </el-header>
       <el-main style="margin-top: 10px; height: 410px">
@@ -56,6 +67,54 @@
         </el-row>
       </el-footer>
     </el-container>
+    <el-dialog
+      v-model="addStationDialogVisible"
+      title="add new station"
+      width="400px"
+    >
+      <el-form :v-model="newStation">
+        <el-row>
+          <el-col>
+            <el-form-item label="id" label-width="20%">
+              <el-input v-model="newStation.id"></el-input>
+            </el-form-item>
+            <el-form-item label="name" label-width="20%">
+              <el-input v-model="newStation.name"></el-input>
+            </el-form-item>
+            <el-form-item label="net" label-width="20%">
+              <el-input v-model="newStation.net"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row justify="center" :gutter="10">
+          <el-col :span="6">
+            <el-form-item label="x:" label-width="20%">
+              <el-input v-model="newStation.position.x"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="y:" label-width="20%">
+              <el-input v-model="newStation.position.y"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="z:" label-width="20%">
+              <el-input v-model="newStation.position.z"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <el-row :gutter="3">
+        <el-col :span="12">
+          <el-button @click="addStationDialogVisible = false">取消</el-button>
+        </el-col>
+        <el-col :span="12">
+          <el-button type="primary" @click="addStationDialogVisible = false">
+            确认
+          </el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -84,6 +143,17 @@ export default {
         ],
       },
       station_list: [],
+      newStation: {
+        id: "",
+        name: "",
+        net: "",
+        position: {
+          x: 0,
+          y: 0,
+          z: 0,
+        },
+      },
+      addStationDialogVisible: false,
     };
   },
   created: function () {
