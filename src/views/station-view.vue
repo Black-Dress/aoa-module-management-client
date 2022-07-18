@@ -2,23 +2,16 @@
   <div>
     <el-container>
       <el-header>
-        <div><h1 style="text-align: left">AoA station</h1></div>
+        <div>
+          <h1 style="text-align: left">AoA station</h1>
+        </div>
         <el-divider></el-divider>
       </el-header>
       <el-main style="margin-top: 10px">
         <div style="float: left"></div>
-        <el-row
-          :gutter="10"
-          v-for="(row, i) in this.stations[this.current_page]"
-          :key="i"
-        >
+        <el-row :gutter="10" v-for="(row, i) in this.stations[this.current_page]" :key="i">
           <el-col v-for="(col, j) in row" :key="j" :span="6">
-            <el-card
-              :body-style="{ padding: '0px' }"
-              class="card"
-              shadow="hover"
-              @click="toStationDetil(col.id)"
-            >
+            <el-card :body-style="{ padding: '0px' }" class="card" shadow="hover" @click="toStationDetil(col.id)">
               <div style="padding: 10px">
                 <el-row>
                   <h1>{{ col.name }}</h1>
@@ -34,14 +27,8 @@
           </el-col>
         </el-row>
         <el-row justify="center" style="margin-top: 10px">
-          <el-pagination
-            layout="prev, pager, next"
-            background
-            :total="total"
-            :page-size="12"
-            :pager-count="7"
-            v-model:current-page="current_page"
-          />
+          <el-pagination layout="prev, pager, next" background :total="total" :page-size="12" :pager-count="7"
+            v-model:current-page="current_page" />
         </el-row>
       </el-main>
     </el-container>
@@ -90,7 +77,7 @@ export default {
   },
   methods: {
     toStationDetil(id) {
-      this.$router.push({ path: "details", params: { id: id } });
+      this.$router.push({ path: "/station/details/:id", params: { id: id } });
     },
   },
 };
@@ -99,10 +86,12 @@ export default {
 .card-container {
   height: 430px;
 }
+
 .card {
   height: 130px;
   margin-bottom: 5px;
 }
+
 code {
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
   font-size: 14px;
@@ -111,6 +100,7 @@ code {
   border-radius: 5px;
   max-height: 500px;
 }
+
 h1 {
   font-size: 20px;
   line-height: 2;

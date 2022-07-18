@@ -141,7 +141,6 @@ export default {
       }
       else
         ElMessage({ type: "error", message: "connect failed" });
-
     },
     message(topic, message) {
       this.code += message.toString() + "\n"
