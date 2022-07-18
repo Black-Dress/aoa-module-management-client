@@ -6,7 +6,6 @@
         <el-divider></el-divider>
       </el-header>
       <el-main style="margin-top: 10px">
-        <div style="float: left"></div>
         <el-row
           :gutter="10"
           v-for="(row, i) in this.stations[this.current_page]"
@@ -17,11 +16,21 @@
               :body-style="{ padding: '0px' }"
               class="card"
               shadow="hover"
-              @click="toStationDetil(col.id)"
             >
               <div style="padding: 10px">
-                <el-row>
-                  <h1>{{ col.name }}</h1>
+                <el-row justify="space-between">
+                  <el-col :span="4">
+                    <el-button text @click="toStationDetil(col.id)">
+                      <h1>{{ col.name }}</h1>
+                    </el-button>
+                  </el-col>
+                  <el-col :span="4">
+                    <el-button text @click="remove(i, j)">
+                      <el-icon>
+                        <Close />
+                      </el-icon>
+                    </el-button>
+                  </el-col>
                 </el-row>
                 <el-row>
                   <code>IP addres: {{ col.net }}</code>
@@ -33,6 +42,8 @@
             </el-card>
           </el-col>
         </el-row>
+      </el-main>
+      <el-footer>
         <el-row justify="center" style="margin-top: 10px">
           <el-pagination
             layout="prev, pager, next"
@@ -43,7 +54,7 @@
             v-model:current-page="current_page"
           />
         </el-row>
-      </el-main>
+      </el-footer>
     </el-container>
   </div>
 </template>
@@ -72,11 +83,13 @@ export default {
           [],
         ],
       },
+      station_list: [],
     };
   },
   created: function () {
     ipcRenderer.on("station", (event, data) => {
       this.total = data.length;
+      this.station_list = data;
       for (let i = 0; i * 12 < data.length; i += 1) {
         this.stations[i + 1] = [[], [], []];
         let index = 0;
@@ -91,6 +104,12 @@ export default {
   methods: {
     toStationDetil(id) {
       this.$router.push({ name: "station-details", query: { id: id } });
+    },
+    remove(i, j) {
+      this.stations[this.current_page][i].splice(j, 1);
+      this.station_list.splice((this.current_page - 1) * 12 + i * 4 + j, 1);
+      ipcRenderer.send("write", ["station", JSON.stringify(this.station_list)]);
+      this.total -= 1;
     },
   },
 };
