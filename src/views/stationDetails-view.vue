@@ -3,7 +3,7 @@
     <el-container>
       <el-header>
         <el-row :gutter="2">
-          <el-col :span="2" style="text-align: left">
+          <el-col :span="2" style="text-align: left; max-width: 44px">
             <el-button
               @click="this.$router.back()"
               text
