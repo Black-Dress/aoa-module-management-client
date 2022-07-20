@@ -30,12 +30,16 @@
             >
               <div style="padding: 10px">
                 <el-row justify="space-between">
-                  <el-col :span="4">
-                    <el-button text @click="toStationDetil(col.id)">
+                  <el-col :span="10" style="text-align: left">
+                    <el-button
+                      text
+                      @click="toStationDetil(col.id)"
+                      style="padding: 0 0 0 0"
+                    >
                       <h1>{{ col.name }}</h1>
                     </el-button>
                   </el-col>
-                  <el-col :span="4">
+                  <el-col :span="5">
                     <el-button text @click="remove(i, j)">
                       <el-icon>
                         <Close />
@@ -221,7 +225,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .card-container {
   height: 430px;
 }
@@ -229,20 +233,5 @@ export default {
 .card {
   height: 130px;
   margin-bottom: 5px;
-}
-
-code {
-  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  padding: 5px;
-  border-radius: 5px;
-  max-height: 500px;
-}
-
-h1 {
-  font-size: 20px;
-  line-height: 2;
-  margin: 0;
 }
 </style>

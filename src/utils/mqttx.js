@@ -10,7 +10,9 @@ export class mqttx {
   static url = "";
   static client = null;
   // 消息输出
-  static output = {};
+  static output = {
+    a: "a\na\na\n",
+  };
   static res = "";
   // 连接并订阅
   static connect(url = "ws://localhost:9001") {

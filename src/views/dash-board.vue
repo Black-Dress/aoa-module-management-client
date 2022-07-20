@@ -2,30 +2,45 @@
   <div>
     <el-container>
       <el-header>
-        <div>
+        <el-row>
           <h1 style="text-align: left">AoA station management</h1>
-        </div>
+        </el-row>
         <el-divider></el-divider>
       </el-header>
       <el-main>
         <el-row class="main_row">
-          <el-col :span="2" style="padding: 9px">{{ clientId }}</el-col>
-          <el-col :span="2">
-            <el-button @click="editIdDialogVisible = true">
+          <el-col :span="4" style="text-align: left; margin-top: 14px">
+            <p>{{ clientId }}</p>
+          </el-col>
+          <el-col :span="2" style="text-align: left; margin-top: 4px">
+            <el-button
+              @click="editIdDialogVisible = true"
+              text
+              style="padding: 0 0 0 0"
+            >
               <el-icon>
                 <Edit />
               </el-icon>
             </el-button>
           </el-col>
         </el-row>
-        <el-row class="main_row" :gutter="5">
+        <el-row :gutter="5">
           <el-col :span="3">
             <el-select v-model="curUrl" placeholder="URL">
-              <el-option v-for="item in mqttUrls" :key="item.name" :label="item.name" :value="item" />
+              <el-option
+                v-for="item in mqttUrls"
+                :key="item.name"
+                :label="item.name"
+                :value="item"
+              />
             </el-select>
           </el-col>
           <el-col :span="14">
-            <el-input v-model="curUrl.value" disabled placeholder="ws://localhost:9001" />
+            <el-input
+              v-model="curUrl.value"
+              disabled
+              placeholder="ws://localhost:9001"
+            />
           </el-col>
           <el-col :span="4">
             <el-button @click="addUrlDialogVisible = true">
@@ -40,12 +55,20 @@
             </el-button>
           </el-col>
           <el-col :span="2">
-            <el-button id="start" type="primary" @click="connect(curUrl.value)">连接</el-button>
+            <el-button id="start" type="primary" @click="connect(curUrl.value)"
+              >连接</el-button
+            >
           </el-col>
         </el-row>
         <el-divider></el-divider>
         <el-row class="main_row">
-          <prism-editor class="my-editor" :readonly="true" v-model="code" :highlight="highlighter" line-numbers />
+          <prism-editor
+            class="my-editor"
+            :readonly="true"
+            v-model="code"
+            :highlight="highlighter"
+            line-numbers
+          />
         </el-row>
       </el-main>
     </el-container>
@@ -103,7 +126,6 @@ import "prismjs/components/prism-bash";
 import "prismjs/themes/prism-tomorrow.css";
 import "vue-prism-editor/dist/prismeditor.min.css";
 
-
 export default {
   components: {
     PrismEditor,
@@ -111,7 +133,7 @@ export default {
   created: function () {
     this.init();
   },
-  mounted: function () { },
+  mounted: function () {},
   data: function () {
     return {
       mqttUrls: [],
@@ -123,8 +145,7 @@ export default {
       newUrl: { name: "", value: "" },
     };
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     connect(url) {
       if (url == undefined || url == "") {
@@ -134,14 +155,11 @@ export default {
       // 连接
       if (mqttx.connect(this.curUrl.value)) {
         ElMessage({ type: "success", message: "connect success" });
-        mqttx.setMessage(this.message)
-      }
-      else
-        ElMessage({ type: "error", message: "connect failed" });
+        mqttx.setMessage(this.message);
+      } else ElMessage({ type: "error", message: "connect failed" });
     },
     message(topic, message) {
-      this.code += message.toString() + "\n"
-      console.log(topic)
+      this.code += message.toString() + "\n";
     },
     highlighter(code) {
       return highlight(code, languages.plaintext, "bash");
@@ -172,8 +190,10 @@ export default {
       mqttx.setId(this.clientId);
       this.addUrlDialogVisible = false;
       this.editIdDialogVisible = false;
-      let res = { id: this.clientId, urls: this.mqttUrls };
-      ipcRenderer.send("write", ["mqtt", JSON.stringify(res)]);
+      ipcRenderer.send("write", [
+        "mqtt",
+        JSON.stringify({ id: this.clientId, urls: this.mqttUrls }),
+      ]);
     },
     rmUrls() {
       var index = this.mqttUrls.findIndex(
@@ -213,9 +233,5 @@ export default {
   display: block;
   margin-left: 0;
   float: left;
-}
-
-.main_row {
-  margin-top: 10px;
 }
 </style>
