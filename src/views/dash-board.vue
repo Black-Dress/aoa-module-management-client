@@ -2,35 +2,30 @@
   <div>
     <el-container>
       <el-header>
-        <div><h1 style="text-align: left">AoA station management</h1></div>
+        <div>
+          <h1 style="text-align: left">AoA station management</h1>
+        </div>
         <el-divider></el-divider>
       </el-header>
       <el-main>
         <el-row class="main_row">
           <el-col :span="2" style="padding: 9px">{{ clientId }}</el-col>
           <el-col :span="2">
-            <el-button @click="editIdDialogVisible = true"
-              ><el-icon><Edit /></el-icon>
+            <el-button @click="editIdDialogVisible = true">
+              <el-icon>
+                <Edit />
+              </el-icon>
             </el-button>
           </el-col>
         </el-row>
         <el-row class="main_row" :gutter="5">
           <el-col :span="3">
             <el-select v-model="curUrl" placeholder="URL">
-              <el-option
-                v-for="item in mqttUrls"
-                :key="item.name"
-                :label="item.name"
-                :value="item"
-              />
+              <el-option v-for="item in mqttUrls" :key="item.name" :label="item.name" :value="item" />
             </el-select>
           </el-col>
           <el-col :span="14">
-            <el-input
-              v-model="curUrl.value"
-              disabled
-              placeholder="ws://localhost:9001"
-            />
+            <el-input v-model="curUrl.value" disabled placeholder="ws://localhost:9001" />
           </el-col>
           <el-col :span="4">
             <el-button @click="addUrlDialogVisible = true">
@@ -45,20 +40,12 @@
             </el-button>
           </el-col>
           <el-col :span="2">
-            <el-button id="start" type="primary" @click="connect(curUrl.value)"
-              >连接</el-button
-            >
+            <el-button id="start" type="primary" @click="connect(curUrl.value)">连接</el-button>
           </el-col>
         </el-row>
         <el-divider></el-divider>
         <el-row class="main_row">
-          <prism-editor
-            class="my-editor"
-            :readonly="true"
-            v-model="code"
-            :highlight="highlighter"
-            line-numbers
-          />
+          <prism-editor class="my-editor" :readonly="true" v-model="code" :highlight="highlighter" line-numbers />
         </el-row>
       </el-main>
     </el-container>
@@ -116,6 +103,7 @@ import "prismjs/components/prism-bash";
 import "prismjs/themes/prism-tomorrow.css";
 import "vue-prism-editor/dist/prismeditor.min.css";
 
+
 export default {
   components: {
     PrismEditor,
@@ -123,17 +111,19 @@ export default {
   created: function () {
     this.init();
   },
-  mounted: function () {},
+  mounted: function () { },
   data: function () {
     return {
       mqttUrls: [],
       clientId: "",
-      curUrl: { name: "", value: "" },
       code: "",
+      curUrl: { name: "", value: "" },
       addUrlDialogVisible: false,
       editIdDialogVisible: false,
       newUrl: { name: "", value: "" },
     };
+  },
+  computed: {
   },
   methods: {
     connect(url) {
@@ -141,20 +131,17 @@ export default {
         ElMessage({ message: "请选择mqtt服务器地址。", type: "warning" });
         return;
       }
-      // 定义成功连接失败连接函数
-      var success = function () {
-        this.code = "connected success";
-        ElMessage({ type: "success", message: "connect success" });
-      };
-      var failed = function () {
-        ElMessage({ type: "error", message: "connect failed" });
-      };
       // 连接
-      mqttx.connect(this.curUrl.value, success, failed);
-      // 参数设置
-      mqttx.client.on("message", (payload) => {
-        this.code += JSON.parse(payload);
-      });
+      if (mqttx.connect(this.curUrl.value)) {
+        ElMessage({ type: "success", message: "connect success" });
+        mqttx.setMessage(this.message)
+      }
+      else
+        ElMessage({ type: "error", message: "connect failed" });
+    },
+    message(topic, message) {
+      this.code += message.toString() + "\n"
+      console.log(topic)
     },
     highlighter(code) {
       return highlight(code, languages.plaintext, "bash");
@@ -221,11 +208,13 @@ export default {
 .prism-editor__textarea:focus {
   outline: none;
 }
+
 .el-col {
   display: block;
   margin-left: 0;
   float: left;
 }
+
 .main_row {
   margin-top: 10px;
 }

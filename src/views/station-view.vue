@@ -2,18 +2,16 @@
   <div>
     <el-container style="height: 600px">
       <el-header>
-        <el-row justify="space-between">
-          <el-col :span="6" style="text-align: left">
-            <h1>AoA station</h1>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" @click="addStationDialogVisible = true">
-              <el-icon>
-                <plus />
-              </el-icon>
-            </el-button>
-          </el-col>
-        </el-row>
+        <el-col :span="6" style="text-align: left">
+          <h1>AoA station</h1>
+        </el-col>
+        <el-col :span="4">
+          <el-button type="primary" @click="addStationDialogVisible = true">
+            <el-icon>
+              <plus />
+            </el-icon>
+          </el-button>
+        </el-col>
         <el-divider></el-divider>
       </el-header>
       <el-main style="margin-top: 10px; height: 410px">
@@ -29,20 +27,6 @@
               shadow="hover"
             >
               <div style="padding: 10px">
-                <el-row justify="space-between">
-                  <el-col :span="4">
-                    <el-button text @click="toStationDetil(col.id)">
-                      <h1>{{ col.name }}</h1>
-                    </el-button>
-                  </el-col>
-                  <el-col :span="4">
-                    <el-button text @click="remove(i, j)">
-                      <el-icon>
-                        <Close />
-                      </el-icon>
-                    </el-button>
-                  </el-col>
-                </el-row>
                 <el-row>
                   <code>IP addres: {{ col.net }}</code>
                 </el-row>
@@ -225,10 +209,12 @@ export default {
 .card-container {
   height: 430px;
 }
+
 .card {
   height: 130px;
   margin-bottom: 5px;
 }
+
 code {
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
   font-size: 14px;
@@ -237,6 +223,7 @@ code {
   border-radius: 5px;
   max-height: 500px;
 }
+
 h1 {
   font-size: 20px;
   line-height: 2;
