@@ -2,16 +2,18 @@
   <div>
     <el-container style="height: 600px">
       <el-header>
-        <el-col :span="6" style="text-align: left">
-          <h1>AoA station</h1>
-        </el-col>
-        <el-col :span="4">
-          <el-button type="primary" @click="addStationDialogVisible = true">
-            <el-icon>
-              <plus />
-            </el-icon>
-          </el-button>
-        </el-col>
+        <el-row justify="space-between">
+          <el-col :span="6" style="text-align: left">
+            <h1>AoA station</h1>
+          </el-col>
+          <el-col :span="4">
+            <el-button type="primary" @click="addStationDialogVisible = true">
+              <el-icon>
+                <plus />
+              </el-icon>
+            </el-button>
+          </el-col>
+        </el-row>
         <el-divider></el-divider>
       </el-header>
       <el-main style="margin-top: 10px; height: 410px">
@@ -27,6 +29,20 @@
               shadow="hover"
             >
               <div style="padding: 10px">
+                <el-row justify="space-between">
+                  <el-col :span="4">
+                    <el-button text @click="toStationDetil(col.id)">
+                      <h1>{{ col.name }}</h1>
+                    </el-button>
+                  </el-col>
+                  <el-col :span="4">
+                    <el-button text @click="remove(i, j)">
+                      <el-icon>
+                        <Close />
+                      </el-icon>
+                    </el-button>
+                  </el-col>
+                </el-row>
                 <el-row>
                   <code>IP addres: {{ col.net }}</code>
                 </el-row>
