@@ -13,22 +13,19 @@ export class mqttx {
   static output = {
     a: "a\na\na\n",
   };
-  static res = "";
+  static res = "aaaaa";
   // 连接并订阅
   static connect(url = "ws://localhost:9001") {
     this.disconnect();
     this.url = url;
     this.client = mqtt.connect(this.url, this.options);
     // 连接失败
-    setTimeout(() => {
-      if (this.client == undefined || this.client.connected == false) {
-        return false;
-      }
-    }, 2000);
-    this.client.subscribe(this.topic);
-    while (this.client == null) {
-      console.log("conneting");
+    if (this.client.connected == false) {
+      this.res = "connect faild";
+      return false;
     }
+    // 订阅
+    this.client.subscribe(this.topic);
     // 注册事件函数
     this.client.on("connect", () => {
       this.subscribe(this.topic);
@@ -36,6 +33,11 @@ export class mqttx {
     this.client.on("error", (err) => {
       console.log("client error", err);
     });
+    this.client.on("message", (topic, message) => {
+      this.output[topic] += message.toString() + "\n";
+      this.res += this.output[topic];
+    });
+    this.res = "connect success";
     return true;
   }
   // 断开连接
@@ -59,13 +61,5 @@ export class mqttx {
   static setId(id = "default-id") {
     this.options.clientId = id;
     if (this.client && this.client.connected) this.connect();
-  }
-  // 设置信息到达处理函数
-  static setMessage(m) {
-    this.client.on("message", (topic, message) => {
-      this.output[topic] += message.toString() + "\n";
-      m(topic, message);
-      console.log(this, this.output);
-    });
   }
 }
