@@ -158,18 +158,17 @@ export default {
         return;
       }
       // 连接
-      if (this.$mqttx.connect(url, this.s, this.f)) {
-        ElMessage({ type: "success", message: "connect success" });
-        this.$mqttx.addMessage(this.message);
-      } else ElMessage({ type: "error", message: "connect failed" });
-    },
-    message(topic, ms) {
-      this.code += ms.toString() + "\n";
+      this.$mqttx.connect(url, this.s, this.f);
     },
     s(msg) {
+      ElMessage({ type: "success", message: "connect success" });
+      this.$mqttx.addMessage((topic, ms) => {
+        this.code += ms.toString() + "\n";
+      });
       this.code += msg + "\n";
     },
     f(msg) {
+      ElMessage({ type: "error", message: "connect failed" });
       this.code += msg + "\n";
     },
     highlighter(code) {

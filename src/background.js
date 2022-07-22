@@ -100,5 +100,8 @@ function writeHandle(event, arg) {
     case "station":
       writeFile("./src/config/station.json", arg[1], () => {});
       break;
+    case "data":
+      writeFile("./src/data/" + arg[1], arg[2], arg[3]);
+      break;
   }
 }

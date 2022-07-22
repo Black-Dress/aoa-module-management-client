@@ -1,4 +1,5 @@
 import * as mqtt from "mqtt";
+const ipcRenderer = window.require("electron").ipcRenderer;
 export class mqttx {
   static options = {
     clientId: "AoA-module-management",
@@ -81,5 +82,15 @@ export class mqttx {
       const element = this.messages[index];
       element(topic, message);
     }
+  }
+  // 存储数据
+  static save(data, name) {
+    ipcRenderer.send("data", [
+      name,
+      data,
+      () => {
+        console.log("success");
+      },
+    ]);
   }
 }
