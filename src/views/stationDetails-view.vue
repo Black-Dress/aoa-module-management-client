@@ -34,7 +34,6 @@
   </div>
 </template>
 <script>
-import { mqttx } from "@/utils/mqttx";
 import { PrismEditor } from "vue-prism-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
 export default {
@@ -42,17 +41,19 @@ export default {
     PrismEditor,
   },
   data: function () {
-    return {};
+    return {
+      code: "",
+    };
   },
-  created: function () {},
+  created: function () {
+    this.$mqttx.addMessage(this.ms);
+  },
   methods: {
     highlighter(code) {
       return highlight(code, languages.bash);
     },
-  },
-  computed: {
-    code() {
-      return mqttx.output[this.$route.query.id];
+    ms(topic, ms) {
+      this.code += ms.toString() + "\n";
     },
   },
 };

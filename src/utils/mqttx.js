@@ -85,11 +85,12 @@ export class mqttx {
     // 执行注册的函数
     for (let index = 0; index < this.messages.length; index++) {
       const element = this.messages[index];
-      element(topic, message);
+      if (element != undefined) element(topic, message);
     }
     // 存储数据
     if (this.output[topic].length >= MAXLEN) {
       this.save(JSON.stringify(this.output[topic]), `${topic}-${now()}.json`);
+      this.output[topic] = [];
     }
   }
   // 存储数据
