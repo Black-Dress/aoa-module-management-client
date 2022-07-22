@@ -1,5 +1,7 @@
+import { now } from "core-js/core/date";
 import * as mqtt from "mqtt";
 const ipcRenderer = window.require("electron").ipcRenderer;
+const MAXLEN = 1000000;
 export class mqttx {
   static options = {
     clientId: "AoA-module-management",
@@ -12,9 +14,9 @@ export class mqttx {
   static client = null;
   // 消息输出
   static output = {
-    a: "a\na\na\n",
+    a: ["a\na\na\n"],
   };
-  static res = "aaaaa";
+  static res = [];
   static messages = [];
   // 连接并订阅
   static connect(
@@ -75,12 +77,19 @@ export class mqttx {
   }
   // 消息到达时执行函数
   static message(topic, message) {
-    this.output[topic] += message.toString() + "\n";
-    this.res += this.output[topic];
+    if (this.output[topic] == undefined) {
+      this.output[topic] = [];
+    }
+    this.output[topic].push(message.toString());
+    this.res.push(message.toString());
     // 执行注册的函数
     for (let index = 0; index < this.messages.length; index++) {
       const element = this.messages[index];
       element(topic, message);
+    }
+    // 存储数据
+    if (this.output[topic].length >= MAXLEN) {
+      this.save(JSON.stringify(this.output[topic]), `${topic}-${now()}.json`);
     }
   }
   // 存储数据
