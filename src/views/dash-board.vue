@@ -67,10 +67,10 @@
         <el-divider></el-divider>
         <el-row class="main_row">
           <prism-editor
-            :key="this.$mqttx.res"
+            :key="code"
             class="my-editor"
             :readonly="true"
-            v-model="this.$mqttx.res"
+            :model-value="code"
             :highlight="highlighter"
             line-numbers
           />
@@ -147,6 +147,7 @@ export default {
       addUrlDialogVisible: false,
       editIdDialogVisible: false,
       newUrl: { name: "", value: "" },
+      code: "",
     };
   },
   computed: {},
@@ -157,10 +158,19 @@ export default {
         return;
       }
       // 连接
-      if (mqttx.connect(this.curUrl.value))
+      if (this.$mqttx.connect(url, this.s, this.f)) {
         ElMessage({ type: "success", message: "connect success" });
-      else ElMessage({ type: "error", message: "connect failed" });
-      console.log(this.$mqttx.res);
+        this.$mqttx.addMessage(this.message);
+      } else ElMessage({ type: "error", message: "connect failed" });
+    },
+    message(topic, ms) {
+      this.code += ms.toString() + "\n";
+    },
+    s(msg) {
+      this.code += msg + "\n";
+    },
+    f(msg) {
+      this.code += msg + "\n";
     },
     highlighter(code) {
       return highlight(code, languages.plaintext, "bash");

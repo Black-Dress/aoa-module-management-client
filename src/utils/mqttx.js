@@ -14,14 +14,23 @@ export class mqttx {
     a: "a\na\na\n",
   };
   static res = "aaaaa";
+  static messages = [];
   // 连接并订阅
-  static connect(url = "ws://localhost:9001") {
+  static connect(
+    url = "ws://localhost:9001",
+    s = (msg) => {
+      console.log(msg);
+    },
+    f = (msg) => {
+      console.log(msg);
+    }
+  ) {
     this.disconnect();
     this.url = url;
     this.client = mqtt.connect(this.url, this.options);
     // 连接失败
     if (this.client.connected == false) {
-      this.res = "connect faild";
+      f("connect faild");
       return false;
     }
     // 订阅
@@ -33,11 +42,8 @@ export class mqttx {
     this.client.on("error", (err) => {
       console.log("client error", err);
     });
-    this.client.on("message", (topic, message) => {
-      this.output[topic] += message.toString() + "\n";
-      this.res += this.output[topic];
-    });
-    this.res = "connect success";
+    this.client.on("message", this.message);
+    s("connect success");
     return true;
   }
   // 断开连接
@@ -61,5 +67,19 @@ export class mqttx {
   static setId(id = "default-id") {
     this.options.clientId = id;
     if (this.client && this.client.connected) this.connect();
+  }
+  // 注册消息函数回调
+  static addMessage(m) {
+    this.messages.push(m);
+  }
+  // 消息到达时执行函数
+  static message(topic, message) {
+    this.output[topic] += message.toString() + "\n";
+    this.res += this.output[topic];
+    // 执行注册的函数
+    for (let index = 0; index < this.messages.length; index++) {
+      const element = this.messages[index];
+      element(topic, message);
+    }
   }
 }
