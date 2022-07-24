@@ -162,7 +162,7 @@ export default {
   methods: {
     connect(url) {
       if (url == undefined || url == "") {
-        ElMessage({ message: "choose mqtt server adderss", type: "warning" });
+        ElMessage({ message: "choose a mqtt server adderss", type: "warning" });
         return;
       }
       // 连接
@@ -170,7 +170,7 @@ export default {
     },
     s(msg) {
       ElMessage({ type: "success", message: "connect success" });
-      this.$mqttx.addMessage((topic, ms) => {
+      this.$mqttx.set_message_callback((topic, ms) => {
         this.code += ms.toString() + "\n";
       });
       this.code += msg + "\n";

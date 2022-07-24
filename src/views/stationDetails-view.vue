@@ -49,7 +49,7 @@ export default {
     };
   },
   created: function () {
-    this.$mqttx.addMessage(this.ms);
+    this.$mqttx.set_message_callback(this.ms);
     this.code = `station: ${this.$route.query.id} \n`;
   },
   methods: {

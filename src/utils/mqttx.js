@@ -7,16 +7,19 @@ export class mqttx {
     clean: true,
     reconnectPeriod: 0,
     connectTimeout: 1000,
+    host: "localhost",
+    port: "9001",
+    hostname: "ws://localhost:9001",
   };
   static topic = "hello";
-  static url = "";
   static client = null;
   // 消息输出
   static output = {
     a: ["a\na\na\n"],
   };
   static res = [];
-  static messages = [];
+  // 回调函数
+  static messages = function () {};
   // 连接并订阅
   static connect(
     url = "ws://localhost:9001",
@@ -28,7 +31,7 @@ export class mqttx {
     }
   ) {
     this.disconnect();
-    this.url = url;
+    this.options.hostname = url;
     this.client = mqtt.connect(this.url, this.options);
     // 连接失败
     if (this.client.connected == false) {
@@ -71,8 +74,8 @@ export class mqttx {
     if (this.client && this.client.connected) this.connect();
   }
   // 注册消息函数回调
-  static addMessage(m) {
-    this.messages.push(m);
+  static set_message_callback(m) {
+    this.messages = m;
   }
   // 消息到达时执行函数
   static message(topic, message) {
@@ -82,10 +85,7 @@ export class mqttx {
     this.output[topic].push(message.toString());
     this.res.push(message.toString());
     // 执行注册的函数
-    for (let index = 0; index < this.messages.length; index++) {
-      const element = this.messages[index];
-      if (element != undefined) element(topic, message);
-    }
+    this.messages(topic, message.toString());
     // 存储数据
     if (this.output[topic].length >= MAXLEN) {
       this.save(
