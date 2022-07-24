@@ -7,10 +7,8 @@ export class mqttx {
     clean: true,
     reconnectPeriod: 0,
     connectTimeout: 1000,
-    host: "localhost",
-    port: "9001",
-    hostname: "ws://localhost:9001",
   };
+  static url = "ws://localhost:9001";
   static topic = "hello";
   static client = null;
   // 消息输出
@@ -31,7 +29,7 @@ export class mqttx {
     }
   ) {
     this.disconnect();
-    this.options.hostname = url;
+    this.url = url;
     this.client = mqtt.connect(this.url, this.options);
     // 连接失败
     if (this.client.connected == false) {

@@ -18,7 +18,12 @@
             <h1>station: {{ this.$route.query.id }}</h1>
           </el-col>
           <el-col :span="4" style="text-align: right">
-            <el-button @click="save" type="primary">save</el-button>
+            <el-button
+              @click="save_message_dialog_visible = true"
+              type="primary"
+            >
+              save
+            </el-button>
           </el-col>
         </el-row>
         <el-divider></el-divider>
@@ -34,6 +39,31 @@
         ></prism-editor>
       </el-main>
     </el-container>
+    <el-dialog
+      v-model="save_message_dialog_visible"
+      title="save message"
+      width="300px"
+    >
+      <el-row>
+        <el-col>
+          <el-form>
+            <el-form-item label="name" label-width="20%">
+              <el-input v-model="file_name"></el-input>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
+      <el-row :gutter="3">
+        <el-col :span="12">
+          <el-button @click="save_message_dialog_visible = false">
+            cancel
+          </el-button>
+        </el-col>
+        <el-col :span="12">
+          <el-button type="primary" @click="dialogConfirm()">confirm</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -46,6 +76,8 @@ export default {
   data: function () {
     return {
       code: "",
+      save_message_dialog_visible: false,
+      file_name: "",
     };
   },
   created: function () {
@@ -59,12 +91,17 @@ export default {
     ms(topic, ms) {
       this.code += ms.toString() + "\n";
     },
-    save() {
+    save(
+      name = `${this.$route.query.id}/${new Date()
+        .toISOString()
+        .slice(0, 10)}.json`
+    ) {
       const data = this.$mqttx.output[this.$route.query.id];
-      this.$mqttx.save(
-        JSON.stringify(data),
-        `${new Date().toISOString().slice(0, 10)}.json`
-      );
+      this.$mqttx.save(JSON.stringify(data), `${this.$route.query.id}/${name}`);
+    },
+    dialogConfirm() {
+      this.save(this.file_name);
+      this.save_message_dialog_visible = false;
     },
   },
 };

@@ -151,7 +151,7 @@ export default {
     return {
       mqttUrls: [],
       clientId: "",
-      curUrl: { name: "", value: "" },
+      curUrl: { name: "default", value: "ws://localhost:9001" },
       addUrlDialogVisible: false,
       editIdDialogVisible: false,
       newUrl: { name: "", value: "" },
