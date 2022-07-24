@@ -1,4 +1,3 @@
-import { now } from "core-js/core/date";
 import * as mqtt from "mqtt";
 const ipcRenderer = window.require("electron").ipcRenderer;
 const MAXLEN = 1000000;
@@ -89,7 +88,7 @@ export class mqttx {
     }
     // 存储数据
     if (this.output[topic].length >= MAXLEN) {
-      this.save(JSON.stringify(this.output[topic]), `${topic}-${now()}.json`);
+      this.save(JSON.stringify(this.output[topic]), `${topic}-${new Date().toDateString()}.json`);
       this.output[topic] = [];
     }
   }
