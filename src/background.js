@@ -3,7 +3,7 @@
 import { app, protocol, BrowserWindow, ipcMain, Notification } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
-import { readFile, writeFile } from "original-fs";
+import { mkdir, readFile, writeFile } from "original-fs";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 // Scheme must be registered before the app is ready
@@ -101,9 +101,22 @@ function writeHandle(event, arg) {
       writeFile("./src/config/station.json", arg[1], () => {});
       break;
     case "data":
-      writeFile("./src/data/" + arg[1], arg[2], () => {
-        new Notification({ title: "file", body: "save success" }).show();
+      write("./src/data/" + arg[1], arg[2], (err) => {
+        const message = { title: "file", body: "save success" };
+        if (err) {
+          new Notification({ title: "error", body: err.toString() }).show();
+          return;
+        }
+        new Notification(message).show();
       });
       break;
   }
+}
+// 写文件，自动创建文件
+function write(path, buffer, callback) {
+  let last_path = path.substring(0, path.lastIndexOf("/"));
+  mkdir(last_path, { recursive: true }, (err) => {
+    if (err) return callback(err);
+    writeFile(path, buffer, callback);
+  });
 }
