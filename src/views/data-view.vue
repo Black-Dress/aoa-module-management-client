@@ -17,13 +17,13 @@
 export default {
   data: function () {
     return {
-      files: [
-        {
+      files: {
+        a: {
           name: "",
           time: "",
           size: "",
         },
-      ],
+      },
     };
   },
 };
