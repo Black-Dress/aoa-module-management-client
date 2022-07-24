@@ -60,7 +60,7 @@
           </el-col>
           <el-col :span="2" style="max-width: 32px">
             <el-button id="start" type="primary" @click="connect(curUrl.value)">
-              连接
+              connect
             </el-button>
           </el-col>
         </el-row>
@@ -78,14 +78,18 @@
       </el-main>
     </el-container>
   </div>
-  <el-dialog v-model="addUrlDialogVisible" title="添加新链接" width="300px">
+  <el-dialog
+    v-model="addUrlDialogVisible"
+    title="add new connection"
+    width="300px"
+  >
     <el-row>
       <el-col>
         <el-form :v-model="newUrl">
-          <el-form-item label="名称" label-width="20%">
+          <el-form-item label="name" label-width="20%">
             <el-input v-model="newUrl.name"></el-input>
           </el-form-item>
-          <el-form-item label="地址" label-width="20%">
+          <el-form-item label="url" label-width="20%">
             <el-input v-model="newUrl.value"></el-input>
           </el-form-item>
         </el-form>
@@ -93,14 +97,18 @@
     </el-row>
     <el-row :gutter="3">
       <el-col :span="12">
-        <el-button @click="dialogCancel">取消</el-button>
+        <el-button @click="dialogCancel">cancel</el-button>
       </el-col>
       <el-col :span="12">
-        <el-button type="primary" @click="dialogConfirm()">确认</el-button>
+        <el-button type="primary" @click="dialogConfirm()">confirm</el-button>
       </el-col>
     </el-row>
   </el-dialog>
-  <el-dialog v-model="editIdDialogVisible" title="修改客户端ID" width="300px">
+  <el-dialog
+    v-model="editIdDialogVisible"
+    title="update client id"
+    width="300px"
+  >
     <el-row>
       <el-col>
         <el-form>
@@ -112,10 +120,10 @@
     </el-row>
     <el-row :gutter="3">
       <el-col :span="12">
-        <el-button @click="dialogCancel">取消</el-button>
+        <el-button @click="dialogCancel">cancel</el-button>
       </el-col>
       <el-col :span="12">
-        <el-button type="primary" @click="dialogConfirm()">确认</el-button>
+        <el-button type="primary" @click="dialogConfirm()">confirm</el-button>
       </el-col>
     </el-row>
   </el-dialog>
@@ -154,7 +162,7 @@ export default {
   methods: {
     connect(url) {
       if (url == undefined || url == "") {
-        ElMessage({ message: "请选择mqtt服务器地址。", type: "warning" });
+        ElMessage({ message: "choose mqtt server adderss", type: "warning" });
         return;
       }
       // 连接
@@ -192,7 +200,10 @@ export default {
         if (
           this.mqttUrls.findIndex((item) => item.name == this.newUrl.name) != -1
         ) {
-          ElMessage({ type: "warning", message: "不能使用相同名称" });
+          ElMessage({
+            type: "warning",
+            message: "there is already a same name",
+          });
         }
         this.mqttUrls.push(this.newUrl);
         this.newUrl = { name: "", value: "" };

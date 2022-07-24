@@ -17,7 +17,7 @@
           <el-col :span="18" style="text-align: left">
             <h1>station: {{ this.$route.query.id }}</h1>
           </el-col>
-          <el-col :span="4" style="text-align:right">
+          <el-col :span="4" style="text-align: right">
             <el-button @click="save" type="primary">save</el-button>
           </el-col>
         </el-row>
@@ -50,6 +50,7 @@ export default {
   },
   created: function () {
     this.$mqttx.addMessage(this.ms);
+    this.code = `station: ${this.$route.query.id} \n`;
   },
   methods: {
     highlighter(code) {
@@ -58,10 +59,13 @@ export default {
     ms(topic, ms) {
       this.code += ms.toString() + "\n";
     },
-    save(){
-      const data = this.$mqttx.output[this.$route.query.id]
-      this.$mqttx.save(JSON.stringify(data),`${new Date().toISOString().slice(0,10)}.json`)
-    }
+    save() {
+      const data = this.$mqttx.output[this.$route.query.id];
+      this.$mqttx.save(
+        JSON.stringify(data),
+        `${new Date().toISOString().slice(0, 10)}.json`
+      );
+    },
   },
 };
 </script>
