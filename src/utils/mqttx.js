@@ -88,18 +88,15 @@ export class mqttx {
     }
     // 存储数据
     if (this.output[topic].length >= MAXLEN) {
-      this.save(JSON.stringify(this.output[topic]), `${topic}-${new Date().toDateString()}.json`);
+      this.save(
+        JSON.stringify(this.output[topic]),
+        `${topic}-${new Date().toLocaleDateString()}.json`
+      );
       this.output[topic] = [];
     }
   }
   // 存储数据
   static save(data, name) {
-    ipcRenderer.send("data", [
-      name,
-      data,
-      () => {
-        console.log("success");
-      },
-    ]);
+    ipcRenderer.send("write", ["data", name, data]);
   }
 }

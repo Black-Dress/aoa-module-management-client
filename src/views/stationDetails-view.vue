@@ -14,8 +14,11 @@
               </el-icon>
             </el-button>
           </el-col>
-          <el-col :span="10" style="text-align: left">
+          <el-col :span="18" style="text-align: left">
             <h1>station: {{ this.$route.query.id }}</h1>
+          </el-col>
+          <el-col :span="4" style="text-align:right">
+            <el-button @click="save" type="primary">save</el-button>
           </el-col>
         </el-row>
         <el-divider></el-divider>
@@ -55,6 +58,10 @@ export default {
     ms(topic, ms) {
       this.code += ms.toString() + "\n";
     },
+    save(){
+      const data = this.$mqttx.output[this.$route.query.id]
+      this.$mqttx.save(JSON.stringify(data),`${new Date().toISOString().slice(0,10)}.json`)
+    }
   },
 };
 </script>

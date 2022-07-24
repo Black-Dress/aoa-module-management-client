@@ -1,6 +1,6 @@
 "use strict";
 
-import { app, protocol, BrowserWindow, ipcMain } from "electron";
+import { app, protocol, BrowserWindow, ipcMain, Notification } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import { readFile, writeFile } from "original-fs";
@@ -13,7 +13,7 @@ protocol.registerSchemesAsPrivileged([
 
 async function createWindow() {
   const win = new BrowserWindow({
-    width: 1000,
+    width: 900,
     height: 750,
     webPreferences: {
       nodeIntegration: true,
@@ -101,7 +101,9 @@ function writeHandle(event, arg) {
       writeFile("./src/config/station.json", arg[1], () => {});
       break;
     case "data":
-      writeFile("./src/data/" + arg[1], arg[2], arg[3]);
+      writeFile("./src/data/" + arg[1], arg[2], () => {
+        new Notification({ title: "file", body: "save success" }).show();
+      });
       break;
   }
 }
