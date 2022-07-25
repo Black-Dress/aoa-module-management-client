@@ -29,7 +29,6 @@
         <el-divider></el-divider>
       </el-header>
       <el-main>
-        <!-- <code>{{ code }}</code> -->
         <prism-editor
           class="code"
           :model-value="code"
@@ -86,7 +85,7 @@ export default {
   },
   methods: {
     highlighter(code) {
-      return highlight(code, languages.bash);
+      return highlight(code, languages.bash, "bash");
     },
     ms(topic, ms) {
       this.code += ms.toString() + "\n";
