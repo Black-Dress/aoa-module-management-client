@@ -3,7 +3,7 @@
 import { app, protocol, BrowserWindow, ipcMain, Notification } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
-import { mkdir, readFile, writeFile } from "original-fs";
+import { mkdir, readdir, readdirSync, readFile, writeFile } from "original-fs";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 // Scheme must be registered before the app is ready
@@ -89,6 +89,14 @@ function readHandle(event, arg) {
       readFile("./src/config/station.json", (err, data) =>
         event.sender.send("station", JSON.parse(data))
       );
+      break;
+    // 读取数据文件
+    case "data":
+      readdir("./src/data", (err, files) => {
+        if (err) console.log(err);
+        else console.log(files);
+      });
+      break;
   }
 }
 // 写文件
@@ -119,4 +127,9 @@ function write(path, buffer, callback) {
     if (err) return callback(err);
     writeFile(path, buffer, callback);
   });
+}
+//TODO 递归读取文件，并且读取文件信息
+function readFileList(dir, fileList) {
+  const files = readdirSync(dir);
+  console.log(files);
 }

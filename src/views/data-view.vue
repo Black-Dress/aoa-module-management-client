@@ -32,6 +32,7 @@
   </el-container>
 </template>
 <script>
+const ipcRenderer = window.require("electron").ipcRenderer;
 export default {
   data: function () {
     return {
@@ -64,6 +65,9 @@ export default {
       });
       return res;
     },
+  },
+  created: function () {
+    ipcRenderer.send("read", ["data"]);
   },
   methods: {
     remove() {
