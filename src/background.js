@@ -3,8 +3,7 @@
 import { app, protocol, BrowserWindow, ipcMain, Notification } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
-import { mkdir, readdir, readdirSync, readFile, writeFile } from "original-fs";
-
+import { mkdir, readdirSync, readFile, statSync, writeFile } from "original-fs";
 const isDevelopment = process.env.NODE_ENV !== "production";
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -91,12 +90,13 @@ function readHandle(event, arg) {
       );
       break;
     // 读取数据文件
-    case "data":
-      readdir("./src/data", (err, files) => {
-        if (err) console.log(err);
-        else console.log(files);
-      });
+    case "data": {
+      let list = [];
+      readFileList("./src/data", [], list);
+      console.log(list);
+      event.sender.send("data", list);
       break;
+    }
   }
 }
 // 写文件
@@ -128,8 +128,25 @@ function write(path, buffer, callback) {
     writeFile(path, buffer, callback);
   });
 }
-//TODO 递归读取文件，并且读取文件信息
-function readFileList(dir, fileList) {
+// 读取数据文件
+function readFileList(dir, res, list) {
+  const state = statSync(dir);
+  if (!state.isDirectory()) {
+    const a = dir.split("/");
+    const item = {
+      name: dir.slice(dir.lastIndexOf("/") + 1),
+      size: state.size,
+      time: state.ctime.toLocaleDateString(),
+      path: dir,
+      station: a[a.length - 2],
+    };
+    list.push(item);
+    return item;
+  }
   const files = readdirSync(dir);
-  console.log(files);
+  for (let index = 0; index < files.length; index++) {
+    const element = files[index];
+    res.push(readFileList(`${dir}/${element}`, [], list));
+  }
+  return res;
 }

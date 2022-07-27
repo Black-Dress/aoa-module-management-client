@@ -67,6 +67,9 @@ export default {
     },
   },
   created: function () {
+    ipcRenderer.on("data", (event, arg) => {
+      this.files = arg;
+    });
     ipcRenderer.send("read", ["data"]);
   },
   methods: {
