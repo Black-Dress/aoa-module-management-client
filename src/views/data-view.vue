@@ -20,34 +20,89 @@
           label="station"
         />
         <el-table-column fixed="right" label="operations">
-          <el-button text type="primary" size="small" @click="remove">
-            remove
-          </el-button>
-          <el-button text type="primary" size="small" @click="detail">
-            detail
-          </el-button>
+          <template #default="scope">
+            <el-button
+              text
+              type="primary"
+              size="small"
+              @click="remove(scope.$index)"
+            >
+              remove
+            </el-button>
+            <el-button
+              text
+              type="primary"
+              size="small"
+              @click="detail(scope.$index)"
+            >
+              detail
+            </el-button>
+          </template>
         </el-table-column>
       </el-table>
     </el-main>
   </el-container>
+  <el-dialog v-model="detailDialogVisible">
+    <el-container>
+      <el-header>
+        <el-row :gutter="2">
+          <el-col :span="2" style="text-align: left; max-width: 44px">
+            <el-button
+              @click="detailDialogVisible = false"
+              text
+              style="margin-top: 4px"
+            >
+              <el-icon>
+                <ArrowLeft />
+              </el-icon>
+            </el-button>
+          </el-col>
+          <el-col :span="18" style="text-align: left">
+            <h1>name: {{ files[cur_index].name }}</h1>
+          </el-col>
+        </el-row>
+        <el-divider></el-divider>
+      </el-header>
+      <el-main>
+        <prism-editor
+          class="code"
+          :model-value="code"
+          :highlight="highlighter"
+          line-numbers
+          :readonly="true"
+        ></prism-editor>
+      </el-main>
+    </el-container>
+  </el-dialog>
 </template>
 <script>
+import { PrismEditor } from "vue-prism-editor";
+import { highlight, languages } from "prismjs/components/prism-core";
+import { ElMessage } from "element-plus";
 const ipcRenderer = window.require("electron").ipcRenderer;
 export default {
+  components: {
+    PrismEditor,
+  },
   data: function () {
     return {
+      code: "",
+      detailDialogVisible: false,
+      cur_index: 0,
       files: [
         {
           name: "a",
           time: "a",
           size: "aaaaaaaaaaaaaaaaaaaaaaaa",
           station: "a",
+          path: "",
         },
         {
           name: "b",
           time: "b",
           size: "bbbbbbbbbbbbbbbbbbbbb",
           station: "b",
+          path: "",
         },
       ],
     };
@@ -73,11 +128,27 @@ export default {
     ipcRenderer.send("read", ["data"]);
   },
   methods: {
-    remove() {
-      console.log("remove");
+    highlighter(code) {
+      return highlight(code, languages.plaintext, "bash");
     },
-    detail() {
-      console.log("detail");
+    alert_delete() {
+      ElMessage({ type: "success", message: "delete success" });
+    },
+    remove(index) {
+      ipcRenderer.send("delete", ["data", this.files[index].path]);
+      this.files.splice(index, 1);
+    },
+    detail(index) {
+      ipcRenderer.on("data_details", (event, arg) => {
+        this.code = "";
+        for (let index = 0; index < arg.length; index++) {
+          const element = arg[index];
+          this.code += element + "\n";
+        }
+      });
+      ipcRenderer.send("read", ["data_detail", this.files[index].path]);
+      this.detailDialogVisible = true;
+      this.cur_index = index;
     },
     filter_station(value, row) {
       return row.station == value;
@@ -85,3 +156,4 @@ export default {
   },
 };
 </script>
+<style scoped></style>

@@ -3,7 +3,14 @@
 import { app, protocol, BrowserWindow, ipcMain, Notification } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
-import { mkdir, readdirSync, readFile, statSync, writeFile } from "original-fs";
+import {
+  mkdir,
+  readdirSync,
+  readFile,
+  rm,
+  statSync,
+  writeFile,
+} from "original-fs";
 const isDevelopment = process.env.NODE_ENV !== "production";
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -58,6 +65,7 @@ app.on("ready", async () => {
   //注册事件
   ipcMain.on("read", readHandle);
   ipcMain.on("write", writeHandle);
+  ipcMain.on("delete", deleteHandle);
   createWindow();
 });
 
@@ -93,10 +101,18 @@ function readHandle(event, arg) {
     case "data": {
       let list = [];
       readFileList("./src/data", [], list);
-      console.log(list);
       event.sender.send("data", list);
       break;
     }
+    case "data_detail":
+      readFile(arg[1], (err, data) => {
+        if (err) new Notification({ title: "file", body: "read file error" });
+        else
+          event.sender.send(
+            "data_details",
+            data.buffer.length != 0 ? JSON.parse(data) : {}
+          );
+      });
   }
 }
 // 写文件
@@ -127,6 +143,16 @@ function write(path, buffer, callback) {
     if (err) return callback(err);
     writeFile(path, buffer, callback);
   });
+}
+// 删除文件
+function deleteHandle(event, arg) {
+  switch (arg[0]) {
+    case "data":
+      rm(arg[1], () => {
+        new Notification({ title: "file", body: "delete success" }).show();
+      });
+      break;
+  }
 }
 // 读取数据文件
 function readFileList(dir, res, list) {
