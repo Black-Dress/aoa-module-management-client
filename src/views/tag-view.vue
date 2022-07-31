@@ -21,7 +21,7 @@
           <el-col v-for="(col, j) in row" :key="j" :span="6">
             <el-card :body-style="{ padding: '0px' }" class="card" shadow="hover">
               <div style="padding: 10px">
-                <el-row justify="space-between">
+                <el-row justify="space-between" class="row">
                   <el-col :span="10" style="text-align: left">
                     <el-button text @click="detail(col.id)" style="padding: 0 0 0 0">
                       <h1>{{ col.name }}</h1>
@@ -35,10 +35,10 @@
                     </el-button>
                   </el-col>
                 </el-row>
-                <el-row>
+                <el-row class="row">
                   <code> Tag Status: {{ col.status ? "online" : "offline" }} </code>
                 </el-row>
-                <el-row>
+                <el-row class="row">
                   <code>Tag id: {{ col.id }}</code>
                 </el-row>
               </div>
@@ -103,3 +103,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.row {
+  margin-top: 5px;
+}
+</style>
