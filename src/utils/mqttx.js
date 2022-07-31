@@ -81,10 +81,11 @@ export class mqttx {
   }
   // 订阅
   static subscribe(topics, callback) {
-    this.client.subscribe(topics, { qos: 0 }, callback);
+    if (this.client.connected) this.client.subscribe(topics, { qos: 0 }, callback);
   }
   // 取消订阅
   static unsubscribe(topics) {
+    if (!this.client.connected) return;
     this.client.unsubscribe(topics, (err, packet) => {
       if (err) console.log("unsubscrib error: " + err);
       else console.info("unsubscribe success: " + packet);

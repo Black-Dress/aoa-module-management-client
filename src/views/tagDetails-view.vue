@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="6" style="text-align: right">
             <el-button @click="save_message_dialog_visible = true" type="primary"> save </el-button>
-            <el-switch v-model="value2" class="mt-2" style="margin-left: 24px" inline-prompt :active-icon="Check" :change="statusChange(val)" :inactive-icon="Close" />
+            <el-switch v-model="tag.status" style="margin-left: 24px" inline-prompt active-text="on" inactive-text="off" />
           </el-col>
         </el-row>
         <el-divider></el-divider>
@@ -54,12 +54,18 @@ export default {
   },
   data: function () {
     return {
+      tag: {
+        name: "aa",
+        id: "aa-id",
+        status: false,
+      },
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
     };
   },
   created: function () {
+    this.tag = this.$mqttx.tag_list.find((item) => item.id == this.$route.query.id);
     this.$mqttx.set_message_callback(this.ms);
     this.code = `Tag: ${this.$route.query.id} \n`;
   },

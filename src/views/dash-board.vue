@@ -132,7 +132,7 @@ export default {
       // 连接
       if (this.$mqttx.connect(url, this.s, this.f)) {
         // 订阅
-        this.$mqttx.subscribe([], () => {
+        this.$mqttx.defaultSubscribe(() => {
           ElMessage({ message: "subscribe success", type: "success" });
         });
       }
