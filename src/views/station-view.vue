@@ -27,7 +27,7 @@
                       <h1>{{ col.name }}</h1>
                     </el-button>
                   </el-col>
-                  <el-col :span="5">
+                  <el-col :span="3">
                     <el-button text @click="remove(i, j)">
                       <el-icon>
                         <Close />
@@ -39,7 +39,7 @@
                   <code>IP addres: {{ col.net }}</code>
                 </el-row>
                 <el-row>
-                  <code>station id :{{ col.id }}</code>
+                  <code>station id: {{ col.id }}</code>
                 </el-row>
               </div>
             </el-card>

@@ -27,7 +27,7 @@
                       <h1>{{ col.name }}</h1>
                     </el-button>
                   </el-col>
-                  <el-col :span="5">
+                  <el-col :span="3">
                     <el-button text @click="remove(i, j)">
                       <el-icon>
                         <Close />
@@ -39,7 +39,7 @@
                   <code> Tag Status: {{ col.status ? "online" : "offline" }} </code>
                 </el-row>
                 <el-row>
-                  <code>Tag id :{{ col.id }}</code>
+                  <code>Tag id: {{ col.id }}</code>
                 </el-row>
               </div>
             </el-card>
@@ -77,6 +77,7 @@ export default {
   },
   created: function () {
     ipcRenderer.once("tags", (event, args) => {
+      this.total = args.length;
       this.tag_list = args;
       this.tags = this.toTags(args);
     });
@@ -84,8 +85,8 @@ export default {
   },
   methods: {
     remove(i, j) {
-      this.tags[this.current_page][i].splic(j, 1);
-      this.tag_list.splic((this.current_page - 1) * this.page_size + i * this.col_size + j, 1);
+      this.tags[this.current_page][i].splice(j, 1);
+      this.tag_list.splice((this.current_page - 1) * this.page_size + i * this.col_size + j, 1);
       ipcRenderer.send("write", ["tags", JSON.stringify(this.tag_list)]);
       this.total -= 1;
     },

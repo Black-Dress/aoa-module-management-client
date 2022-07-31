@@ -4,11 +4,7 @@
       <el-header>
         <el-row :gutter="2">
           <el-col :span="2" style="text-align: left; max-width: 44px">
-            <el-button
-              @click="this.$router.back()"
-              text
-              style="margin-top: 4px"
-            >
+            <el-button @click="this.$router.back()" text style="margin-top: 4px">
               <el-icon>
                 <ArrowLeft />
               </el-icon>
@@ -18,31 +14,16 @@
             <h1>station: {{ this.$route.query.id }}</h1>
           </el-col>
           <el-col :span="4" style="text-align: right">
-            <el-button
-              @click="save_message_dialog_visible = true"
-              type="primary"
-            >
-              save
-            </el-button>
+            <el-button @click="save_message_dialog_visible = true" type="primary"> save </el-button>
           </el-col>
         </el-row>
         <el-divider></el-divider>
       </el-header>
       <el-main>
-        <prism-editor
-          class="code"
-          :model-value="code"
-          :highlight="highlighter"
-          line-numbers
-          :readonly="true"
-        ></prism-editor>
+        <prism-editor class="code" :model-value="code" :highlight="highlighter" line-numbers :readonly="true"></prism-editor>
       </el-main>
     </el-container>
-    <el-dialog
-      v-model="save_message_dialog_visible"
-      title="save message"
-      width="300px"
-    >
+    <el-dialog v-model="save_message_dialog_visible" title="save message" width="300px">
       <el-row>
         <el-col>
           <el-form>
@@ -54,9 +35,7 @@
       </el-row>
       <el-row :gutter="3">
         <el-col :span="12">
-          <el-button @click="save_message_dialog_visible = false">
-            cancel
-          </el-button>
+          <el-button @click="save_message_dialog_visible = false"> cancel </el-button>
         </el-col>
         <el-col :span="12">
           <el-button type="primary" @click="dialogConfirm()">confirm</el-button>
@@ -90,12 +69,8 @@ export default {
     ms(topic, ms) {
       this.code += ms.toString() + "\n";
     },
-    save(
-      name = `${this.$route.query.id}/${new Date()
-        .toISOString()
-        .slice(0, 10)}.json`
-    ) {
-      const data = this.$mqttx.output[this.$route.query.id];
+    save(name = `${this.$route.query.id}/${new Date().toISOString().slice(0, 10)}.json`) {
+      const data = this.$mqttx.stations[this.$route.query.id];
       this.$mqttx.save(JSON.stringify(data), `${this.$route.query.id}/${name}`);
     },
     dialogConfirm() {

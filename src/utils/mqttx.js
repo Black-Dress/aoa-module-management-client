@@ -13,9 +13,10 @@ export class mqttx {
   static topic = "silabs/aoa/angle/#";
   static client = null;
   // 消息输出，按照基站id进行存储
-  static output = {
+  static stations = {
     a: ["a\na\na\n"],
   };
+
   static res = [];
   // 回调函数
   static messages = function () {};
@@ -57,10 +58,17 @@ export class mqttx {
     }
   }
   // 订阅
-  static subscribe(topic) {
-    this.client.subscribe(topic, { qos: 0 }, function (error) {
-      if (error) console.error("subscribe" + " failed");
+  static subscribe(topics) {
+    this.client.subscribe(topics, { qos: 0 }, function (error) {
+      if (error) console.error("subscribe failed" + error);
       else console.info("subscribe" + " success");
+    });
+  }
+  // 取消订阅
+  static unsubscribe(topics) {
+    this.client.unsubscribe(topics, (err, packet) => {
+      if (err) console.log("unsubscrib error: " + err);
+      else console.info("unsubscribe success: " + packet);
     });
   }
   // 重新连接
@@ -78,20 +86,17 @@ export class mqttx {
   }
   // 消息到达时执行函数
   static message(topic, message) {
-    if (this.output[topic] == undefined) {
-      this.output[topic] = [];
+    if (this.stations[topic] == undefined) {
+      this.stations[topic] = [];
     }
-    this.output[topic].push(message.toString());
+    this.stations[topic].push(message.toString());
     this.res.push(message.toString());
     // 执行注册的函数
     this.messages(topic, message.toString());
     // 存储数据
-    if (this.output[topic].length >= MAXLEN) {
-      this.save(
-        JSON.stringify(this.output[topic]),
-        `${topic}-${new Date().toLocaleDateString()}.json`
-      );
-      this.output[topic] = [];
+    if (this.stations[topic].length >= MAXLEN) {
+      this.save(JSON.stringify(this.stations[topic]), `${topic}-${new Date().toLocaleDateString()}.json`);
+      this.stations[topic] = [];
     }
   }
   // 存储数据
