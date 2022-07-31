@@ -9,8 +9,6 @@ export class mqttx {
     connectTimeout: 1000,
   };
   static url = "ws://localhost:9001";
-  // 订阅的主题，#后面是tag的标签id
-  static defaultTopic = "silabs/aoa/angle/";
   static client = null;
   // 存储所有的tag，station 对象
   static tag_list = [
@@ -132,5 +130,9 @@ export class mqttx {
   // 存储数据
   static save(data, name) {
     ipcRenderer.send("write", ["data", name, data]);
+  }
+  static defaultTopic() {
+    let topic = "silabs/aoa/angle/";
+    return topic;
   }
 }

@@ -130,7 +130,12 @@ export default {
         return;
       }
       // 连接
-      this.$mqttx.connect(url, this.s, this.f);
+      if (this.$mqttx.connect(url, this.s, this.f)) {
+        // 订阅
+        this.$mqttx.subscribe([], () => {
+          ElMessage({ message: "subscribe success", type: "success" });
+        });
+      }
     },
     s(msg) {
       ElMessage({ type: "success", message: "connect success" });
@@ -152,7 +157,6 @@ export default {
         this.mqttUrls = data.urls;
         this.clientId = data.id;
       });
-
       ipcRenderer.send("read", ["mqtt"]);
     },
     dialogCancel() {
