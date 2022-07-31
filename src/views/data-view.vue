@@ -125,6 +125,13 @@ export default {
     ipcRenderer.on("data", (event, arg) => {
       this.files = arg;
     });
+    ipcRenderer.on("data_details", (event, arg) => {
+      this.code = "";
+      for (let index = 0; index < arg.length; index++) {
+        const element = arg[index];
+        this.code += element + "\n";
+      }
+    });
     ipcRenderer.send("read", ["data"]);
   },
   methods: {
@@ -139,16 +146,9 @@ export default {
       this.files.splice(index, 1);
     },
     detail(index) {
-      ipcRenderer.on("data_details", (event, arg) => {
-        this.code = "";
-        for (let index = 0; index < arg.length; index++) {
-          const element = arg[index];
-          this.code += element + "\n";
-        }
-      });
-      ipcRenderer.send("read", ["data_detail", this.files[index].path]);
       this.detailDialogVisible = true;
       this.cur_index = index;
+      ipcRenderer.send("read", ["data_detail", this.files[index].path]);
     },
     filter_station(value, row) {
       return row.station == value;

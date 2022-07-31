@@ -107,11 +107,12 @@ function readHandle(event, arg) {
     case "data_detail":
       readFile(arg[1], (err, data) => {
         if (err) new Notification({ title: "file", body: "read file error" });
-        else
+        else {
           event.sender.send(
             "data_details",
-            data.buffer.length != 0 ? JSON.parse(data) : {}
+            data.buffer.byteLength != 0 ? JSON.parse(data) : {}
           );
+        }
       });
   }
 }
