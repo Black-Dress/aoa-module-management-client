@@ -9,21 +9,11 @@
       </el-header>
       <el-main>
         <el-row class="main_row">
-          <el-col
-            :span="4"
-            style="text-align: left; margin-top: 9px; max-width: 100px"
-          >
+          <el-col :span="4" style="text-align: left; margin-top: 9px; max-width: 100px">
             <p>{{ clientId }}</p>
           </el-col>
-          <el-col
-            :span="2"
-            style="text-align: left; margin-top: 4px; max-width: 20px"
-          >
-            <el-button
-              @click="editIdDialogVisible = true"
-              text
-              style="padding: 0 0 0 0"
-            >
+          <el-col :span="2" style="text-align: left; margin-top: 4px; max-width: 20px">
+            <el-button @click="editIdDialogVisible = true" text style="padding: 0 0 0 0">
               <el-icon> <Edit /> </el-icon>
             </el-button>
           </el-col>
@@ -31,20 +21,11 @@
         <el-row :gutter="5">
           <el-col :span="3">
             <el-select v-model="curUrl" placeholder="URL">
-              <el-option
-                v-for="item in mqttUrls"
-                :key="item.name"
-                :label="item.name"
-                :value="item"
-              />
+              <el-option v-for="item in mqttUrls" :key="item.name" :label="item.name" :value="item" />
             </el-select>
           </el-col>
           <el-col :span="14">
-            <el-input
-              v-model="curUrl.value"
-              disabled
-              placeholder="ws://localhost:9001"
-            />
+            <el-input v-model="curUrl.value" disabled placeholder="ws://localhost:9001" />
           </el-col>
           <el-col :span="4" style="max-width: 120px">
             <el-button @click="addUrlDialogVisible = true">
@@ -59,30 +40,17 @@
             </el-button>
           </el-col>
           <el-col :span="2" style="max-width: 32px">
-            <el-button id="start" type="primary" @click="connect(curUrl.value)">
-              connect
-            </el-button>
+            <el-button id="start" type="primary" @click="connect(curUrl.value)"> connect </el-button>
           </el-col>
         </el-row>
         <el-divider></el-divider>
         <el-row class="main_row">
-          <prism-editor
-            :key="code"
-            class="my-editor"
-            :readonly="true"
-            :model-value="code"
-            :highlight="highlighter"
-            line-numbers
-          />
+          <prism-editor :key="code" class="my-editor" :readonly="true" :model-value="code" :highlight="highlighter" line-numbers />
         </el-row>
       </el-main>
     </el-container>
   </div>
-  <el-dialog
-    v-model="addUrlDialogVisible"
-    title="add new connection"
-    width="300px"
-  >
+  <el-dialog v-model="addUrlDialogVisible" title="add new connection" width="300px">
     <el-row>
       <el-col>
         <el-form :v-model="newUrl">
@@ -104,11 +72,7 @@
       </el-col>
     </el-row>
   </el-dialog>
-  <el-dialog
-    v-model="editIdDialogVisible"
-    title="update client id"
-    width="300px"
-  >
+  <el-dialog v-model="editIdDialogVisible" title="update client id" width="300px">
     <el-row>
       <el-col>
         <el-form>
@@ -188,6 +152,7 @@ export default {
         this.mqttUrls = data.urls;
         this.clientId = data.id;
       });
+
       ipcRenderer.send("read", ["mqtt"]);
     },
     dialogCancel() {
@@ -197,9 +162,7 @@ export default {
     },
     dialogConfirm() {
       if (this.newUrl.name != "") {
-        if (
-          this.mqttUrls.findIndex((item) => item.name == this.newUrl.name) != -1
-        ) {
+        if (this.mqttUrls.findIndex((item) => item.name == this.newUrl.name) != -1) {
           ElMessage({
             type: "warning",
             message: "there is already a same name",
@@ -211,19 +174,13 @@ export default {
       mqttx.setId(this.clientId);
       this.addUrlDialogVisible = false;
       this.editIdDialogVisible = false;
-      ipcRenderer.send("write", [
-        "mqtt",
-        JSON.stringify({ id: this.clientId, urls: this.mqttUrls }),
-      ]);
+      ipcRenderer.send("write", ["mqtt", JSON.stringify({ id: this.clientId, urls: this.mqttUrls })]);
     },
     rmUrls() {
-      var index = this.mqttUrls.findIndex(
-        (item) => item.name == this.curUrl.name
-      );
+      var index = this.mqttUrls.findIndex((item) => item.name == this.curUrl.name);
       this.mqttUrls.splice(index, 1);
       console.log(this.mqttUrls);
-      this.curUrl =
-        this.mqttUrls.length > 0 ? this.mqttUrls[0] : { name: "", value: "" };
+      this.curUrl = this.mqttUrls.length > 0 ? this.mqttUrls[0] : { name: "", value: "" };
       this.dialogConfirm();
     },
   },

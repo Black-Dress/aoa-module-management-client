@@ -132,12 +132,12 @@ export default {
     };
   },
   created: function () {
-    ipcRenderer.once("station", (event, data) => {
+    ipcRenderer.once("stations", (event, data) => {
       this.total = data.length;
       this.station_list = data;
       this.stations = this.toStations();
     });
-    ipcRenderer.send("read", ["station"]);
+    ipcRenderer.send("read", ["stations"]);
   },
   methods: {
     toStations() {

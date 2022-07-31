@@ -10,8 +10,33 @@ export class mqttx {
   };
   static url = "ws://localhost:9001";
   // 订阅的主题，#后面是tag的标签id
-  static topic = "silabs/aoa/angle/#";
+  static defaultTopic = "silabs/aoa/angle/";
   static client = null;
+  // 存储所有的tag，station 对象
+  static tag_list = [
+    {
+      name: "aa",
+      id: "aa-id",
+      status: false,
+    },
+    {
+      name: "aa",
+      id: "aa-id",
+      status: false,
+    },
+  ];
+  static station_list = [
+    {
+      id: "a",
+      name: "别称",
+      positon: {
+        x: 1,
+        y: 1,
+        z: 1,
+      },
+      net: "192.168.1.101",
+    },
+  ];
   // 消息输出，按照基站id进行存储
   static stations = {
     a: ["a\na\na\n"],
@@ -24,7 +49,7 @@ export class mqttx {
   static res = [];
   // 回调函数
   static messages = function () {};
-  // 连接并订阅
+  // 连接
   static connect(
     url = "ws://localhost:9001",
     s = (msg) => {
@@ -56,11 +81,8 @@ export class mqttx {
     }
   }
   // 订阅
-  static subscribe(topics) {
-    this.client.subscribe(topics, { qos: 0 }, function (error) {
-      if (error) console.error("subscribe failed" + error);
-      else console.info("subscribe" + " success");
-    });
+  static subscribe(topics, callback) {
+    this.client.subscribe(topics, { qos: 0 }, callback);
   }
   // 取消订阅
   static unsubscribe(topics) {

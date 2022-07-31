@@ -81,8 +81,8 @@ function readHandle(event, arg) {
     case "mqtt":
       readFile("./src/config/mqtt.json", (err, data) => event.sender.send("mqtt", JSON.parse(data)));
       break;
-    case "station":
-      readFile("./src/config/station.json", (err, data) => event.sender.send("station", JSON.parse(data)));
+    case "stations":
+      readFile("./src/config/station.json", (err, data) => event.sender.send("stations", JSON.parse(data)));
       break;
     // 读取数据文件目录
     case "data": {

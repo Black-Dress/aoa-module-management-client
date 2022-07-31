@@ -37,10 +37,21 @@
 </template>
 
 <script>
+const ipcRenderer = window.require("electron").ipcRenderer;
 export default {
   name: "App",
   components: {},
-  created() {},
+  created() {
+    ipcRenderer.once("tags", (event, data) => {
+      this.$mqttx.tag_list = data;
+    });
+    ipcRenderer.once("stations", (event, data) => {
+      this.$mqttx.station_list = data;
+      console.log(this.$mqttx.station_list);
+    });
+    ipcRenderer.send("read", ["stations"]);
+    ipcRenderer.send("read", ["tags"]);
+  },
   methods: {},
 };
 </script>
