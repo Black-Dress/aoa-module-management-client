@@ -16,7 +16,11 @@ export class mqttx {
   static stations = {
     a: ["a\na\na\n"],
   };
-
+  // 消息输出，按照tag id 进行存储
+  static tags = {
+    a: [],
+    b: [],
+  };
   static res = [];
   // 回调函数
   static messages = function () {};
@@ -34,16 +38,10 @@ export class mqttx {
     this.url = url;
     this.client = mqtt.connect(this.url, this.options);
     // 连接失败
-    if (this.client.connected == false) {
+    while (this.client.connected == false) {
       f("connect faild");
       return false;
     }
-    // 订阅
-    this.client.subscribe(this.topic);
-    // 注册事件函数
-    this.client.on("connect", () => {
-      this.subscribe(this.topic);
-    });
     this.client.on("error", (err) => {
       console.log("client error", err);
     });
@@ -89,14 +87,24 @@ export class mqttx {
     if (this.stations[topic] == undefined) {
       this.stations[topic] = [];
     }
-    this.stations[topic].push(message.toString());
+    // 获取topic中包含的stationId 和 tagId
+    const s = topic.split("/");
+    const stationsId = s[s.length - 2];
+    const tagId = s[s.length - 1];
+    // 存储消息
+    this.stations[stationsId].push(message.toString());
+    this.tags[tagId].push(message.toString());
     this.res.push(message.toString());
     // 执行注册的函数
     this.messages(topic, message.toString());
-    // 存储数据
-    if (this.stations[topic].length >= MAXLEN) {
-      this.save(JSON.stringify(this.stations[topic]), `${topic}-${new Date().toLocaleDateString()}.json`);
-      this.stations[topic] = [];
+    // 存储数据,按照id作为文件夹进行划分
+    if (this.stations[stationsId].length >= MAXLEN) {
+      this.save(JSON.stringify(this.stations[stationsId]), `${stationsId}/${new Date().toLocaleDateString()}.json`);
+      this.stations[stationsId] = [];
+    }
+    if (this.tags[tagId].length >= MAXLEN) {
+      this.save(JSON.stringify(this.tags[tagId]), `${tagId}/${new Date().toLocaleDateString()}.json`);
+      this.tags[stationsId] = [];
     }
   }
   // 存储数据
