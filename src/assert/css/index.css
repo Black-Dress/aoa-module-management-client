@@ -28,3 +28,11 @@ code {
 p {
   margin: 0 0 0 0;
 }
+.card-container {
+  height: 430px;
+}
+
+.card {
+  height: 130px;
+  margin-bottom: 5px;
+}

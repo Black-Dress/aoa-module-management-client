@@ -17,25 +17,13 @@
         <el-divider></el-divider>
       </el-header>
       <el-main style="margin-top: 10px; height: 410px">
-        <el-row
-          :gutter="10"
-          v-for="(row, i) in this.stations[this.current_page]"
-          :key="i"
-        >
+        <el-row :gutter="10" v-for="(row, i) in this.stations[this.current_page]" :key="i">
           <el-col v-for="(col, j) in row" :key="j" :span="6">
-            <el-card
-              :body-style="{ padding: '0px' }"
-              class="card"
-              shadow="hover"
-            >
+            <el-card :body-style="{ padding: '0px' }" class="card" shadow="hover">
               <div style="padding: 10px">
                 <el-row justify="space-between">
                   <el-col :span="10" style="text-align: left">
-                    <el-button
-                      text
-                      @click="toStationDetil(col.id)"
-                      style="padding: 0 0 0 0"
-                    >
+                    <el-button text @click="toStationDetil(col.id)" style="padding: 0 0 0 0">
                       <h1>{{ col.name }}</h1>
                     </el-button>
                   </el-col>
@@ -60,22 +48,11 @@
       </el-main>
       <el-footer>
         <el-row justify="center" style="margin-top: 10px">
-          <el-pagination
-            layout="prev, pager, next"
-            background
-            :total="total"
-            :page-size="12"
-            :pager-count="7"
-            v-model:current-page="current_page"
-          />
+          <el-pagination layout="prev, pager, next" background :total="total" :page-size="12" :pager-count="7" v-model:current-page="current_page" />
         </el-row>
       </el-footer>
     </el-container>
-    <el-dialog
-      v-model="addStationDialogVisible"
-      title="add new station"
-      width="400px"
-    >
+    <el-dialog v-model="addStationDialogVisible" title="add new station" width="400px">
       <el-form :model="newStation">
         <el-row>
           <el-col>
@@ -168,11 +145,7 @@ export default {
       for (let i = 0; i * 12 < this.station_list.length; i += 1) {
         res[i + 1] = [[], [], []];
         let index = 0;
-        for (
-          let j = 0;
-          j < 12 && j + i * 12 < this.station_list.length;
-          j += 1
-        ) {
+        for (let j = 0; j < 12 && j + i * 12 < this.station_list.length; j += 1) {
           if (j % 4 == 0 && j != 0) index += 1;
           res[i + 1][index].push(this.station_list[j + i * 12]);
         }
@@ -191,16 +164,10 @@ export default {
     confirm() {
       let l = this.station_list.length;
       if (l % 12 == 0) {
-        this.stations[Number.parseInt(l / 12) + 1] = [
-          [this.newStation],
-          [],
-          [],
-        ];
+        this.stations[Number.parseInt(l / 12) + 1] = [[this.newStation], [], []];
         this.current_page += 1;
       } else {
-        this.stations[Number.parseInt(l / 12) + 1][(l % 12) % 3].push(
-          this.newStation
-        );
+        this.stations[Number.parseInt(l / 12) + 1][(l % 12) % 3].push(this.newStation);
       }
       this.station_list.push(this.newStation);
       this.total = this.station_list.length;
@@ -225,13 +192,4 @@ export default {
   },
 };
 </script>
-<style scoped>
-.card-container {
-  height: 430px;
-}
-
-.card {
-  height: 130px;
-  margin-bottom: 5px;
-}
-</style>
+<style scoped></style>

@@ -48,7 +48,7 @@
       </el-main>
       <el-footer>
         <el-row justify="center" style="margin-top: 10px">
-          <el-pagination layout="prev, pager, next" background :total="total" :page-size="12" :pager-count="7" v-model:current-page="current_page" />
+          <el-pagination layout="prev, pager, next" background :total="total" :page-size="page_size" :pager-count="7" v-model:current-page="current_page" />
         </el-row>
       </el-footer>
     </el-container>
@@ -64,6 +64,7 @@ export default {
         1: [[{ name: "aa", id: "id-aa", status: false }, {}], [], []],
       },
       tag_list: [],
+      total: 0,
       current_page: 1,
       col_size: 4,
       row_size: 3,
@@ -82,6 +83,12 @@ export default {
     ipcRenderer.send("read", ["tags"]);
   },
   methods: {
+    remove(i, j) {
+      this.tags[this.current_page][i].splic(j, 1);
+      this.tag_list.splic((this.current_page - 1) * this.page_size + i * this.col_size + j, 1);
+      ipcRenderer.send("write", ["tags", JSON.stringify(this.tag_list)]);
+      this.total -= 1;
+    },
     detail() {},
     toTags(args) {
       let res = {};

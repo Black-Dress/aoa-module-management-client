@@ -101,6 +101,7 @@ function readHandle(event, arg) {
     // 读取tag文件
     case "tags":
       readFile("./src/config/tags.json", (err, data) => event.sender.send("tags", JSON.parse(data)));
+      break;
   }
 }
 // 写文件
@@ -121,6 +122,9 @@ function writeHandle(event, arg) {
         }
         new Notification(message).show();
       });
+      break;
+    case "tags":
+      write("./src/config/tags.json", arg[1], () => {});
       break;
   }
 }
