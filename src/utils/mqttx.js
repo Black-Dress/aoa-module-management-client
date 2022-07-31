@@ -32,6 +32,7 @@ export class mqttx {
         y: 1,
         z: 1,
       },
+      status: false,
       net: "192.168.1.101",
     },
   ];
@@ -132,7 +133,22 @@ export class mqttx {
     ipcRenderer.send("write", ["data", name, data]);
   }
   static defaultTopic() {
-    let topic = "silabs/aoa/angle/";
+    let topic = "silabs/aoa/angle";
     return topic;
+  }
+  static subscribeTag(tagId, callback = () => {}) {
+    let topic = `${this.defaultTopic()}/+/${tagId}`;
+    this.subscribe(topic, callback);
+  }
+  static unsubscribeTag(tagId, callback = () => {}) {
+    let topic = `${this.defaultTopic()}/+/${tagId}`;
+    this.unsubscribe(topic, callback);
+  }
+  static defaultSubscribe(callback = () => {}) {
+    let topics = [];
+    this.tag_list.forEach((t) => {
+      if (t.status) topics.push(`${this.defaultTopic()}/+/${t.id}`);
+    });
+    this.subscribe(topics, callback);
   }
 }

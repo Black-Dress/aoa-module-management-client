@@ -10,11 +10,12 @@
               </el-icon>
             </el-button>
           </el-col>
-          <el-col :span="18" style="text-align: left">
+          <el-col :span="16" style="text-align: left">
             <h1>Tag: {{ this.$route.query.id }}</h1>
           </el-col>
-          <el-col :span="4" style="text-align: right">
+          <el-col :span="6" style="text-align: right">
             <el-button @click="save_message_dialog_visible = true" type="primary"> save </el-button>
+            <el-switch v-model="value2" class="mt-2" style="margin-left: 24px" inline-prompt :active-icon="Check" :change="statusChange(val)" :inactive-icon="Close" />
           </el-col>
         </el-row>
         <el-divider></el-divider>
@@ -77,6 +78,13 @@ export default {
     dialogConfirm() {
       this.save(this.file_name);
       this.save_message_dialog_visible = false;
+    },
+    statusChange(val) {
+      this.$mqttx.tag_list.forEach((element) => {
+        if (element.id == this.$route.query.id) element.status = val;
+      });
+      if (val) this.$mqttx.subscribeTag(this.$route.query.id);
+      else this.$mqttx.unsubscribeTag(this.$route.query.id);
     },
   },
 };
