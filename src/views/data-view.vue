@@ -2,7 +2,7 @@
   <el-container>
     <el-header>
       <el-row>
-        <el-col :span="5" style="text-align: left">
+        <el-col :span="10" style="text-align: left">
           <h1>mqtt messages</h1>
         </el-col>
         <el-divider> </el-divider>
@@ -122,16 +122,10 @@ export default {
     },
   },
   created: function () {
-    ipcRenderer.on("data", (event, arg) => {
+    ipcRenderer.once("data", (event, arg) => {
       this.files = arg;
     });
-    ipcRenderer.on("data_details", (event, arg) => {
-      this.code = "";
-      for (let index = 0; index < arg.length; index++) {
-        const element = arg[index];
-        this.code += element + "\n";
-      }
-    });
+
     ipcRenderer.send("read", ["data"]);
   },
   methods: {
@@ -148,6 +142,13 @@ export default {
     detail(index) {
       this.detailDialogVisible = true;
       this.cur_index = index;
+      ipcRenderer.once("data_details", (event, arg) => {
+        this.code = "";
+        for (let index = 0; index < arg.length; index++) {
+          const element = arg[index];
+          this.code += element + "\n";
+        }
+      });
       ipcRenderer.send("read", ["data_detail", this.files[index].path]);
     },
     filter_station(value, row) {

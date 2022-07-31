@@ -155,7 +155,7 @@ export default {
     };
   },
   created: function () {
-    ipcRenderer.on("station", (event, data) => {
+    ipcRenderer.once("station", (event, data) => {
       this.total = data.length;
       this.station_list = data;
       this.stations = this.toStations();

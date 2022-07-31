@@ -184,7 +184,7 @@ export default {
     },
     init() {
       // 读取配置文件
-      ipcRenderer.on("mqtt", (event, data) => {
+      ipcRenderer.once("mqtt", (event, data) => {
         this.mqttUrls = data.urls;
         this.clientId = data.id;
       });
