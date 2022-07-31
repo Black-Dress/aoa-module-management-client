@@ -47,7 +47,6 @@ export default {
     });
     ipcRenderer.once("stations", (event, data) => {
       this.$mqttx.station_list = data;
-      console.log(this.$mqttx.station_list);
     });
     ipcRenderer.send("read", ["stations"]);
     ipcRenderer.send("read", ["tags"]);

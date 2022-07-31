@@ -102,7 +102,7 @@ export default {
   data: function () {
     return {
       current_page: 1,
-      total: 10,
+      total: this.$mqttx.station_list.length,
       stations: {
         1: [
           [
@@ -121,7 +121,6 @@ export default {
           [],
         ],
       },
-      station_list: [],
       newStation: {
         id: "",
         name: "",
@@ -132,22 +131,17 @@ export default {
     };
   },
   created: function () {
-    ipcRenderer.once("stations", (event, data) => {
-      this.total = data.length;
-      this.station_list = data;
-      this.stations = this.toStations();
-    });
-    ipcRenderer.send("read", ["stations"]);
+    this.stations = this.toStations(this.$mqttx.station_list);
   },
   methods: {
-    toStations() {
+    toStations(data) {
       let res = {};
-      for (let i = 0; i * 12 < this.station_list.length; i += 1) {
+      for (let i = 0; i * 12 < data.length; i += 1) {
         res[i + 1] = [[], [], []];
         let index = 0;
-        for (let j = 0; j < 12 && j + i * 12 < this.station_list.length; j += 1) {
+        for (let j = 0; j < 12 && j + i * 12 < data.length; j += 1) {
           if (j % 4 == 0 && j != 0) index += 1;
-          res[i + 1][index].push(this.station_list[j + i * 12]);
+          res[i + 1][index].push(data[j + i * 12]);
         }
       }
       return res;
@@ -157,20 +151,20 @@ export default {
     },
     remove(i, j) {
       this.stations[this.current_page][i].splice(j, 1);
-      this.station_list.splice((this.current_page - 1) * 12 + i * 4 + j, 1);
-      ipcRenderer.send("write", ["station", JSON.stringify(this.station_list)]);
+      this.$mqttx.station_list.splice((this.current_page - 1) * 12 + i * 4 + j, 1);
+      ipcRenderer.send("write", ["station", JSON.stringify(this.$mqttx.station_list)]);
       this.total -= 1;
     },
     confirm() {
-      let l = this.station_list.length;
+      let l = this.$mqttx.station_list.length;
       if (l % 12 == 0) {
         this.stations[Number.parseInt(l / 12) + 1] = [[this.newStation], [], []];
         this.current_page += 1;
       } else {
         this.stations[Number.parseInt(l / 12) + 1][(l % 12) % 3].push(this.newStation);
       }
-      this.station_list.push(this.newStation);
-      this.total = this.station_list.length;
+      this.$mqttx.station_list.push(this.newStation);
+      this.total = this.$mqttx.station_list.length;
       this.newStation = {
         id: "",
         name: "",
@@ -178,7 +172,7 @@ export default {
         position: { x: 0, y: 0, z: 0 },
       };
       this.addStationDialogVisible = false;
-      ipcRenderer.send("write", ["station", JSON.stringify(this.station_list)]);
+      ipcRenderer.send("write", ["station", JSON.stringify(this.$mqttx.station_list)]);
     },
     cancle() {
       this.newStation = {
