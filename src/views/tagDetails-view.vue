@@ -11,7 +11,7 @@
             </el-button>
           </el-col>
           <el-col :span="18" style="text-align: left">
-            <h1>station: {{ this.$route.query.id }}</h1>
+            <h1>Tag: {{ this.$route.query.id }}</h1>
           </el-col>
           <el-col :span="4" style="text-align: right">
             <el-button @click="save_message_dialog_visible = true" type="primary"> save </el-button>
@@ -60,7 +60,7 @@ export default {
   },
   created: function () {
     this.$mqttx.set_message_callback(this.ms);
-    this.code = `station: ${this.$route.query.id} \n`;
+    this.code = `Tag: ${this.$route.query.id} \n`;
   },
   methods: {
     highlighter(code) {
@@ -70,7 +70,7 @@ export default {
       this.code += ms.toString() + "\n";
     },
     save(name = `${new Date().toISOString().slice(0, 10)}.json`) {
-      let data = this.$mqttx.stations[this.$route.query.id];
+      let data = this.$mqttx.tags[this.$route.query.id];
       data = data ? data : {};
       this.$mqttx.save(JSON.stringify(data), `${this.$route.query.id}/${name}`);
     },

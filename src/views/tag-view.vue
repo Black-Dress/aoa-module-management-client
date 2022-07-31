@@ -85,7 +85,9 @@ export default {
       ipcRenderer.send("write", ["tags", JSON.stringify(this.$mqttx.tag_list)]);
       this.total -= 1;
     },
-    detail() {},
+    detail(id) {
+      this.$router.push({ name: "tag-details", query: { id: id } });
+    },
     toTags(args) {
       let res = {};
       for (let i = 0; i * this.page_size < args.length; i += 1) {

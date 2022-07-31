@@ -4,6 +4,7 @@ import tag from "@/views/tag-view";
 import station from "@/views/station-view";
 import data from "@/views/data-view";
 import station_details from "@/views/stationDetails-view";
+import tag_details from "@/views/tagDetails-view";
 const router = createRouter({
   routes: [
     {
@@ -30,6 +31,11 @@ const router = createRouter({
       path: "/station-details",
       name: "station-details",
       component: station_details,
+    },
+    {
+      path: "/tag-details",
+      name: "tag-details",
+      component: tag_details,
     },
   ],
   history: createWebHashHistory(),
