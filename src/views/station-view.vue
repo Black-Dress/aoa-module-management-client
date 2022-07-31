@@ -4,7 +4,7 @@
       <el-header>
         <el-row justify="space-between">
           <el-col :span="6" style="text-align: left">
-            <h1>AoA station</h1>
+            <h1>AoA stations</h1>
           </el-col>
           <el-col :span="4">
             <el-button type="primary" @click="addStationDialogVisible = true">

@@ -4,7 +4,7 @@
       <el-header>
         <el-row justify="space-between">
           <el-col :span="6" style="text-align: left">
-            <h1>AoA station</h1>
+            <h1>AoA tags</h1>
           </el-col>
           <el-col :span="4">
             <el-button type="primary" @click="addStationDialogVisible = true">
@@ -64,7 +64,7 @@ export default {
         1: [[{ name: "aa", id: "id-aa", status: false }, {}], [], []],
       },
       tag_list: [],
-      total: 0,
+      total: this.$mqttx.tag_list.length,
       current_page: 1,
       col_size: 4,
       row_size: 3,
@@ -76,18 +76,13 @@ export default {
     },
   },
   created: function () {
-    ipcRenderer.once("tags", (event, args) => {
-      this.total = args.length;
-      this.tag_list = args;
-      this.tags = this.toTags(args);
-    });
-    ipcRenderer.send("read", ["tags"]);
+    this.tags = this.toTags(this.$mqttx.tag_list);
   },
   methods: {
     remove(i, j) {
       this.tags[this.current_page][i].splice(j, 1);
-      this.tag_list.splice((this.current_page - 1) * this.page_size + i * this.col_size + j, 1);
-      ipcRenderer.send("write", ["tags", JSON.stringify(this.tag_list)]);
+      this.$mqttx.tag_list.splice((this.current_page - 1) * this.page_size + i * this.col_size + j, 1);
+      ipcRenderer.send("write", ["tags", JSON.stringify(this.$mqttx.tag_list)]);
       this.total -= 1;
     },
     detail() {},
