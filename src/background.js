@@ -3,19 +3,10 @@
 import { app, protocol, BrowserWindow, ipcMain, Notification } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
-import {
-  mkdir,
-  readdirSync,
-  readFile,
-  rm,
-  statSync,
-  writeFile,
-} from "original-fs";
+import { mkdir, readdirSync, readFile, rm, statSync, writeFile } from "original-fs";
 const isDevelopment = process.env.NODE_ENV !== "production";
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } },
-]);
+protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { secure: true, standard: true } }]);
 
 async function createWindow() {
   const win = new BrowserWindow({
@@ -88,32 +79,28 @@ if (isDevelopment) {
 function readHandle(event, arg) {
   switch (arg[0]) {
     case "mqtt":
-      readFile("./src/config/mqtt.json", (err, data) =>
-        event.sender.send("mqtt", JSON.parse(data))
-      );
+      readFile("./src/config/mqtt.json", (err, data) => event.sender.send("mqtt", JSON.parse(data)));
       break;
     case "station":
-      readFile("./src/config/station.json", (err, data) =>
-        event.sender.send("station", JSON.parse(data))
-      );
+      readFile("./src/config/station.json", (err, data) => event.sender.send("station", JSON.parse(data)));
       break;
-    // 读取数据文件
+    // 读取数据文件目录
     case "data": {
       let list = [];
       readFileList("./src/data", [], list);
       event.sender.send("data", list);
       break;
     }
+    // 读数据文件细节
     case "data_detail":
       readFile(arg[1], (err, data) => {
         if (err) new Notification({ title: "file", body: "read file error" });
-        else {
-          event.sender.send(
-            "data_details",
-            data.buffer.byteLength != 0 ? JSON.parse(data) : {}
-          );
-        }
+        else event.sender.send("data_details", data.buffer.byteLength != 0 ? JSON.parse(data) : {});
       });
+      break;
+    // 读取tag文件
+    case "tags":
+      readFile("./src/config/tags.json", (err, data) => event.sender.send("tags", JSON.parse(data)));
   }
 }
 // 写文件

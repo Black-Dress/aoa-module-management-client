@@ -9,9 +9,10 @@ export class mqttx {
     connectTimeout: 1000,
   };
   static url = "ws://localhost:9001";
-  static topic = "hello";
+  // 订阅的主题，#后面是tag的标签id
+  static topic = "silabs/aoa/angle/#";
   static client = null;
-  // 消息输出
+  // 消息输出，按照基站id进行存储
   static output = {
     a: ["a\na\na\n"],
   };
