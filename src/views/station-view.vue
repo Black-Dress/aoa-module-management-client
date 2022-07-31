@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-container style="height: 600px">
+    <el-container>
       <el-header>
         <el-row justify="space-between">
           <el-col :span="6" style="text-align: left">
@@ -16,7 +16,7 @@
         </el-row>
         <el-divider></el-divider>
       </el-header>
-      <el-main style="margin-top: 10px; height: 410px">
+      <el-main style="margin-top: 10px">
         <el-row :gutter="10" v-for="(row, i) in this.stations[this.current_page]" :key="i">
           <el-col v-for="(col, j) in row" :key="j" :span="6">
             <el-card :body-style="{ padding: '0px' }" class="card" shadow="hover">
@@ -96,10 +96,10 @@
       </el-form>
       <el-row :gutter="3">
         <el-col :span="12">
-          <el-button @click="cancle">取消</el-button>
+          <el-button @click="cancle">cancel</el-button>
         </el-col>
         <el-col :span="12">
-          <el-button type="primary" @click="confirm"> 确认 </el-button>
+          <el-button type="primary" @click="confirm"> confirm </el-button>
         </el-col>
       </el-row>
     </el-dialog>
