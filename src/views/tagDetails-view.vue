@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="6" style="text-align: right">
             <el-button @click="save_message_dialog_visible = true" type="primary"> save </el-button>
-            <el-switch v-model="tag.status" style="margin-left: 24px" inline-prompt active-text="on" inactive-text="off" />
+            <el-switch v-model="tag.status" style="margin-left: 24px" inline-prompt active-text="on" inactive-text="off" @change="statusChange" />
           </el-col>
         </el-row>
         <el-divider></el-divider>
@@ -59,13 +59,15 @@ export default {
         id: "aa-id",
         status: false,
       },
+      tagIndex: 0,
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
     };
   },
   created: function () {
-    this.tag = this.$mqttx.tag_list.find((item) => item.id == this.$route.query.id);
+    this.tagIndex = this.$mqttx.tag_list.findIndex((item) => item.id == this.$route.query.id);
+    this.tag = this.$mqttx.tag_list[this.tagIndex];
     this.$mqttx.set_message_callback(this.ms);
     this.code = `Tag: ${this.$route.query.id} \n`;
   },
@@ -85,11 +87,9 @@ export default {
       this.save(this.file_name);
       this.save_message_dialog_visible = false;
     },
-    statusChange(val) {
-      this.$mqttx.tag_list.forEach((element) => {
-        if (element.id == this.$route.query.id) element.status = val;
-      });
-      if (val) this.$mqttx.subscribeTag(this.$route.query.id);
+    statusChange() {
+      this.$mqttx.tag_list[this.tagIndex] = this.tag;
+      if (this.tag.status) this.$mqttx.subscribeTag(this.$route.query.id);
       else this.$mqttx.unsubscribeTag(this.$route.query.id);
     },
   },
