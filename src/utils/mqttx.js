@@ -137,10 +137,12 @@ export class mqttx {
     let topic = "silabs/aoa/angle";
     return topic;
   }
+  // 订阅tag
   static subscribeTag(tagId, callback = () => {}) {
     let topic = `${this.defaultTopic()}/+/${tagId}`;
     this.subscribe(topic, callback);
   }
+  // 取消订阅tag
   static unsubscribeTag(tagId, callback = () => {}) {
     let topic = `${this.defaultTopic()}/+/${tagId}`;
     this.unsubscribe(topic, callback);
@@ -151,5 +153,13 @@ export class mqttx {
       if (t.status) topics.push(`${this.defaultTopic()}/+/${t.id}`);
     });
     this.subscribe(topics, callback);
+  }
+  static subscribeStation(stationId, callback = () => {}) {
+    let topic = `${this.defaultTopic()}/${stationId}/+`;
+    this.subscribe(topic, callback);
+  }
+  static unSubscribeStation(stationId, callback = () => {}) {
+    let topic = `${this.defaultTopic()}/${stationId}/+`;
+    this.unsubscribe(topic, callback);
   }
 }
