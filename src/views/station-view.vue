@@ -107,6 +107,8 @@
 </template>
 <script>
 const ipcRenderer = window.require("electron").ipcRenderer;
+import { ElMessage } from "element-plus";
+
 export default {
   data: function () {
     return {
@@ -174,6 +176,10 @@ export default {
       this.total -= 1;
     },
     confirm() {
+      if (!this.$mqttx.station_list.find((item) => (item.id = this.newStation.id))) {
+        ElMessage({ type: "error", message: "there is already a same id" });
+        return;
+      }
       let l = this.$mqttx.station_list.length;
       if (l % 12 == 0) {
         this.stations[Number.parseInt(l / this.page_size) + 1] = [[this.newStation], [], []];
