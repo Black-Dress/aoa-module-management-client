@@ -170,7 +170,7 @@ export default {
     remove(i, j) {
       this.stations[this.current_page][i].splice(j, 1);
       this.$mqttx.station_list.splice((this.current_page - 1) * this.page_size + i * this.col_size + j, 1);
-      ipcRenderer.send("write", ["station", JSON.stringify(this.$mqttx.station_list)]);
+      ipcRenderer.send("write", ["stations", JSON.stringify(this.$mqttx.station_list)]);
       this.total -= 1;
     },
     confirm() {
@@ -191,7 +191,7 @@ export default {
         position: { x: 0, y: 0, z: 0 },
       };
       this.addStationDialogVisible = false;
-      ipcRenderer.send("write", ["station", JSON.stringify(this.$mqttx.station_list)]);
+      ipcRenderer.send("write", ["stations", JSON.stringify(this.$mqttx.station_list)]);
     },
     cancle() {
       this.newStation = {

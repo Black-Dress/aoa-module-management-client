@@ -9,7 +9,7 @@
                 <ArrowLeft />
               </el-icon>
             </el-button>
-            <el-switch v-model="station.status" style="margin-left: 24px" inline-prompt active-text="on" inactive-text="off" @change="statusChange" />
+            <el-switch v-model="status" style="margin-left: 24px" inline-prompt active-text="on" inactive-text="off" @change="statusChange" />
           </el-col>
           <el-col :span="18" style="text-align: left">
             <h1>station: {{ this.$route.query.id }}</h1>
@@ -48,6 +48,8 @@
 <script>
 import { PrismEditor } from "vue-prism-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
+const ipcRenderer = window.require("electron").ipcRenderer;
+
 export default {
   components: {
     PrismEditor,
@@ -57,25 +59,23 @@ export default {
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
-      station: {
-        id: "a",
-        name: "别称",
-        positon: {
-          x: 1,
-          y: 1,
-          z: 1,
-        },
-        status: true,
-        net: "192.168.1.101",
-      },
+      status: false,
+      station_index: 0,
     };
   },
   created: function () {
     this.$mqttx.set_message_callback(this.ms);
     this.code = `station: ${this.$route.query.id} \n`;
-    this.station = this.$mqttx.stations[this.$route.query.id];
+    this.station_index = this.$mqttx.station_list.findIndex((item) => item.id == this.$route.query.id);
+    this.status = this.$mqttx.station_list[this.station_index].status;
   },
   methods: {
+    statusChange() {
+      this.$mqttx.station_list[this.station_index].status = this.status;
+      if (this.status) this.$mqttx.subscribeStation(this.$route.query.id);
+      else this.$mqttx.unSubscribeStation(this.$route.query.id);
+      ipcRenderer.send("write", ["stations", JSON.stringify(this.$mqttx.tag_list)]);
+    },
     highlighter(code) {
       return highlight(code, languages.bash, "bash");
     },

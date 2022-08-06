@@ -82,7 +82,7 @@ function readHandle(event, arg) {
       readFile("./src/config/mqtt.json", (err, data) => event.sender.send("mqtt", JSON.parse(data)));
       break;
     case "stations":
-      readFile("./src/config/station.json", (err, data) => event.sender.send("stations", JSON.parse(data)));
+      readFile("./src/config/stations.json", (err, data) => event.sender.send("stations", JSON.parse(data)));
       break;
     // 读取数据文件目录
     case "data": {
@@ -110,8 +110,8 @@ function writeHandle(event, arg) {
     case "mqtt":
       writeFile("./src/config/mqtt.json", arg[1], () => {});
       break;
-    case "station":
-      writeFile("./src/config/station.json", arg[1], () => {});
+    case "stations":
+      writeFile("./src/config/stations.json", arg[1], () => {});
       break;
     case "data":
       write("./src/data/" + arg[1], arg[2], (err) => {
