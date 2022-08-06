@@ -154,10 +154,12 @@ export class mqttx {
     });
     this.subscribe(topics, callback);
   }
+  // 订阅station
   static subscribeStation(stationId, callback = () => {}) {
     let topic = `${this.defaultTopic()}/${stationId}/+`;
     this.subscribe(topic, callback);
   }
+  // 取消订阅station
   static unSubscribeStation(stationId, callback = () => {}) {
     let topic = `${this.defaultTopic()}/${stationId}/+`;
     this.unsubscribe(topic, callback);

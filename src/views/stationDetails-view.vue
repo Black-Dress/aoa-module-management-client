@@ -9,6 +9,7 @@
                 <ArrowLeft />
               </el-icon>
             </el-button>
+            <el-switch v-model="station.status" style="margin-left: 24px" inline-prompt active-text="on" inactive-text="off" @change="statusChange" />
           </el-col>
           <el-col :span="18" style="text-align: left">
             <h1>station: {{ this.$route.query.id }}</h1>
@@ -56,11 +57,23 @@ export default {
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
+      station: {
+        id: "a",
+        name: "别称",
+        positon: {
+          x: 1,
+          y: 1,
+          z: 1,
+        },
+        status: true,
+        net: "192.168.1.101",
+      },
     };
   },
   created: function () {
     this.$mqttx.set_message_callback(this.ms);
     this.code = `station: ${this.$route.query.id} \n`;
+    this.station = this.$mqttx.stations[this.$route.query.id];
   },
   methods: {
     highlighter(code) {

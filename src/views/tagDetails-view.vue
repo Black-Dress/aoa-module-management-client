@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="6" style="text-align: right">
             <el-button @click="save_message_dialog_visible = true" type="primary"> save </el-button>
-            <el-switch v-model="tag.status" style="margin-left: 24px" inline-prompt active-text="on" inactive-text="off" @change="statusChange" />
+            <el-switch v-model="status" style="margin-left: 24px" inline-prompt active-text="on" inactive-text="off" @change="statusChange" />
           </el-col>
         </el-row>
         <el-divider></el-divider>
@@ -48,17 +48,15 @@
 <script>
 import { PrismEditor } from "vue-prism-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
+const ipcRenderer = window.require("electron").ipcRenderer;
+
 export default {
   components: {
     PrismEditor,
   },
   data: function () {
     return {
-      tag: {
-        name: "aa",
-        id: "aa-id",
-        status: false,
-      },
+      status: false,
       tagIndex: 0,
       code: "",
       save_message_dialog_visible: false,
@@ -67,7 +65,7 @@ export default {
   },
   created: function () {
     this.tagIndex = this.$mqttx.tag_list.findIndex((item) => item.id == this.$route.query.id);
-    this.tag = this.$mqttx.tag_list[this.tagIndex];
+    this.status = this.$mqttx.tag_list[this.tagIndex].status;
     this.$mqttx.set_message_callback(this.ms);
     this.code = `Tag: ${this.$route.query.id} \n`;
   },
@@ -80,6 +78,7 @@ export default {
     },
     save(name = `${new Date().toISOString().slice(0, 10)}.json`) {
       let data = this.$mqttx.tags[this.$route.query.id];
+      this.$mqttx.tags[this.$route.query.id].status = this.tag.status;
       data = data ? data : {};
       this.$mqttx.save(JSON.stringify(data), `${this.$route.query.id}/${name}`);
     },
@@ -88,9 +87,11 @@ export default {
       this.save_message_dialog_visible = false;
     },
     statusChange() {
-      this.$mqttx.tag_list[this.tagIndex] = this.tag;
-      if (this.tag.status) this.$mqttx.subscribeTag(this.$route.query.id);
+      // save to file
+      this.$mqttx.tag_list[this.tagIndex].status = this.status;
+      if (this.status) this.$mqttx.subscribeTag(this.$route.query.id);
       else this.$mqttx.unsubscribeTag(this.$route.query.id);
+      ipcRenderer.send("write", ["tags", JSON.stringify(this.$mqttx.tag_list)]);
     },
   },
 };
