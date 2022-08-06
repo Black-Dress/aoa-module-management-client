@@ -64,7 +64,7 @@ export default {
     };
   },
   created: function () {
-    this.tagIndex = this.$mqttx.tag_list.findIndex((item) => item.id == this.$route.query.id);
+    this.tagIndex = this.$route.query.index;
     this.status = this.$mqttx.tag_list[this.tagIndex].status;
     this.$mqttx.set_message_callback(this.ms);
     this.code = `Tag: ${this.$route.query.id} \n`;
