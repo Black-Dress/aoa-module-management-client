@@ -48,6 +48,8 @@ export default {
     ipcRenderer.once("stations", (event, data) => {
       this.$mqttx.station_list = data;
     });
+    ipcRenderer.send("read", ["stations"]);
+    ipcRenderer.send("read", ["tags"]);
     // let stations = [];
     // let tags = [];
     // for (let index = 0; index < 100; index++) {
@@ -70,8 +72,6 @@ export default {
     // }
     // ipcRenderer.send("write", ["stations", JSON.stringify(stations)]);
     // ipcRenderer.send("write", ["tags", JSON.stringify(tags)]);
-    ipcRenderer.send("read", ["stations"]);
-    ipcRenderer.send("read", ["tags"]);
   },
   methods: {},
 };

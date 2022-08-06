@@ -66,15 +66,16 @@ export default {
   created: function () {
     this.$mqttx.set_message_callback(this.ms);
     this.code = `station: ${this.$route.query.id} \n`;
-    this.station_index = this.$mqttx.station_list.findIndex((item) => item.id == this.$route.query.id);
+    this.station_index = this.$route.query.index;
     this.status = this.$mqttx.station_list[this.station_index].status;
   },
   methods: {
     statusChange() {
       this.$mqttx.station_list[this.station_index].status = this.status;
+      console.log(this.station_index);
       if (this.status) this.$mqttx.subscribeStation(this.$route.query.id);
       else this.$mqttx.unSubscribeStation(this.$route.query.id);
-      ipcRenderer.send("write", ["stations", JSON.stringify(this.$mqttx.tag_list)]);
+      ipcRenderer.send("write", ["stations", JSON.stringify(this.$mqttx.station_list)]);
     },
     highlighter(code) {
       return highlight(code, languages.bash, "bash");

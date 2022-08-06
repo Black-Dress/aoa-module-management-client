@@ -23,7 +23,7 @@
               <div style="padding: 10px">
                 <el-row justify="space-between">
                   <el-col :span="10" style="text-align: left">
-                    <el-button text @click="toStationDetil(col.id)" style="padding: 0 0 0 0">
+                    <el-button text @click="toStationDetil(col.id, i, j)" style="padding: 0 0 0 0">
                       <h1>{{ col.name }}</h1>
                     </el-button>
                   </el-col>
@@ -166,8 +166,9 @@ export default {
       }
       return res;
     },
-    toStationDetil(id) {
-      this.$router.push({ name: "station-details", query: { id: id } });
+    toStationDetil(id, i, j) {
+      let index = (this.current_page - 1) * this.page_size + i * this.col_size + j;
+      this.$router.push({ name: "station-details", query: { id: id, index: index } });
     },
     remove(i, j) {
       this.stations[this.current_page][i].splice(j, 1);
