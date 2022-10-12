@@ -193,7 +193,7 @@ export default {
         position: { x: 0, y: 0, z: 0 },
       };
       this.addStationDialogVisible = false;
-      ipcRenderer.send("write", ["station", JSON.stringify(this.$mqttx.station_list)]);
+      ipcRenderer.send("write", ["stations", JSON.stringify(this.$mqttx.station_list)]);
     },
     cancle() {
       this.newStation = {
