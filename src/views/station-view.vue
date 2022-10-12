@@ -51,7 +51,8 @@
       </el-main>
       <el-footer>
         <el-row justify="center" style="margin-top: 10px">
-          <el-pagination layout="prev, pager, next" background :total="total" :page-size="12" :pager-count="7" v-model:current-page="current_page" />
+          <el-pagination layout="prev, pager, next" background :total="total" :page-size="12" :pager-count="7"
+            v-model:current-page="current_page" />
         </el-row>
       </el-footer>
     </el-container>
@@ -117,7 +118,7 @@ export default {
           [
             {
               id: "a",
-              positon: {
+              position: {
                 x: 1,
                 y: 1,
                 z: 1,
@@ -206,4 +207,6 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+
+</style>
