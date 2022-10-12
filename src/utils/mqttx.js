@@ -46,8 +46,10 @@ export class mqttx {
     b: [],
   };
   static res = [];
-  // 回调函数
-  static messages = function () {};
+  // 默认回调函数
+  static messages = function (topic, message) {
+    console.log(topic, message);
+  };
   // 连接
   static connect(
     url = "ws://localhost:9001",
@@ -154,10 +156,12 @@ export class mqttx {
     });
     this.subscribe(topics, callback);
   }
+  // 订阅基站
   static subscribeStation(stationId, callback = () => {}) {
     let topic = `${this.defaultTopic()}/${stationId}/+`;
     this.subscribe(topic, callback);
   }
+  // 取消订阅基站
   static unSubscribeStation(stationId, callback = () => {}) {
     let topic = `${this.defaultTopic()}/${stationId}/+`;
     this.unsubscribe(topic, callback);

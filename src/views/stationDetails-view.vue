@@ -11,16 +11,18 @@
             </el-button>
           </el-col>
           <el-col :span="18" style="text-align: left">
-            <h1>station: {{ this.$route.query.id }}</h1>
+            <h1>station: {{ this.station.id }}</h1>
           </el-col>
           <el-col :span="4" style="text-align: right">
             <el-button @click="save_message_dialog_visible = true" type="primary"> save </el-button>
+            <el-switch v-model="this.station.status" inline-prompt active-text="Y" inactive-text="N" />
           </el-col>
         </el-row>
         <el-divider></el-divider>
       </el-header>
       <el-main>
-        <prism-editor class="code" :model-value="code" :highlight="highlighter" line-numbers :readonly="true"></prism-editor>
+        <prism-editor class="code" :model-value="code" :highlight="highlighter" line-numbers :readonly="true">
+        </prism-editor>
       </el-main>
     </el-container>
     <el-dialog v-model="save_message_dialog_visible" title="save message" width="300px">
@@ -56,11 +58,14 @@ export default {
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
+      station: { id: "", status: false }
     };
   },
   created: function () {
+    this.station = JSON.parse(this.$route.query.station)
     this.$mqttx.set_message_callback(this.ms);
-    this.code = `station: ${this.$route.query.id} \n`;
+    this.code = `station: ${this.station.id} \n`;
+    console.log(this.station)
   },
   methods: {
     highlighter(code) {
@@ -79,6 +84,9 @@ export default {
       this.save_message_dialog_visible = false;
     },
   },
+
 };
 </script>
-<style scoped></style>
+<style scoped>
+
+</style>
