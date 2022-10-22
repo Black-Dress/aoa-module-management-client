@@ -7,6 +7,7 @@ import { mkdir, readdirSync, readFile, rm, statSync, writeFile } from "original-
 import { exec } from "child_process";
 import { da } from "element-plus/lib/locale";
 import { el } from "element-plus/es/locale";
+import { stderr, stdout } from "process";
 const isDevelopment = process.env.NODE_ENV !== "production";
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { secure: true, standard: true } }]);
@@ -59,12 +60,15 @@ app.on("ready", async () => {
   ipcMain.on("read", readHandle);
   ipcMain.on("write", writeHandle);
   ipcMain.on("delete", deleteHandle);
+  ipcMain.on("start_serve", start_serve_handle);
   createWindow();
   // 启动项目的时候启动服务
-  startServer();
+  start_mosquitto();
 });
+// 程序退出前工作
 app.on("before-quit", async () => {
-  endMqttServe();
+  end("mosquitto");
+  end("aoa_locator");
 });
 
 // Exit cleanly on request from parent process in development mode.
@@ -175,9 +179,16 @@ function readFileList(dir, res, list) {
   }
   return res;
 }
-
-// 启动服务，
-function startServer() {
+// 启动服务
+function start_serve_handle(event, arg) {
+  switch (arg[0]) {
+    case "locator":
+      const res = start_locator(arg[1]);
+      new Notification({ title: "start locator", body: res }).show();
+  }
+}
+// 启动mqtt
+function start_mosquitto() {
   const exec = require("child_process").exec;
   const iconv = require("iconv-lite");
   // 启动mqtt
@@ -186,19 +197,16 @@ function startServer() {
     else console.log(iconv.decode(std, "cp936"));
   });
 }
-// 结束进程
-function endServer(ids) {
-  ids.forEach((element) => {
-    console.log(`id:${element}`);
-    exec(`kill ${element}`, { encoding: "buffer" }, function (err, std, stderr) {
-      if (err) console.log(`end server failed ${iconv.decode(stderr, "cp936")}`);
-    });
-  });
-}
-// 结束mqtt 服务
-function endMqttServe() {
+// 启动locator
+function start_locator(ip) {
   const es = require("child_process").execSync;
-  var cmd = process.platform == "win32" ? "tasklist | findstr mosquitto" : "ps aux | grep mosquitto";
+  var cmd = `.\aoa_locator\exe\aoa_locator.exe -t ${ip}`;
+  return es(cmd).toString();
+}
+// 结束进程 name
+function end(name) {
+  const es = require("child_process").execSync;
+  var cmd = process.platform == "win32" ? `tasklist | findstr ${name}` : `ps aux | grep ${name}`;
   var res = es(cmd).toString().split("\n");
   for (let index = 0; index < res.length; index++) {
     const element = res[index];
