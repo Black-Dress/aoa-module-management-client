@@ -4,10 +4,12 @@ import { app, protocol, BrowserWindow, ipcMain, Notification } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import { mkdir, readdirSync, readFile, rm, statSync, writeFile } from "original-fs";
+import { exec } from "child_process";
+import { da } from "element-plus/lib/locale";
+import { el } from "element-plus/es/locale";
 const isDevelopment = process.env.NODE_ENV !== "production";
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { secure: true, standard: true } }]);
-
 async function createWindow() {
   const win = new BrowserWindow({
     width: 1300,
@@ -29,7 +31,7 @@ async function createWindow() {
   }
   // Menu.setApplicationMenu(null)
 }
-
+// 项目结束
 app.on("window-all-closed", () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
@@ -58,6 +60,11 @@ app.on("ready", async () => {
   ipcMain.on("write", writeHandle);
   ipcMain.on("delete", deleteHandle);
   createWindow();
+  // 启动项目的时候启动服务
+  startServer();
+});
+app.on("before-quit", async () => {
+  endMqttServe();
 });
 
 // Exit cleanly on request from parent process in development mode.
@@ -167,4 +174,37 @@ function readFileList(dir, res, list) {
     res.push(readFileList(`${dir}/${element}`, [], list));
   }
   return res;
+}
+
+// 启动服务，
+function startServer() {
+  const exec = require("child_process").exec;
+  const iconv = require("iconv-lite");
+  // 启动mqtt
+  exec(".\\mosquitto\\mosquitto.exe -c .\\mosquitto\\mosquitto.conf", { encoding: "buffer" }, function (err, std, stderr) {
+    if (err) console.log(iconv.decode(stderr, "cp936"));
+    else console.log(iconv.decode(std, "cp936"));
+  });
+}
+// 结束进程
+function endServer(ids) {
+  ids.forEach((element) => {
+    console.log(`id:${element}`);
+    exec(`kill ${element}`, { encoding: "buffer" }, function (err, std, stderr) {
+      if (err) console.log(`end server failed ${iconv.decode(stderr, "cp936")}`);
+    });
+  });
+}
+// 结束mqtt 服务
+function endMqttServe() {
+  const es = require("child_process").execSync;
+  var cmd = process.platform == "win32" ? "tasklist | findstr mosquitto" : "ps aux | grep mosquitto";
+  var res = es(cmd).toString().split("\n");
+  for (let index = 0; index < res.length; index++) {
+    const element = res[index];
+    if (element == undefined || element == "") continue;
+    const pid = element.trim().split(/\s+/)[1];
+    var cmd_kill = process.platform == "win32" ? `taskkill /pid ${pid} -f` : `kill ${pid}`;
+    es(cmd_kill);
+  }
 }
