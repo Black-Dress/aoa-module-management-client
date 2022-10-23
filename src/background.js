@@ -3,7 +3,7 @@
 
 import { app, protocol, BrowserWindow, ipcMain, Notification } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
-import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+// import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import { mkdir, readdirSync, readFile, rm, statSync, writeFile } from "original-fs";
 const isDevelopment = process.env.NODE_ENV !== "production";
 // Scheme must be registered before the app is ready
@@ -45,15 +45,15 @@ app.on("activate", () => {
 });
 
 app.on("ready", async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      // await installExtension(VUEJS3_DEVTOOLS);
-      // await installExtension({ id: "ljjemllljcmogpfapbkkighbhhppjdbg", electron: ">=1.2.1" });
-    } catch (e) {
-      console.error("Vue Devtools failed to install:", e.toString());
-    }
-  }
+  // if (isDevelopment && !process.env.IS_TEST) {
+  //   // Install Vue Devtools
+  //   try {
+  //     await installExtension(VUEJS3_DEVTOOLS);
+  //     await installExtension({ id: "ljjemllljcmogpfapbkkighbhhppjdbg", electron: ">=1.2.1" });
+  //   } catch (e) {
+  //     console.error("Vue Devtools failed to install:", e.toString());
+  //   }
+  // }
   //注册事件
   ipcMain.on("read", readHandle);
   ipcMain.on("write", writeHandle);
@@ -65,8 +65,8 @@ app.on("ready", async () => {
 });
 // 程序退出前工作
 app.on("before-quit", async () => {
-  end("mosquitto", "1228");
-  end("aoa_locator", "1228");
+  end("mosquitto");
+  end("aoa_locator");
 });
 
 // Exit cleanly on request from parent process in development mode.
@@ -196,19 +196,28 @@ function start_mosquitto() {
 // 启动locator
 function start_locator(ip) {
   const es = require("child_process").execSync;
-  var cmd = `.\\aoa_locator\\exe\\aoa_locator.exe -t ${ip}`;
-  return es(cmd).toString();
+  try {
+    var cmd = `.\\aoa_locator\\exe\\aoa_locator.exe -t ${ip}`;
+    return es(cmd).toString();
+  } catch (err) {
+    console.error(err);
+  }
 }
 // 结束进程 name
-function end(name, root_password) {
+function end(name) {
   const es = require("child_process").execSync;
-  var cmd = process.platform == "win32" ? `tasklist | findstr ${name}` : `ps -aux | grep ${name}| grep -v grep`;
-  var res = es(cmd).toString().split("\n");
-  for (let index = 0; index < res.length; index++) {
-    const element = res[index];
-    if (element == undefined || element == "") continue;
-    const pid = element.trim().split(/\s+/)[1];
-    var cmd_kill = process.platform == "win32" ? `taskkill /pid ${pid} -f` : `echo ${root_password} | sudo kill ${pid}`;
-    es(cmd_kill);
+  // 当该指令查询不到指定进程时，会返回失败
+  var cmd = process.platform == "win32" ? `tasklist | findstr ${name}` : `ps -aux | grep ${name} | grep -v grep`;
+  try {
+    var res = es(cmd).toString().split("\n");
+    for (let index = 0; index < res.length; index++) {
+      const element = res[index];
+      if (element == undefined || element == "") continue;
+      const pid = element.trim().split(/\s+/)[1];
+      var cmd_kill = process.platform == "win32" ? `taskkill /pid ${pid} -f` : `kill ${pid}`;
+      es(cmd_kill);
+    }
+  } catch (err) {
+    console.log("err:" + err);
   }
 }
