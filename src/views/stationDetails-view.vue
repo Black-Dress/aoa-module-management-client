@@ -10,12 +10,14 @@
               </el-icon>
             </el-button>
           </el-col>
-          <el-col :span="18" style="text-align: left">
-            <h1>station: {{ this.station.id }}</h1>
+          <el-col :span="16" style="text-align: left">
+            <h1>station: {{ this.station.id }} {{ this.station.position }}</h1>
           </el-col>
-          <el-col :span="4" style="text-align: right">
+          <el-col :span="3" style="text-align: right">
             <el-button @click="save_message_dialog_visible = true" type="primary"> save </el-button>
-            <el-switch v-model="this.station.status" inline-prompt active-text="Y" inactive-text="N" />
+          </el-col>
+          <el-col :span="3" style="text-align: right">
+            <el-switch v-model="this.station.status" inline-prompt active-text="Y" inactive-text="N" @change="status_change" />
           </el-col>
         </el-row>
         <el-divider></el-divider>
@@ -48,6 +50,7 @@
 <script>
 import { PrismEditor } from "vue-prism-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
+const ipcRenderer = window.require("electron").ipcRenderer;
 export default {
   components: {
     PrismEditor,
@@ -57,7 +60,7 @@ export default {
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
-      station: { id: "", status: false },
+      station: { id: "", status: false, position: { x: 0, y: 0, z: 0 } },
     };
   },
   created: function () {
@@ -81,6 +84,10 @@ export default {
     dialogConfirm() {
       this.save(this.file_name);
       this.save_message_dialog_visible = false;
+    },
+    // 状态转换，是否开启AoA线程
+    status_change(val) {
+      ipcRenderer.send("locator_ctl", [this.station.net, val]);
     },
   },
 };

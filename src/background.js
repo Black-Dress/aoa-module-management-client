@@ -58,15 +58,15 @@ app.on("ready", async () => {
   ipcMain.on("read", readHandle);
   ipcMain.on("write", writeHandle);
   ipcMain.on("delete", deleteHandle);
-  ipcMain.on("start_serve", start_serve_handle);
+  ipcMain.on("locator_ctl", locator_ctl_handle);
   createWindow();
   // 启动项目的时候启动服务
   start_mosquitto();
 });
 // 程序退出前工作
 app.on("before-quit", async () => {
-  end("mosquitto");
-  end("aoa_locator");
+  end(["mosquitto"]);
+  end(["aoa_locator"]);
 });
 
 // Exit cleanly on request from parent process in development mode.
@@ -178,9 +178,9 @@ function readFileList(dir, res, list) {
   return res;
 }
 // 启动服务
-function start_serve_handle(event, arg) {
-  const res = start_locator(arg[1]);
-  new Notification({ title: "start locator", body: res }).show();
+function locator_ctl_handle(event, arg) {
+  const res = locator_ctl(arg[0], arg[1]);
+  new Notification({ title: `locator serve`, body: res }).show();
 }
 // 启动mqtt
 function start_mosquitto() {
@@ -194,20 +194,33 @@ function start_mosquitto() {
   });
 }
 // 启动locator
-function start_locator(ip) {
-  const es = require("child_process").execSync;
-  try {
-    var cmd = `.\\aoa_locator\\exe\\aoa_locator.exe -t ${ip}`;
-    return es(cmd).toString();
-  } catch (err) {
-    console.error(err);
+function locator_ctl(ip, status) {
+  if (status) {
+    const exec = require("child_process").exec;
+    var cmd = "./aoa_locator/exe/aoa_locator ";
+    if (process.platform == "win32") cmd += ".exe";
+    cmd += `-t ${ip}`;
+    exec(cmd, function (a, b, c) {
+      if (a) console.error(c);
+    });
+  } else {
+    end(["aoa_locator", ip]);
   }
+  return `locator status: ${status}`;
 }
 // 结束进程 name
-function end(name) {
+function end(args) {
   const es = require("child_process").execSync;
   // 当该指令查询不到指定进程时，会返回失败
-  var cmd = process.platform == "win32" ? `tasklist | findstr ${name}` : `ps -aux | grep ${name} | grep -v grep`;
+  var ctl = "grep";
+  var cmd = "ps -aux | grep -v grep";
+  if (process.platform == "win32") {
+    ctl = "findstr";
+    cmd = "tasklist";
+  }
+  args.forEach((element) => {
+    cmd += `| ${ctl} ${element}`;
+  });
   try {
     var res = es(cmd).toString().split("\n");
     for (let index = 0; index < res.length; index++) {
