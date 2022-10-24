@@ -130,12 +130,7 @@ export default {
         return;
       }
       // 连接
-      if (this.$mqttx.connect(url, this.s, this.f)) {
-        // 订阅
-        this.$mqttx.defaultSubscribe(() => {
-          ElMessage({ message: "subscribe success", type: "success" });
-        });
-      }
+      this.$mqttx.connect(url, this.s, this.f);
     },
     s(msg) {
       ElMessage({ type: "success", message: "connect success" });
@@ -143,6 +138,10 @@ export default {
         this.code += ms.toString() + "\n";
       });
       this.code += msg + "\n";
+      // 自动订阅主题
+      this.$mqttx.defaultSubscribe(() => {
+        ElMessage({ message: "subscribe success", type: "success" });
+      });
     },
     f(msg) {
       ElMessage({ type: "error", message: "connect failed" });

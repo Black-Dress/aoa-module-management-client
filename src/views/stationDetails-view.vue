@@ -21,8 +21,7 @@
         <el-divider></el-divider>
       </el-header>
       <el-main>
-        <prism-editor class="code" :model-value="code" :highlight="highlighter" line-numbers :readonly="true">
-        </prism-editor>
+        <prism-editor class="code" :model-value="code" :highlight="highlighter" line-numbers :readonly="true"> </prism-editor>
       </el-main>
     </el-container>
     <el-dialog v-model="save_message_dialog_visible" title="save message" width="300px">
@@ -58,14 +57,14 @@ export default {
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
-      station: { id: "", status: false }
+      station: { id: "", status: false },
     };
   },
   created: function () {
-    this.station = JSON.parse(this.$route.query.station)
+    this.station = JSON.parse(this.$route.query.station);
     this.$mqttx.set_message_callback(this.ms);
     this.code = `station: ${this.station.id} \n`;
-    console.log(this.station)
+    console.log(this.station);
   },
   methods: {
     highlighter(code) {
@@ -84,9 +83,6 @@ export default {
       this.save_message_dialog_visible = false;
     },
   },
-
 };
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>

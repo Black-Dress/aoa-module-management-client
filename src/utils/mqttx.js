@@ -63,17 +63,16 @@ export class mqttx {
     this.disconnect();
     this.url = url;
     this.client = mqtt.connect(this.url, this.options);
-    // 连接失败
-    while (this.client.connected == false) {
-      f("connect faild");
-      return false;
-    }
+    this.client.on("connect", () => {
+      s("connect success");
+    });
+    this.client.on("disconnect", () => {
+      f("connect failed");
+    });
     this.client.on("error", (err) => {
       console.log("client error", err);
     });
     this.client.on("message", this.message);
-    s("connect success");
-    return true;
   }
   // 断开连接
   static disconnect() {
@@ -135,6 +134,7 @@ export class mqttx {
   static save(data, name) {
     ipcRenderer.send("write", ["data", name, data]);
   }
+  // 默认主题
   static defaultTopic() {
     let topic = "silabs/aoa/angle";
     return topic;
