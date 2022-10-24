@@ -61,13 +61,14 @@ export default {
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
       station: { id: "", status: false, position: { x: 0, y: 0, z: 0 } },
+      index: 0,
     };
   },
   created: function () {
     this.station = JSON.parse(this.$route.query.station);
+    this.index = parseInt(this.$route.query.index);
     this.$mqttx.set_message_callback(this.ms);
     this.code = `station: ${this.station.id} \n`;
-    console.log(this.station);
   },
   methods: {
     highlighter(code) {
@@ -88,6 +89,8 @@ export default {
     // 状态转换，是否开启AoA线程
     status_change(val) {
       ipcRenderer.send("locator_ctl", [this.station.net, val]);
+      this.$mqttx.station_list[this.index].status = val;
+      console.log(this.$mqttx.station_list);
     },
   },
 };

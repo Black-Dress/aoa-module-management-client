@@ -120,6 +120,7 @@ export default {
       editIdDialogVisible: false,
       newUrl: { name: "", value: "" },
       code: "",
+      status: false,
     };
   },
   computed: {},
@@ -142,10 +143,12 @@ export default {
       this.$mqttx.defaultSubscribe(() => {
         ElMessage({ message: "subscribe success", type: "success" });
       });
+      this.status = true;
     },
     f(msg) {
       ElMessage({ type: "error", message: "connect failed" });
       this.code += msg + "\n";
+      this.status = false;
     },
     highlighter(code) {
       return highlight(code, languages.plaintext, "bash");

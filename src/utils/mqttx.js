@@ -37,15 +37,9 @@ export class mqttx {
     },
   ];
   // 消息输出，按照基站id进行存储
-  static stations = {
-    a: ["a\na\na\n"],
-  };
+  static stations = new Map();
   // 消息输出，按照tag id 进行存储
-  static tags = {
-    a: [],
-    b: [],
-  };
-  static res = [];
+  static tags = new Map();
   // 默认回调函数
   static messages = function (topic, message) {
     console.log(topic, message);
@@ -107,27 +101,29 @@ export class mqttx {
   }
   // 消息到达时执行函数
   static message(topic, message) {
-    if (this.stations[topic] == undefined) {
-      this.stations[topic] = [];
-    }
+    // if (this.stations[topic] == undefined) {
+    //   this.stations[topic] = [];
+    // }
     // 获取topic中包含的stationId 和 tagId
     const s = topic.split("/");
     const stationsId = s[s.length - 2];
     const tagId = s[s.length - 1];
+    // 初始化
+    if (!mqttx.stations.has(stationsId)) mqttx.stations.set(stationsId, new Array());
+    if (!mqttx.tags.has(tagId)) mqttx.tags.set(tagId, new Array());
     // 存储消息
-    this.stations[stationsId].push(message.toString());
-    this.tags[tagId].push(message.toString());
-    this.res.push(message.toString());
+    mqttx.stations.get(stationsId).push(message.toString());
+    mqttx.tags.get(tagId).push(message.toString());
     // 执行注册的函数
-    this.messages(topic, message.toString());
+    mqttx.messages(topic, `${stationsId}:${tagId} -> ${message.toString()}`);
     // 存储数据,按照id作为文件夹进行划分
-    if (this.stations[stationsId].length >= MAXLEN) {
-      this.save(JSON.stringify(this.stations[stationsId]), `${stationsId}/${new Date().toLocaleDateString()}.json`);
-      this.stations[stationsId] = [];
+    if (mqttx.stations.get(stationsId).length >= MAXLEN) {
+      mqttx.save(JSON.stringify(mqttx.stations.get(stationsId)), `${stationsId}/${new Date().toLocaleDateString()}.json`);
+      mqttx.stations.set(stationsId, new Array());
     }
-    if (this.tags[tagId].length >= MAXLEN) {
-      this.save(JSON.stringify(this.tags[tagId]), `${tagId}/${new Date().toLocaleDateString()}.json`);
-      this.tags[stationsId] = [];
+    if (mqttx.tags.get(tagId).length >= MAXLEN) {
+      mqttx.save(JSON.stringify(mqttx.tags.get(tagId)), `${tagId}/${new Date().toLocaleDateString()}.json`);
+      mqttx.tags.set(tagId, new Array());
     }
   }
   // 存储数据
@@ -150,11 +146,7 @@ export class mqttx {
     this.unsubscribe(topic, callback);
   }
   static defaultSubscribe(callback = () => {}) {
-    let topics = [];
-    this.tag_list.forEach((t) => {
-      if (t.status) topics.push(`${this.defaultTopic()}/+/${t.id}`);
-    });
-    this.subscribe(topics, callback);
+    this.subscribe(`${this.defaultTopic()}/#`, callback);
   }
   // 订阅基站
   static subscribeStation(stationId, callback = () => {}) {

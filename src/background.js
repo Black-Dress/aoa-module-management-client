@@ -190,7 +190,6 @@ function start_mosquitto() {
   // 启动mqtt
   exec(cmd, { encoding: "buffer" }, function (err, std, stderr) {
     if (err) console.log(iconv.decode(stderr, "cp936"));
-    else console.log(iconv.decode(std, "cp936"));
   });
 }
 // 启动locator
