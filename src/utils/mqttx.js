@@ -145,6 +145,7 @@ export class mqttx {
     let topic = `${this.defaultTopic()}/+/${tagId}`;
     this.unsubscribe(topic, callback);
   }
+  // 默认订阅
   static defaultSubscribe(callback = () => {}) {
     this.subscribe(`${this.defaultTopic()}/#`, callback);
   }
