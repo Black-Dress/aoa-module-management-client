@@ -40,7 +40,8 @@
             </el-button>
           </el-col>
           <el-col :span="2" style="max-width: 32px">
-            <el-button id="start" type="primary" @click="connect(curUrl.value)"> connect </el-button>
+            <el-button v-if="!this.status" id="start" type="primary" @click="connect(curUrl.value)"> connect </el-button>
+            <el-button v-if="this.status" id="end" type="danger" @click="disconnect()">disconnect</el-button>
           </el-col>
         </el-row>
         <el-divider></el-divider>
@@ -97,6 +98,7 @@ import { PrismEditor } from "vue-prism-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
 import { ElMessage } from "element-plus";
 import { mqttx } from "@/utils/mqttx";
+import { store } from "@/utils/store";
 const ipcRenderer = window.require("electron").ipcRenderer;
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-bash";
@@ -120,11 +122,22 @@ export default {
       editIdDialogVisible: false,
       newUrl: { name: "", value: "" },
       code: "",
-      status: false,
     };
   },
-  computed: {},
+  computed: {
+    status: {
+      get: function () {
+        return store.main_connect_status;
+      },
+      set: function (val) {
+        store.set_main_connect_status(val);
+      },
+    },
+  },
   methods: {
+    disconnect() {
+      this.$mqttx.disconnect(this.df);
+    },
     connect(url) {
       if (url == undefined || url == "") {
         ElMessage({ message: "choose a mqtt server adderss", type: "warning" });
@@ -132,6 +145,11 @@ export default {
       }
       // 连接
       this.$mqttx.connect(url, this.s, this.f);
+    },
+    df() {
+      ElMessage({ type: "success", message: "disconnect success" });
+      this.status = false;
+      this.code = "";
     },
     s(msg) {
       ElMessage({ type: "success", message: "connect success" });
@@ -143,12 +161,12 @@ export default {
       this.$mqttx.defaultSubscribe(() => {
         ElMessage({ message: "subscribe success", type: "success" });
       });
-      this.status = true;
+      store.set_main_connect_status(true);
     },
     f(msg) {
       ElMessage({ type: "error", message: "connect failed" });
       this.code += msg + "\n";
-      this.status = false;
+      store.set_main_connect_status(false);
     },
     highlighter(code) {
       return highlight(code, languages.plaintext, "bash");

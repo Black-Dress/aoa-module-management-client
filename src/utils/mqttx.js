@@ -69,9 +69,9 @@ export class mqttx {
     this.client.on("message", this.message);
   }
   // 断开连接
-  static disconnect() {
+  static disconnect(callback) {
     if (this.client && !this.client.disconnected) {
-      this.client.end();
+      this.client.end(true, {}, callback);
     }
   }
   // 订阅
