@@ -78,9 +78,9 @@ export default {
       this.code += ms.toString() + "\n";
     },
     save(name = `${new Date().toISOString().slice(0, 10)}.json`) {
-      let data = this.$mqttx.stations[this.$route.query.id];
-      data = data ? data : {};
-      this.$mqttx.save(JSON.stringify(data), `${this.$route.query.id}/${name}`);
+      let data = this.$mqttx.stations.get(this.station.id);
+      if (data == undefined || data.length == 0) return;
+      this.$mqttx.save(JSON.stringify(data), `${this.station.id}/${name}`);
     },
     dialogConfirm() {
       this.save(this.file_name);

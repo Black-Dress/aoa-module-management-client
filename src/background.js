@@ -230,6 +230,6 @@ function end(args) {
       es(cmd_kill);
     }
   } catch (err) {
-    console.log("err:" + err);
+    console.error(err);
   }
 }

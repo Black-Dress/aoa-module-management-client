@@ -56,12 +56,13 @@ export class mqttx {
   ) {
     this.disconnect();
     this.url = url;
-    this.client = mqtt.connect(this.url, this.options);
+    try {
+      this.client = mqtt.connect(this.url, this.options);
+    } catch (err) {
+      f(err);
+    }
     this.client.on("connect", () => {
       s("connect success");
-    });
-    this.client.on("disconnect", () => {
-      f("connect failed");
     });
     this.client.on("error", (err) => {
       console.log("client error", err);
@@ -118,11 +119,11 @@ export class mqttx {
     mqttx.messages(topic, `${stationsId}:${tagId} -> ${message.toString()}`);
     // 存储数据,按照id作为文件夹进行划分
     if (mqttx.stations.get(stationsId).length >= MAXLEN) {
-      mqttx.save(JSON.stringify(mqttx.stations.get(stationsId)), `${stationsId}/${new Date().toLocaleDateString()}.json`);
+      mqttx.save(mqttx.stations.get(stationsId), `${stationsId}/${new Date().toLocaleDateString()}.json`);
       mqttx.stations.set(stationsId, new Array());
     }
     if (mqttx.tags.get(tagId).length >= MAXLEN) {
-      mqttx.save(JSON.stringify(mqttx.tags.get(tagId)), `${tagId}/${new Date().toLocaleDateString()}.json`);
+      mqttx.save(mqttx.tags.get(tagId), `${tagId}/${new Date().toLocaleDateString()}.json`);
       mqttx.tags.set(tagId, new Array());
     }
   }
