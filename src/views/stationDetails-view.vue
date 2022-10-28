@@ -2,21 +2,21 @@
   <div>
     <el-container>
       <el-header>
-        <el-row :gutter="2">
-          <el-col :span="2" style="text-align: left; max-width: 44px">
+        <el-row :gutter="20">
+          <el-col :span="2" style="text-align: left">
             <el-button @click="this.$router.back()" text style="margin-top: 4px">
               <el-icon>
                 <ArrowLeft />
               </el-icon>
             </el-button>
           </el-col>
-          <el-col :span="16" style="text-align: left">
-            <h1>station: {{ this.station.id }} {{ this.station.position }}</h1>
+          <el-col :span="18" style="text-align: left">
+            <h1>{{ this.station.id }} {{ this.station.position }}</h1>
           </el-col>
-          <el-col :span="3" style="text-align: right">
-            <el-button @click="save_message_dialog_visible = true" type="primary"> save </el-button>
+          <el-col :span="2" style="text-align: right">
+            <el-button @click="save_message_dialog_visible = true" type="primary" style="margin-right: 10px"> save </el-button>
           </el-col>
-          <el-col :span="3" style="text-align: right">
+          <el-col :span="2">
             <el-switch v-model="this.station.status" inline-prompt active-text="Y" inactive-text="N" @change="status_change" />
           </el-col>
         </el-row>
