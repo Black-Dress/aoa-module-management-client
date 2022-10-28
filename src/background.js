@@ -205,7 +205,7 @@ function locator_ctl(ip, status) {
   } else {
     end(["aoa_locator", ip]);
   }
-  return `locator status: ${status}`;
+  return `${ip}  status:  ${status}`;
 }
 // 结束进程 name
 function end(args) {

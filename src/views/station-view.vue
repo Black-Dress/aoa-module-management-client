@@ -36,13 +36,13 @@
                   </el-col>
                 </el-row>
                 <el-row>
-                  <code>IP addres: {{ col.net }}</code>
+                  <code>{{ col.net }}</code>
                 </el-row>
                 <el-row>
-                  <code>station id: {{ col.id }}</code>
+                  <code>{{ col.id }}</code>
                 </el-row>
                 <el-row>
-                  <code>status: {{ col.status ? "online" : "offline" }}</code>
+                  <code>{{ col.status ? "online" : "offline" }}</code>
                 </el-row>
               </div>
             </el-card>

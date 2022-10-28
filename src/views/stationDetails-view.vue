@@ -50,6 +50,7 @@
 <script>
 import { PrismEditor } from "vue-prism-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
+import { store } from "@/utils/store";
 const ipcRenderer = window.require("electron").ipcRenderer;
 export default {
   components: {
@@ -67,10 +68,22 @@ export default {
   created: function () {
     this.station = JSON.parse(this.$route.query.station);
     this.index = parseInt(this.$route.query.index);
-    this.$mqttx.set_message_callback(this.ms);
+    if (this.station.status) {
+      this.connect();
+    }
     this.code = `station: ${this.station.id} \n`;
   },
   methods: {
+    connect() {
+      this.$mqttx.connect(
+        store.cur_url.value,
+        () => {
+          this.$mqttx.subscribeStation(this.station.id);
+          this.$mqttx.set_message_callback(this.ms);
+        },
+        () => {}
+      );
+    },
     highlighter(code) {
       return highlight(code, languages.bash, "bash");
     },
@@ -90,7 +103,7 @@ export default {
     status_change(val) {
       ipcRenderer.send("locator_ctl", [this.station.net, val]);
       this.$mqttx.station_list[this.index].status = val;
-      console.log(this.$mqttx.station_list);
+      this.connect();
     },
   },
 };
