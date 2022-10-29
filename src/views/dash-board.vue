@@ -82,6 +82,9 @@
           </el-form-item>
         </el-form>
       </el-col>
+      <el-col>
+        <el-button @click="random_id">random</el-button>
+      </el-col>
     </el-row>
     <el-row :gutter="3">
       <el-col :span="12">
@@ -148,6 +151,7 @@ export default {
     },
   },
   methods: {
+    random_id() {},
     disconnect() {
       this.$mqttx.disconnect(this.df);
     },
