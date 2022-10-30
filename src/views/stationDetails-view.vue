@@ -17,7 +17,7 @@
             <el-button @click="save_message_dialog_visible = true" type="primary" style="margin-right: 10px"> save </el-button>
           </el-col>
           <el-col :span="2">
-            <el-switch v-model="this.station.status" inline-prompt active-text="Y" inactive-text="N" @change="status_change" />
+            <el-switch v-model="this.station.status" inline-prompt @change="status_change" :before-change="before_status_change" />
           </el-col>
         </el-row>
         <el-divider></el-divider>
@@ -51,7 +51,8 @@
 import { PrismEditor } from "vue-prism-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
 import { store } from "@/utils/store";
-const ipcRenderer = window.require("electron").ipcRenderer;
+import { ElMessage } from "element-plus";
+
 export default {
   components: {
     PrismEditor,
@@ -99,10 +100,13 @@ export default {
       this.save(this.file_name);
       this.save_message_dialog_visible = false;
     },
+    before_status_change() {
+      if (!store.main_connect_status) ElMessage({ type: "error", message: "please connect mqtt in dashboard" });
+      return store.main_connect_status;
+    },
     // 状态转换，是否开启AoA线程
     status_change(val) {
-      ipcRenderer.send("locator_ctl", [this.station.net, val]);
-      this.$mqttx.station_list[this.index].status = val;
+      this.$mqttx.station_status_ctl(this.index, val);
       this.connect();
     },
   },

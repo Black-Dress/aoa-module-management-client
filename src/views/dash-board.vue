@@ -256,7 +256,7 @@ export default {
       this.name_check_status = false;
     },
     dialogConfirm() {
-      if (this.new_url.name != "") {
+      if (this.new_url.name != "" && this.new_url.value != "") {
         if (this.client.urls.findIndex((item) => item.name == this.new_url.name) != -1) {
           ElMessage({ type: "warning", message: "there is already a same name" });
           return;
@@ -269,10 +269,9 @@ export default {
       this.addUrlDialogVisible = false;
     },
     rmUrls() {
-      var index = this.mqttUrls.findIndex((item) => item.name == this.cur_url.name);
-      this.mqttUrls.splice(index, 1);
-      console.log(this.mqttUrls);
-      this.curUrl = this.mqttUrls.length > 0 ? this.mqttUrls[0] : { name: "", value: "" };
+      var index = this.client.urls.findIndex((item) => item.name == this.cur_url.name);
+      this.client.urls.splice(index, 1);
+      this.cur_url = this.client.urls.length > 0 ? this.client.urls[0] : { name: "", value: "" };
       this.dialogConfirm();
     },
   },

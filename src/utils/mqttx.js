@@ -36,6 +36,11 @@ export class mqttx {
       net: "192.168.1.101",
     },
   ];
+
+  static active_station_num = 0;
+  static msg_station_size = 2;
+  // 用于发送middle server的数据
+  static msgs = [];
   // 消息输出，按照基站id进行存储
   static stations = new Map();
   // 消息输出，按照tag id 进行存储
@@ -160,4 +165,12 @@ export class mqttx {
     let topic = `${this.defaultTopic()}/${stationId}/+`;
     this.unsubscribe(topic, callback);
   }
+  // 基站状态改变函数
+  static station_status_ctl(index, status) {
+    if (status && !mqttx.station_list[index].status) mqttx.active_station_num += 1;
+    else mqttx.active_station_num -= 1;
+    mqttx.station_list[index].status = status;
+    ipcRenderer.send("locator_ctl", [mqttx.station_list[index].net, status]);
+  }
+  static send_raw_data() {}
 }
