@@ -53,15 +53,15 @@
 
   <el-dialog v-model="addUrlDialogVisible" title="add new connection" width="300px" @close="dialogCancel">
     <el-row>
-      <el-col>
-        <el-form :v-model="newUrl">
-          <el-form-item label="name" label-width="20%">
-            <el-input v-model="newUrl.name"></el-input>
-          </el-form-item>
-          <el-form-item label="url" label-width="20%">
-            <el-input v-model="newUrl.value"></el-input>
-          </el-form-item>
-        </el-form>
+      <el-col :span="4"><p>name</p></el-col>
+      <el-col :span="20">
+        <el-input v-model="this.new_url.name"></el-input>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="4"><p>url</p></el-col>
+      <el-col :span="20">
+        <el-input v-model="this.new_url.value"></el-input>
       </el-col>
     </el-row>
     <el-row :gutter="3">
@@ -158,7 +158,7 @@ export default {
     return {
       addUrlDialogVisible: false,
       editIdDialogVisible: false,
-      newUrl: { name: "", value: "" },
+      new_url: { name: "", value: "" },
       code: "",
       client: {
         clientId: "id",
@@ -197,6 +197,8 @@ export default {
         () => {
           ElMessage({ type: "success", message: "upload success!" });
           this.editIdDialogVisible = false;
+          ipcRenderer.send("write", ["mqtt", JSON.stringify(this.client)]);
+          mqttx.setId(this.client.clientId);
         },
         (e) => {
           console.error(e);
@@ -247,28 +249,24 @@ export default {
     highlighter(code) {
       return highlight(code, languages.plaintext, "bash");
     },
-    init() {},
     dialogCancel() {
-      this.newUrl = {};
+      this.new_url = {};
       this.addUrlDialogVisible = false;
       this.editIdDialogVisible = false;
       this.name_check_status = false;
     },
     dialogConfirm() {
-      if (this.newUrl.name != "") {
-        if (this.mqttUrls.findIndex((item) => item.name == this.newUrl.name) != -1) {
-          ElMessage({
-            type: "warning",
-            message: "there is already a same name",
-          });
+      if (this.new_url.name != "") {
+        if (this.client.urls.findIndex((item) => item.name == this.new_url.name) != -1) {
+          ElMessage({ type: "warning", message: "there is already a same name" });
+          return;
         }
-        this.mqttUrls.push(this.newUrl);
-        this.newUrl = { name: "", value: "" };
+        this.client.urls.push(this.new_url);
+        ipcRenderer.send("write", ["mqtt", JSON.stringify(this.client)]);
+        ElMessage({ type: "success", message: "add url success" });
+        this.new_url = { name: "", value: "" };
       }
-      mqttx.setId(this.clientId);
       this.addUrlDialogVisible = false;
-
-      ipcRenderer.send("write", ["mqtt", JSON.stringify({ id: this.clientId, urls: this.mqttUrls })]);
     },
     rmUrls() {
       var index = this.mqttUrls.findIndex((item) => item.name == this.cur_url.name);

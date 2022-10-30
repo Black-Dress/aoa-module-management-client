@@ -1,5 +1,5 @@
 {
-    "clientId": "client aaa",
+    "clientId": "aaaa",
     "urls": [
         {
             "name": "default",
@@ -8,11 +8,19 @@
         {
             "name": "emq",
             "value": "mqtt://emq.mqtt.io:1883"
+        },
+        {
+            "name": "aaa",
+            "value": "aaa"
+        },
+        {
+            "name": "bbb",
+            "value": "asdasd"
         }
     ],
-    "name": "",
-    "project": "",
-    "position": "",
-    "contact": "",
-    "remark": ""
+    "name": "aaa",
+    "project": "aaaa",
+    "position": "aaaa",
+    "contact": "aaa",
+    "remark": "aaa"
 }
