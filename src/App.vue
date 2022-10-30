@@ -1,5 +1,5 @@
 <template>
-  <div class="common-layout">
+  <div>
     <el-container>
       <el-aside width="200px">
         <el-menu default-active="/" id="menu" :router="true">
@@ -29,9 +29,9 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main>
-        <router-view></router-view>
-      </el-main>
+      <el-container>
+        <div style="width: 100%"><router-view></router-view></div>
+      </el-container>
     </el-container>
   </div>
 </template>
@@ -66,6 +66,9 @@ export default {
 }
 
 #menu {
+  height: 600px;
+}
+.el-main {
   height: 600px;
 }
 </style>
