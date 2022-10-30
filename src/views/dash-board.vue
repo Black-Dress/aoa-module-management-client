@@ -7,8 +7,8 @@
   </el-header>
   <el-main>
     <el-row class="main_row">
-      <el-col :span="2"><p style="font-weight: 600">CLIENT_ID</p></el-col>
-      <el-col :span="2" style="text-align: left; max-width: 200px">
+      <el-col :span="4"><p style="font-weight: 600">CLIENT_ID:</p></el-col>
+      <el-col :span="3" style="text-align: left; max-width: 200px">
         <p>{{ this.client.clientId }}</p>
       </el-col>
       <el-col :span="2" style="text-align: left">
@@ -26,12 +26,14 @@
       <el-col :span="14">
         <el-input v-model="cur_url.value" disabled />
       </el-col>
-      <el-col :span="4" style="max-width: 120px">
+      <el-col :span="2">
         <el-button @click="addUrlDialogVisible = true">
           <el-icon>
             <plus></plus>
           </el-icon>
         </el-button>
+      </el-col>
+      <el-col :span="2">
         <el-button @click="rmUrls">
           <el-icon>
             <Minus />
@@ -49,7 +51,7 @@
     </el-row>
   </el-main>
 
-  <el-dialog v-model="addUrlDialogVisible" title="add new connection" width="300px">
+  <el-dialog v-model="addUrlDialogVisible" title="add new connection" width="300px" @close="dialogCancel">
     <el-row>
       <el-col>
         <el-form :v-model="newUrl">
@@ -71,33 +73,52 @@
       </el-col>
     </el-row>
   </el-dialog>
-  <el-dialog v-model="editIdDialogVisible" title="update client" width="450px">
+  <el-dialog v-model="editIdDialogVisible" title="UPDATE CLIENT" width="450px" @close="dialogCancel">
     <el-row>
-      <el-col class="dialog-col" :span="3"> <p>clientId</p> </el-col>
-      <el-col :span="15">
+      <el-col class="dialog-col" :span="4"> <p>clientId</p> </el-col>
+      <el-col :span="17">
         <el-input v-model="this.client.clientId"></el-input>
       </el-col>
-      <el-col :span="6">
-        <el-button @click="check_client_id(this.client.clientId)">
+      <el-col :span="3">
+        <el-button v-if="!name_check_status" @click="check_client_id(this.client.clientId)">
           <el-icon><RefreshLeft /></el-icon>
+        </el-button>
+        <el-button v-if="name_check_status" type="primary">
+          <el-icon><Check /></el-icon>
         </el-button>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="24">
-        <el-form-item label="name" label-width="20%">
-          <el-input v-model="this.client.name"></el-input>
-        </el-form-item>
+      <el-col :span="4"><p>name</p></el-col>
+      <el-col :span="20">
+        <el-input v-model="this.client.name"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="24">
-        <el-form-item label="position" label-width="20%">
-          <el-input v-model="this.client.position"></el-input>
-        </el-form-item>
+      <el-col :span="4"><p>position</p></el-col>
+      <el-col :span="20">
+        <el-input v-model="this.client.position"></el-input>
       </el-col>
     </el-row>
     <el-row>
+      <el-col :span="4"><p>project</p></el-col>
+      <el-col :span="20">
+        <el-input v-model="this.client.project"></el-input>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="4"><p>contact</p></el-col>
+      <el-col :span="20">
+        <el-input v-model="this.client.contact"></el-input>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="4"><p>remark</p></el-col>
+      <el-col :span="20">
+        <el-input v-model="this.client.remark"></el-input>
+      </el-col>
+    </el-row>
+    <el-row style="margin-top: 10px">
       <el-col :span="12">
         <el-button @click="dialogCancel">cancel</el-button>
       </el-col>
@@ -118,7 +139,7 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-bash";
 import "prismjs/themes/prism-tomorrow.css";
 import "vue-prism-editor/dist/prismeditor.min.css";
-import { validateId } from "@/api/client";
+import { validateId, upload_client } from "@/api/client";
 
 export default {
   components: {
@@ -148,6 +169,7 @@ export default {
         contact: "",
         remark: "",
       },
+      name_check_status: false,
     };
   },
   computed: {
@@ -170,7 +192,16 @@ export default {
   },
   methods: {
     upload_client() {
-      this.editIdDialogVisible = false;
+      upload_client(
+        this.client,
+        () => {
+          ElMessage({ type: "success", message: "upload success!" });
+          this.editIdDialogVisible = false;
+        },
+        (e) => {
+          console.error(e);
+        }
+      );
     },
     check_client_id(name) {
       validateId(name, (res) => {
@@ -179,6 +210,7 @@ export default {
           return;
         }
         this.clientId = res.data;
+        this.name_check_status = true;
       });
     },
     disconnect() {
@@ -220,6 +252,7 @@ export default {
       this.newUrl = {};
       this.addUrlDialogVisible = false;
       this.editIdDialogVisible = false;
+      this.name_check_status = false;
     },
     dialogConfirm() {
       if (this.newUrl.name != "") {
@@ -260,7 +293,7 @@ export default {
   line-height: 1.5;
   padding: 5px;
   border-radius: 5px;
-  max-height: 500px;
+  max-height: 450px;
 }
 
 /* optional class for removing the outline */
@@ -281,6 +314,7 @@ p {
 .el-col p {
   margin-top: 9px;
   text-align: left;
+  font-weight: 600;
 }
 .el-col .el-button {
   height: 32px;

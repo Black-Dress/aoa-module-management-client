@@ -15,3 +15,14 @@ export function validateId(
     .then(s)
     .catch(e);
 }
+
+export function upload_client(client, s = function () {}, e = function () {}) {
+  service
+    .post("/client", client)
+    .then((res) => {
+      if (res.code != 200) {
+        ElMessage({ type: "error", message: `upload failed: ${res.msg}` });
+      } else s(res);
+    })
+    .catch(e);
+}
