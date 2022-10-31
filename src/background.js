@@ -63,6 +63,7 @@ app.on("ready", async () => {
     ipcMain.on("write", writeHandle);
     ipcMain.on("delete", deleteHandle);
     ipcMain.on("locator_ctl", locator_ctl_handle);
+    ipcMain.on("mosquitto_ctl", mosquitto_ctl_handle);
     await createWindow();
     // 启动项目的时候启动服务
     start_mosquitto();
@@ -195,8 +196,21 @@ function locator_ctl_handle(event, arg) {
     new Notification({title: `locator serve`, body: res}).show();
 }
 
-// 启动mqtt
+/**
+ * mosquitto 服务管理函数，用于启动和停止mosquitto服务
+ * @param event 事件发送者
+ * @param args 参数
+ */
+function mosquitto_ctl_handle(event, args) {
+    if (args[0]) start_mosquitto()
+    else end(["mosquitto"])
+}
+
+/**
+ * 启动 mosquitto 服务 先判断是否已经启动了
+ */
 function start_mosquitto() {
+    if (check_status(["mosquitto"]).length !== 0) return;
     const exec = require("child_process").exec;
     const cmd = process.platform === "win32" ? ".\\mosquitto\\mosquitto.exe -c .\\mosquitto\\mosquitto.conf" : "mosquitto -c ./mosquitto/mosquitto.conf";
     // 启动mqtt
@@ -205,7 +219,12 @@ function start_mosquitto() {
     });
 }
 
-// 启动locator
+/**
+ * 管理基站监听程序
+ * @param ip 基站ip地址
+ * @param status 修改后状态
+ * @returns {string} 基站状态
+ */
 function locator_ctl(ip, status) {
     if (status) {
         const exec = require("child_process").exec;
@@ -221,21 +240,41 @@ function locator_ctl(ip, status) {
     return `${ip}  status:  ${status}`;
 }
 
-// 结束进程 name
-function end(args) {
-    const es = require("child_process").execSync;
-    // 当该指令查询不到指定进程时，会返回失败
-    let ctl = "grep";
-    let cmd = "ps -aux | grep -v grep";
-    if (process.platform === "win32") {
-        ctl = "findstr";
-        cmd = "tasklist";
-    }
-    args.forEach((element) => {
-        cmd += `| ${ctl} ${element}`;
-    });
+/**
+ * 检查进程状态
+ * @param args 进程关键字
+ * @returns {[string]} string数组
+ */
+function check_status(args) {
     try {
-        const res = es(cmd).toString().split("\n");
+        const es = require("child_process").execSync;
+        // 当该指令查询不到指定进程时，会返回失败
+        let ctl = "grep";
+        let cmd = "ps -aux | grep -v grep";
+        if (process.platform === "win32") {
+            ctl = "findstr";
+            cmd = "tasklist";
+        }
+        args.forEach((element) => {
+            cmd += `| ${ctl} ${element}`;
+        });
+        const res = es(cmd).toString();
+        console.log("res", res)
+        return res.split("\n")
+    } catch (e) {
+        console.error(decode(e.stderr, "cp936"))
+    }
+    return [];
+}
+
+/**
+ * 结束进程，通过关键字
+ * @param args 关键字数组
+ */
+function end(args) {
+    try {
+        const es = require("child_process").execSync;
+        const res = check_status(args)
         for (let index = 0; index < res.length; index++) {
             const element = res[index];
             if (element === undefined || element === "") continue;

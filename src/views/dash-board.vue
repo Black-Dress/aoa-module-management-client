@@ -50,7 +50,7 @@
     <el-divider></el-divider>
     <el-row class="main_row">
       <!--suppress JSValidateTypes -->
-      <prism-editor :key="code" class="my-editor" :readonly="true" :model-value="code"
+      <prism-editor :key="code" class="code" :readonly="true" :model-value="code"
                     :highlight="highlighter"
                     line-numbers/>
     </el-row>
@@ -201,7 +201,9 @@ export default {
   },
 
   methods: {
-    // TODO 统一mqtt代码
+    /**
+     * 上传client
+     */
     upload_client() {
       upload_client(
           this.client,
@@ -216,6 +218,10 @@ export default {
           }
       );
     },
+    /**
+     * 验证client_id是否唯一，如果不唯一就将名称修改成唯一
+     * @param name 用户自定义名称
+     */
     check_client_id(name) {
       validateId(name, (res) => {
         if (res.code !== 200) {
@@ -242,20 +248,20 @@ export default {
       this.status = false;
       this.code = "";
     },
-    s(msg) {
-      ElMessage({type: "success", message: "connect success"});
+    s() {
       this.$mqttx.set_message_callback((topic, ms) => {
         this.code += ms.toString() + "\n";
       });
-      this.code += msg + "\n";
       // 自动订阅主题
       this.$mqttx.defaultSubscribe(() => {
+        ElMessage({type: "success", message: "subscribe success"})
+        this.code += "connect & subscribe success" + "\n";
       });
       store.set_main_connect_status(true);
     },
-    f(msg) {
-      ElMessage({type: "error", message: "connect failed"});
-      this.code += msg + "\n";
+    f() {
+      ElMessage({type: "error", message: "connect failed please retry"});
+      this.code += "connect failed \n";
       store.set_main_connect_status(false);
     },
     highlighter(code) {
@@ -293,52 +299,6 @@ export default {
 };
 </script>
 <style>
-/* required class */
-.my-editor {
-  /* we dont use `language-` classes anymore so that's why we need to add background and text color manually */
-  background: #2d2d2d;
-  color: #ccc;
-
-  /* you must provide font-family font-size line-height. Example: */
-  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  padding: 5px;
-  border-radius: 5px;
-  max-height: 450px;
-}
 
 
-el-col {
-  display: block;
-  margin: 0 0 0 0;
-  padding: 0 0 0 0;
-  float: left;
-  height: 36px;
-}
-
-p {
-  height: 18px;
-  padding: 0 0 0 0;
-}
-
-el-col p {
-  margin-top: 9px;
-  text-align: left;
-  font-weight: 600;
-}
-
-el-col el-button {
-  height: 32px;
-  margin-top: 3px;
-}
-
-el-col el-input {
-  height: 32px;
-  margin-top: 3px;
-}
-
-el-row {
-  margin-bottom: 10px;
-}
 </style>
