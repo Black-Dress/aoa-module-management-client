@@ -161,6 +161,7 @@ export default {
       this.client = data;
     });
     ipcRenderer.send("read", ["mqtt"]);
+    // 每次都重新连接，重置订阅列表
     if (this.status) this.connect(this.cur_url.value);
   },
   data: function () {

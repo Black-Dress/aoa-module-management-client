@@ -62,8 +62,9 @@ app.on("ready", async () => {
     ipcMain.on("read", readHandle);
     ipcMain.on("write", writeHandle);
     ipcMain.on("delete", deleteHandle);
-    ipcMain.on("locator_ctl", locator_ctl_handle);
+    ipcMain.on("locator_ctl", locator_ctl);
     ipcMain.on("mosquitto_ctl", mosquitto_ctl_handle);
+    ipcMain.on("end_server", end_handler);
     await createWindow();
     // 启动项目的时候启动服务
     start_mosquitto();
@@ -190,11 +191,6 @@ function readFileList(dir, res, list) {
     return res;
 }
 
-// 启动服务
-function locator_ctl_handle(event, arg) {
-    const res = locator_ctl(arg[0], arg[1]);
-    new Notification({title: `locator serve`, body: res}).show();
-}
 
 /**
  * mosquitto 服务管理函数，用于启动和停止mosquitto服务
@@ -210,7 +206,6 @@ function mosquitto_ctl_handle(event, args) {
  * 启动 mosquitto 服务 先判断是否已经启动了
  */
 function start_mosquitto() {
-    if (check_status(["mosquitto"]).length !== 0) return;
     console.log("start mosquitto")
     const exec = require("child_process").exec;
     const cmd = process.platform === "win32" ? ".\\mosquitto\\mosquitto.exe -c .\\mosquitto\\mosquitto.conf" : "mosquitto -c ./mosquitto/mosquitto.conf";
@@ -222,23 +217,26 @@ function start_mosquitto() {
 
 /**
  * 管理基站监听程序
- * @param ip 基站ip地址
- * @param status 修改后状态
+ * @param event 消息
+ * @param args 参数数组
  * @returns {string} 基站状态
  */
-function locator_ctl(ip, status) {
-    if (status) {
+function locator_ctl(event, args) {
+    const ip = args[0], status = args[1]
+    if (status && check_status(["aoa_locator", ip]).length === 0) {
+        console.log(`aoa_locator ${ip} start`)
         const exec = require("child_process").exec;
         let cmd = "./aoa_locator/exe/aoa_locator ";
         if (process.platform === "win32") cmd += ".exe";
         cmd += `-t ${ip}`;
         exec(cmd, function (a, b, c) {
             if (a) console.error(c);
+            new Notification({title: `locator serve`, body: `${ip}  status:  ${status}`}).show();
         });
     } else {
         end(["aoa_locator", ip]);
     }
-    return `${ip}  status:  ${status}`;
+
 }
 
 /**
@@ -268,13 +266,25 @@ function check_status(args) {
 }
 
 /**
- * 结束进程，通过关键字
- * @param args 关键字数组
+ * 结束进程
+ * @param event 消息发起者
+ * @param args 参数
  */
-function end(args) {
+function end_handler(event, args) {
+    args.forEach(arg => {
+        end(arg)
+    })
+}
+
+/**
+ * 结束进程，通过关键字
+ * @param arg 关键字数组
+ */
+function end(arg) {
+    console.log(`end server ${arg}`)
     try {
         const es = require("child_process").execSync;
-        const res = check_status(args)
+        const res = check_status(arg)
         for (let index = 0; index < res.length; index++) {
             const element = res[index];
             if (element === undefined || element === "") continue;

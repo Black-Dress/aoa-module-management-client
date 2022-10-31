@@ -42,7 +42,7 @@ export class mqttx {
     ];
 
     static active_station_num = 0;
-    static msg_station_size = 2;
+    static msg_station_size = 3;
     // 用于发送middle server的数据
     static msgs = [];
     // 消息输出，按照基站id进行存储
@@ -93,6 +93,7 @@ export class mqttx {
     static disconnect(callback) {
         if (this.client && !this.client.disconnected) {
             this.client.end(true, {}, callback);
+            ipcRenderer.send("end_server", ["aoa_locator"])
         }
     }
 
@@ -155,7 +156,7 @@ export class mqttx {
         }
         // 判断是否需要发送数据
         if (mqttx.msgs.length >= mqttx.active_station_num * mqttx.msg_station_size) {
-            upload_aoa_raw_data(JSON.stringify(mqttx.msgs), () => {
+            upload_aoa_raw_data(mqttx.msgs, () => {
             }, (err) => {
                 ElMessage({type: "error", message: `upload data failed:${err.message}`})
             })
