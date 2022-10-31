@@ -36,7 +36,7 @@
         </el-button>
       </el-col>
       <el-col :span="2">
-        <el-button @click="rmUrls">
+        <el-button @click="rm_url">
           <el-icon>
             <Minus/>
           </el-icon>
@@ -56,7 +56,7 @@
     </el-row>
   </el-main>
 
-  <el-dialog v-model="addUrlDialogVisible" title="add new connection" width="300px" @close="dialogCancel">
+  <el-dialog v-model="addUrlDialogVisible" title="add new connection" width="300px" @close="dialog_cancel">
     <el-row>
       <el-col :span="4"><p>name</p></el-col>
       <el-col :span="20">
@@ -71,14 +71,14 @@
     </el-row>
     <el-row :gutter="3">
       <el-col :span="12">
-        <el-button @click="dialogCancel">cancel</el-button>
+        <el-button @click="dialog_cancel">cancel</el-button>
       </el-col>
       <el-col :span="12">
-        <el-button type="primary" @click="dialogConfirm()">confirm</el-button>
+        <el-button type="primary" @click="add_url_confirm()">confirm</el-button>
       </el-col>
     </el-row>
   </el-dialog>
-  <el-dialog v-model="editIdDialogVisible" title="UPDATE CLIENT" width="450px" @close="dialogCancel">
+  <el-dialog v-model="editIdDialogVisible" title="UPDATE CLIENT" width="450px" @close="dialog_cancel">
     <el-row>
       <el-col class="dialog-col" :span="4"><p>clientId</p></el-col>
       <el-col :span="17">
@@ -129,7 +129,7 @@
     </el-row>
     <el-row style="margin-top: 10px">
       <el-col :span="12">
-        <el-button @click="dialogCancel">cancel</el-button>
+        <el-button @click="dialog_cancel">cancel</el-button>
       </el-col>
       <el-col :span="12">
         <el-button type="primary" @click="upload_client">confirm</el-button>
@@ -261,13 +261,16 @@ export default {
     highlighter(code) {
       return highlight(code, languages.plaintext, "bash");
     },
-    dialogCancel() {
+    /**
+     * 取消对话框，重置所有属性
+     */
+    dialog_cancel() {
       this.new_url = {};
       this.addUrlDialogVisible = false;
       this.editIdDialogVisible = false;
       this.name_check_status = false;
     },
-    dialogConfirm() {
+    add_url_confirm() {
       if (this.new_url.name !== "" && this.new_url.value !== "") {
         if (this.client.urls.findIndex((item) => item.name === this.new_url.name) !== -1) {
           ElMessage({type: "warning", message: "there is already a same name"});
@@ -280,11 +283,11 @@ export default {
       }
       this.addUrlDialogVisible = false;
     },
-    rmUrls() {
+    rm_url() {
       const index = this.client.urls.findIndex((item) => item.name === this.cur_url.name);
       this.client.urls.splice(index, 1);
       this.cur_url = this.client.urls.length > 0 ? this.client.urls[0] : {name: "", value: ""};
-      this.dialogConfirm();
+      ipcRenderer.send("write", ["mqtt", JSON.stringify(this.client)]);
     },
   },
 };
