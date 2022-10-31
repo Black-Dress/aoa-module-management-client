@@ -64,7 +64,10 @@ app.on("ready", async () => {
     ipcMain.on("delete", deleteHandle);
     ipcMain.on("locator_ctl", locator_ctl);
     ipcMain.on("mosquitto_ctl", mosquitto_ctl_handle);
-    ipcMain.on("end_server", end_handler);
+    ipcMain.on("end_server", () => {
+        end(["mosquitto"]);
+        end(["aoa_locator"]);
+    })
     await createWindow();
     // 启动项目的时候启动服务
     start_mosquitto();
@@ -203,7 +206,7 @@ function mosquitto_ctl_handle(event, args) {
 }
 
 /**
- * 启动 mosquitto 服务 先判断是否已经启动了
+ * 启动 mosquitto 服务
  */
 function start_mosquitto() {
     console.log("start mosquitto")
@@ -266,25 +269,14 @@ function check_status(args) {
 }
 
 /**
- * 结束进程
- * @param event 消息发起者
- * @param args 参数
- */
-function end_handler(event, args) {
-    args.forEach(arg => {
-        end(arg)
-    })
-}
-
-/**
  * 结束进程，通过关键字
- * @param arg 关键字数组
+ * @param args 关键字数组
  */
-function end(arg) {
-    console.log(`end server ${arg}`)
+function end(args) {
+    console.log(`end server ${args}`)
     try {
         const es = require("child_process").execSync;
-        const res = check_status(arg)
+        const res = check_status(args)
         for (let index = 0; index < res.length; index++) {
             const element = res[index];
             if (element === undefined || element === "") continue;

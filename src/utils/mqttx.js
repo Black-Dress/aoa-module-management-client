@@ -1,5 +1,4 @@
 import * as mqtt from "mqtt";
-import {ElMessage} from "element-plus";
 import {upload_aoa_raw_data} from "@/api/client";
 
 const ipcRenderer = window.require("electron").ipcRenderer;
@@ -81,7 +80,7 @@ export class mqttx {
     }
 
     /**
-     * 睡眠函数，水面time时间后执行代码
+     * 睡眠函数，睡眠time时间后执行代码
      * @param time 单位ms
      * @returns {Promise<unknown>}延迟函数
      */
@@ -89,11 +88,14 @@ export class mqttx {
         return new Promise((resolve) => setTimeout(resolve, time));
     }
 
-    // 断开连接
+    /**
+     * 断开连接
+     * @param callback 断开连接成功的回调
+     */
     static disconnect(callback) {
-        if (this.client && !this.client.disconnected) {
+        if (mqttx.client !== null && mqttx.client.connected) {
             this.client.end(true, {}, callback);
-            ipcRenderer.send("end_server", ["aoa_locator"])
+            ipcRenderer.send("end_server")
         }
     }
 
@@ -156,10 +158,7 @@ export class mqttx {
         }
         // 判断是否需要发送数据
         if (mqttx.msgs.length >= mqttx.active_station_num * mqttx.msg_station_size) {
-            upload_aoa_raw_data(mqttx.msgs, () => {
-            }, (err) => {
-                ElMessage({type: "error", message: `upload data failed:${err.message}`})
-            })
+            upload_aoa_raw_data(mqttx.msgs)
             mqttx.msgs = [];
         }
     }

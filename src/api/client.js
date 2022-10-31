@@ -32,8 +32,9 @@ export function upload_client(client, s = function () {
 
 // 上传
 export function upload_aoa_raw_data(msgs, s, e) {
+    console.log(msgs)
     service
-        .post("/client/upload/aoa", msgs)
+        .post("/client/upload/aoa", JSON.stringify(msgs))
         .then((res) => {
             if (res.data.code !== 200) {
                 ElMessage({type: "error", message: `upload aoa data failed: ${res.data.msg}`});
