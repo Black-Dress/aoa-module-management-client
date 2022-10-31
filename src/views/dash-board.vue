@@ -262,6 +262,7 @@ export default {
     f() {
       ElMessage({type: "error", message: "connect failed please retry"});
       this.code += "connect failed \n";
+      ipcRenderer.send("mosquitto_ctl", [true])
       store.set_main_connect_status(false);
     },
     highlighter(code) {

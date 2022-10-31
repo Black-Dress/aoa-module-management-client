@@ -211,6 +211,7 @@ function mosquitto_ctl_handle(event, args) {
  */
 function start_mosquitto() {
     if (check_status(["mosquitto"]).length !== 0) return;
+    console.log("start mosquitto")
     const exec = require("child_process").exec;
     const cmd = process.platform === "win32" ? ".\\mosquitto\\mosquitto.exe -c .\\mosquitto\\mosquitto.conf" : "mosquitto -c ./mosquitto/mosquitto.conf";
     // 启动mqtt
@@ -259,7 +260,6 @@ function check_status(args) {
             cmd += `| ${ctl} ${element}`;
         });
         const res = es(cmd).toString();
-        console.log("res", res)
         return res.split("\n")
     } catch (e) {
         console.error(decode(e.stderr, "cp936"))

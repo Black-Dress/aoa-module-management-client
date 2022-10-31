@@ -155,7 +155,7 @@ export class mqttx {
         }
         // 判断是否需要发送数据
         if (mqttx.msgs.length >= mqttx.active_station_num * mqttx.msg_station_size) {
-            upload_aoa_raw_data(mqttx.msgs, () => {
+            upload_aoa_raw_data(JSON.stringify(mqttx.msgs), () => {
             }, (err) => {
                 ElMessage({type: "error", message: `upload data failed:${err.message}`})
             })
