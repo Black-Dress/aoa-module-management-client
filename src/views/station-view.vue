@@ -23,7 +23,7 @@
               <div style="padding: 10px">
                 <el-row justify="space-between">
                   <el-col :span="10" style="text-align: left">
-                    <el-button text @click="toStationDetil(col)" style="padding: 0 0 0 0">
+                    <el-button text @click="toStationDetil(col, i, j)" style="padding: 0 0 0 0">
                       <h1>{{ col.name }}</h1>
                     </el-button>
                   </el-col>
@@ -36,13 +36,13 @@
                   </el-col>
                 </el-row>
                 <el-row>
-                  <code>IP addres: {{ col.net }}</code>
+                  <code>{{ col.net }}</code>
                 </el-row>
                 <el-row>
-                  <code>station id: {{ col.id }}</code>
+                  <code>{{ col.id }}</code>
                 </el-row>
                 <el-row>
-                  <code>status: {{ col.status ? "online" : "offline" }}</code>
+                  <code>{{ col.status ? "online" : "offline" }}</code>
                 </el-row>
               </div>
             </el-card>
@@ -51,8 +51,7 @@
       </el-main>
       <el-footer>
         <el-row justify="center" style="margin-top: 10px">
-          <el-pagination layout="prev, pager, next" background :total="total" :page-size="12" :pager-count="7"
-            v-model:current-page="current_page" />
+          <el-pagination layout="prev, pager, next" background :total="total" :page-size="12" :pager-count="7" v-model:current-page="current_page" />
         </el-row>
       </el-footer>
     </el-container>
@@ -165,9 +164,9 @@ export default {
       }
       return res;
     },
-    toStationDetil(station) {
-      let content = JSON.stringify(station)
-      this.$router.push({ name: "station-details", query: { station: content } });
+    toStationDetil(station, i, j) {
+      let index = (this.current_page - 1) * (this.row_size * this.col_size) + i * this.col_size + j;
+      this.$router.push({ name: "station-details", query: { station: JSON.stringify(station), index: index } });
     },
     remove(i, j) {
       this.stations[this.current_page][i].splice(j, 1);
@@ -208,6 +207,4 @@ export default {
   },
 };
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>

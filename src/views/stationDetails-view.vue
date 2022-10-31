@@ -2,8 +2,8 @@
   <div>
     <el-container>
       <el-header>
-        <el-row :gutter="2">
-          <el-col :span="2" style="text-align: left; max-width: 44px">
+        <el-row :gutter="20">
+          <el-col :span="2" style="text-align: left">
             <el-button @click="this.$router.back()" text style="margin-top: 4px">
               <el-icon>
                 <ArrowLeft />
@@ -11,18 +11,19 @@
             </el-button>
           </el-col>
           <el-col :span="18" style="text-align: left">
-            <h1>station: {{ this.station.id }}</h1>
+            <h1>{{ this.station.id }} {{ this.station.position }}</h1>
           </el-col>
-          <el-col :span="4" style="text-align: right">
-            <el-button @click="save_message_dialog_visible = true" type="primary"> save </el-button>
-            <el-switch v-model="this.station.status" inline-prompt active-text="Y" inactive-text="N" />
+          <el-col :span="2" style="text-align: right">
+            <el-button @click="save_message_dialog_visible = true" type="primary" style="margin-right: 10px"> save </el-button>
+          </el-col>
+          <el-col :span="2">
+            <el-switch v-model="this.station.status" inline-prompt active-text="Y" inactive-text="N" @change="status_change" />
           </el-col>
         </el-row>
         <el-divider></el-divider>
       </el-header>
       <el-main>
-        <prism-editor class="code" :model-value="code" :highlight="highlighter" line-numbers :readonly="true">
-        </prism-editor>
+        <prism-editor class="code" :model-value="code" :highlight="highlighter" line-numbers :readonly="true"> </prism-editor>
       </el-main>
     </el-container>
     <el-dialog v-model="save_message_dialog_visible" title="save message" width="300px">
@@ -49,6 +50,8 @@
 <script>
 import { PrismEditor } from "vue-prism-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
+import { store } from "@/utils/store";
+const ipcRenderer = window.require("electron").ipcRenderer;
 export default {
   components: {
     PrismEditor,
@@ -58,16 +61,29 @@ export default {
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
-      station: { id: "", status: false }
+      station: { id: "", status: false, position: { x: 0, y: 0, z: 0 } },
+      index: 0,
     };
   },
   created: function () {
-    this.station = JSON.parse(this.$route.query.station)
-    this.$mqttx.set_message_callback(this.ms);
+    this.station = JSON.parse(this.$route.query.station);
+    this.index = parseInt(this.$route.query.index);
+    if (this.station.status) {
+      this.connect();
+    }
     this.code = `station: ${this.station.id} \n`;
-    console.log(this.station)
   },
   methods: {
+    connect() {
+      this.$mqttx.connect(
+        store.cur_url.value,
+        () => {
+          this.$mqttx.subscribeStation(this.station.id);
+          this.$mqttx.set_message_callback(this.ms);
+        },
+        () => {}
+      );
+    },
     highlighter(code) {
       return highlight(code, languages.bash, "bash");
     },
@@ -75,18 +91,21 @@ export default {
       this.code += ms.toString() + "\n";
     },
     save(name = `${new Date().toISOString().slice(0, 10)}.json`) {
-      let data = this.$mqttx.stations[this.$route.query.id];
-      data = data ? data : {};
-      this.$mqttx.save(JSON.stringify(data), `${this.$route.query.id}/${name}`);
+      let data = this.$mqttx.stations.get(this.station.id);
+      if (data == undefined || data.length == 0) return;
+      this.$mqttx.save(JSON.stringify(data), `${this.station.id}/${name}`);
     },
     dialogConfirm() {
       this.save(this.file_name);
       this.save_message_dialog_visible = false;
     },
+    // 状态转换，是否开启AoA线程
+    status_change(val) {
+      ipcRenderer.send("locator_ctl", [this.station.net, val]);
+      this.$mqttx.station_list[this.index].status = val;
+      this.connect();
+    },
   },
-
 };
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>

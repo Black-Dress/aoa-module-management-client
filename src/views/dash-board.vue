@@ -20,12 +20,12 @@
         </el-row>
         <el-row :gutter="5">
           <el-col :span="3">
-            <el-select v-model="curUrl" placeholder="URL">
+            <el-select v-model="cur_url" placeholder="URL">
               <el-option v-for="item in mqttUrls" :key="item.name" :label="item.name" :value="item" />
             </el-select>
           </el-col>
           <el-col :span="14">
-            <el-input v-model="curUrl.value" disabled placeholder="ws://localhost:9001" />
+            <el-input v-model="cur_url.value" disabled />
           </el-col>
           <el-col :span="4" style="max-width: 120px">
             <el-button @click="addUrlDialogVisible = true">
@@ -40,7 +40,8 @@
             </el-button>
           </el-col>
           <el-col :span="2" style="max-width: 32px">
-            <el-button id="start" type="primary" @click="connect(curUrl.value)"> connect </el-button>
+            <el-button v-if="!this.status" id="start" type="primary" @click="connect(cur_url.value)"> connect </el-button>
+            <el-button v-if="this.status" id="end" type="danger" @click="disconnect()">disconnect</el-button>
           </el-col>
         </el-row>
         <el-divider></el-divider>
@@ -81,6 +82,9 @@
           </el-form-item>
         </el-form>
       </el-col>
+      <el-col>
+        <el-button @click="random_id">random</el-button>
+      </el-col>
     </el-row>
     <el-row :gutter="3">
       <el-col :span="12">
@@ -97,6 +101,7 @@ import { PrismEditor } from "vue-prism-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
 import { ElMessage } from "element-plus";
 import { mqttx } from "@/utils/mqttx";
+import { store } from "@/utils/store";
 const ipcRenderer = window.require("electron").ipcRenderer;
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-bash";
@@ -108,34 +113,60 @@ export default {
     PrismEditor,
   },
   created: function () {
-    this.init();
+    // 读取配置文件
+    ipcRenderer.once("mqtt", (event, data) => {
+      this.mqttUrls = data.urls;
+      this.clientId = data.id;
+    });
+    ipcRenderer.send("read", ["mqtt"]);
+    if (this.status) this.connect(this.cur_url.value);
   },
   mounted: function () {},
   data: function () {
     return {
       mqttUrls: [],
       clientId: "",
-      curUrl: { name: "default", value: "ws://localhost:9001" },
       addUrlDialogVisible: false,
       editIdDialogVisible: false,
       newUrl: { name: "", value: "" },
       code: "",
     };
   },
-  computed: {},
+  computed: {
+    status: {
+      get: function () {
+        return store.main_connect_status;
+      },
+      set: function (val) {
+        store.set_main_connect_status(val);
+      },
+    },
+    cur_url: {
+      get: function () {
+        return store.cur_url;
+      },
+      set: function (val) {
+        store.set_cur_url(val);
+      },
+    },
+  },
   methods: {
+    random_id() {},
+    disconnect() {
+      this.$mqttx.disconnect(this.df);
+    },
     connect(url) {
       if (url == undefined || url == "") {
         ElMessage({ message: "choose a mqtt server adderss", type: "warning" });
         return;
       }
       // 连接
-      if (this.$mqttx.connect(url, this.s, this.f)) {
-        // 订阅
-        this.$mqttx.defaultSubscribe(() => {
-          ElMessage({ message: "subscribe success", type: "success" });
-        });
-      }
+      this.$mqttx.connect(url, this.s, this.f);
+    },
+    df() {
+      ElMessage({ type: "success", message: "disconnect success" });
+      this.status = false;
+      this.code = "";
     },
     s(msg) {
       ElMessage({ type: "success", message: "connect success" });
@@ -143,22 +174,21 @@ export default {
         this.code += ms.toString() + "\n";
       });
       this.code += msg + "\n";
+      // 自动订阅主题
+      this.$mqttx.defaultSubscribe(() => {
+        ElMessage({ message: "subscribe success", type: "success" });
+      });
+      store.set_main_connect_status(true);
     },
     f(msg) {
       ElMessage({ type: "error", message: "connect failed" });
       this.code += msg + "\n";
+      store.set_main_connect_status(false);
     },
     highlighter(code) {
       return highlight(code, languages.plaintext, "bash");
     },
-    init() {
-      // 读取配置文件
-      ipcRenderer.once("mqtt", (event, data) => {
-        this.mqttUrls = data.urls;
-        this.clientId = data.id;
-      });
-      ipcRenderer.send("read", ["mqtt"]);
-    },
+    init() {},
     dialogCancel() {
       this.newUrl = {};
       this.addUrlDialogVisible = false;
@@ -181,7 +211,7 @@ export default {
       ipcRenderer.send("write", ["mqtt", JSON.stringify({ id: this.clientId, urls: this.mqttUrls })]);
     },
     rmUrls() {
-      var index = this.mqttUrls.findIndex((item) => item.name == this.curUrl.name);
+      var index = this.mqttUrls.findIndex((item) => item.name == this.cur_url.name);
       this.mqttUrls.splice(index, 1);
       console.log(this.mqttUrls);
       this.curUrl = this.mqttUrls.length > 0 ? this.mqttUrls[0] : { name: "", value: "" };

@@ -1,13 +1,10 @@
+/* eslint-disable no-constant-condition */
 "use strict";
 
 import { app, protocol, BrowserWindow, ipcMain, Notification } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
-import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+// import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import { mkdir, readdirSync, readFile, rm, statSync, writeFile } from "original-fs";
-import { exec } from "child_process";
-import { da } from "element-plus/lib/locale";
-import { el } from "element-plus/es/locale";
-import { stderr, stdout } from "process";
 const isDevelopment = process.env.NODE_ENV !== "production";
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { secure: true, standard: true } }]);
@@ -20,7 +17,6 @@ async function createWindow() {
       contextIsolation: false,
     },
   });
-
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
@@ -32,6 +28,7 @@ async function createWindow() {
   }
   // Menu.setApplicationMenu(null)
 }
+
 // 项目结束
 app.on("window-all-closed", () => {
   // On macOS it is common for applications and their menu bar
@@ -48,27 +45,28 @@ app.on("activate", () => {
 });
 
 app.on("ready", async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      await installExtension(VUEJS3_DEVTOOLS);
-    } catch (e) {
-      console.error("Vue Devtools failed to install:", e.toString());
-    }
-  }
+  // if (isDevelopment && !process.env.IS_TEST) {
+  //   // Install Vue Devtools
+  //   try {
+  //     await installExtension(VUEJS3_DEVTOOLS);
+  //     await installExtension({ id: "ljjemllljcmogpfapbkkighbhhppjdbg", electron: ">=1.2.1" });
+  //   } catch (e) {
+  //     console.error("Vue Devtools failed to install:", e.toString());
+  //   }
+  // }
   //注册事件
   ipcMain.on("read", readHandle);
   ipcMain.on("write", writeHandle);
   ipcMain.on("delete", deleteHandle);
-  ipcMain.on("start_serve", start_serve_handle);
+  ipcMain.on("locator_ctl", locator_ctl_handle);
   createWindow();
   // 启动项目的时候启动服务
   start_mosquitto();
 });
 // 程序退出前工作
 app.on("before-quit", async () => {
-  end("mosquitto");
-  end("aoa_locator");
+  end(["mosquitto"]);
+  end(["aoa_locator"]);
 });
 
 // Exit cleanly on request from parent process in development mode.
@@ -180,39 +178,58 @@ function readFileList(dir, res, list) {
   return res;
 }
 // 启动服务
-function start_serve_handle(event, arg) {
-  switch (arg[0]) {
-    case "locator":
-      const res = start_locator(arg[1]);
-      new Notification({ title: "start locator", body: res }).show();
-  }
+function locator_ctl_handle(event, arg) {
+  const res = locator_ctl(arg[0], arg[1]);
+  new Notification({ title: `locator serve`, body: res }).show();
 }
 // 启动mqtt
 function start_mosquitto() {
   const exec = require("child_process").exec;
   const iconv = require("iconv-lite");
+  var cmd = process.platform == "win32" ? ".\\mosquitto\\mosquitto.exe -c .\\mosquitto\\mosquitto.conf" : "mosquitto -c ./mosquitto/mosquitto.conf";
   // 启动mqtt
-  exec(".\\mosquitto\\mosquitto.exe -c .\\mosquitto\\mosquitto.conf", { encoding: "buffer" }, function (err, std, stderr) {
+  exec(cmd, { encoding: "buffer" }, function (err, std, stderr) {
     if (err) console.log(iconv.decode(stderr, "cp936"));
-    else console.log(iconv.decode(std, "cp936"));
   });
 }
 // 启动locator
-function start_locator(ip) {
-  const es = require("child_process").execSync;
-  var cmd = `.\aoa_locator\exe\aoa_locator.exe -t ${ip}`;
-  return es(cmd).toString();
+function locator_ctl(ip, status) {
+  if (status) {
+    const exec = require("child_process").exec;
+    var cmd = "./aoa_locator/exe/aoa_locator ";
+    if (process.platform == "win32") cmd += ".exe";
+    cmd += `-t ${ip}`;
+    exec(cmd, function (a, b, c) {
+      if (a) console.error(c);
+    });
+  } else {
+    end(["aoa_locator", ip]);
+  }
+  return `${ip}  status:  ${status}`;
 }
 // 结束进程 name
-function end(name) {
+function end(args) {
   const es = require("child_process").execSync;
-  var cmd = process.platform == "win32" ? `tasklist | findstr ${name}` : `ps aux | grep ${name}`;
-  var res = es(cmd).toString().split("\n");
-  for (let index = 0; index < res.length; index++) {
-    const element = res[index];
-    if (element == undefined || element == "") continue;
-    const pid = element.trim().split(/\s+/)[1];
-    var cmd_kill = process.platform == "win32" ? `taskkill /pid ${pid} -f` : `kill ${pid}`;
-    es(cmd_kill);
+  // 当该指令查询不到指定进程时，会返回失败
+  var ctl = "grep";
+  var cmd = "ps -aux | grep -v grep";
+  if (process.platform == "win32") {
+    ctl = "findstr";
+    cmd = "tasklist";
+  }
+  args.forEach((element) => {
+    cmd += `| ${ctl} ${element}`;
+  });
+  try {
+    var res = es(cmd).toString().split("\n");
+    for (let index = 0; index < res.length; index++) {
+      const element = res[index];
+      if (element == undefined || element == "") continue;
+      const pid = element.trim().split(/\s+/)[1];
+      var cmd_kill = process.platform == "win32" ? `taskkill /pid ${pid} -f` : `kill ${pid}`;
+      es(cmd_kill);
+    }
+  } catch (err) {
+    console.error(err);
   }
 }
