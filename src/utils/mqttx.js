@@ -142,9 +142,10 @@ export class mqttx {
         if (!mqttx.stations.has(stationsId)) mqttx.stations.set(stationsId, []);
         if (!mqttx.tags.has(tagId)) mqttx.tags.set(tagId, []);
         // 存储消息
-        mqttx.stations.get(stationsId).push(message.toString());
-        mqttx.tags.get(tagId).push(message.toString());
-        mqttx.msgs.push(message.toString());
+        const i = JSON.parse(message.toString());
+        mqttx.stations.get(stationsId).push(i);
+        mqttx.tags.get(tagId).push(i);
+        mqttx.msgs.push(i);
         // 执行注册的函数
         mqttx.messages(topic, `${stationsId}:${tagId} -> ${message.toString()}`);
         // 存储数据,按照id作为文件夹进行划分
