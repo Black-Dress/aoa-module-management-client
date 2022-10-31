@@ -120,6 +120,7 @@ export class mqttx {
     // 存储消息
     mqttx.stations.get(stationsId).push(message.toString());
     mqttx.tags.get(tagId).push(message.toString());
+    mqttx.msgs.push(message.toString());
     // 执行注册的函数
     mqttx.messages(topic, `${stationsId}:${tagId} -> ${message.toString()}`);
     // 存储数据,按照id作为文件夹进行划分
@@ -130,6 +131,11 @@ export class mqttx {
     if (mqttx.tags.get(tagId).length >= MAXLEN) {
       mqttx.save(mqttx.tags.get(tagId), `${tagId}/${new Date().toLocaleDateString()}.json`);
       mqttx.tags.set(tagId, new Array());
+    }
+    // 判断是否需要发送数据
+    if (mqttx.msgs.length >= mqttx.active_station_num * mqttx.msg_station_size) {
+      // todo 添加上传代码
+      mqttx.msgs = [];
     }
   }
   // 存储数据

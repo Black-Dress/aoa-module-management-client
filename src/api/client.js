@@ -26,3 +26,16 @@ export function upload_client(client, s = function () {}, e = function () {}) {
     })
     .catch(e);
 }
+// 上传
+export function upload_aoa_raw_data(msgs, s, e) {
+  service
+    .post("/client/upload/aoa", msgs)
+    .then((res) => {
+      if (res.code != 200) {
+        ElMessage({ type: "error", message: `upload aoa data failed: ${res.msg}` });
+        return;
+      }
+      s(res);
+    })
+    .catch(e);
+}

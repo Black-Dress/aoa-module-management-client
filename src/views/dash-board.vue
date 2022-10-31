@@ -190,7 +190,9 @@ export default {
       },
     },
   },
+
   methods: {
+    // TODO 统一mqtt代码
     upload_client() {
       upload_client(
         this.client,
