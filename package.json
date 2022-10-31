@@ -14,6 +14,8 @@
   "main": "background.js",
   "dependencies": {
     "@element-plus/icons-vue": "^1.1.4",
+    "@iconify-json/ep": "^1.1.8",
+    "@vitejs/plugin-vue": "^3.2.0",
     "axios": "^0.27.2",
     "buffer": "^6.0.3",
     "core-js": "^3.8.3",
@@ -24,10 +26,12 @@
     "prismjs": "^1.28.0",
     "process": "^0.11.10",
     "sudo-prompt": "^9.2.1",
+    "vite": "^3.2.1",
     "vue": "^3.2.13",
     "vue-axios": "^3.4.1",
     "vue-prism-editor": "^2.0.0-alpha.2",
-    "vue-router": "^4.0.15"
+    "vue-router": "^4.0.15",
+    "webpack": "^5.74.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
