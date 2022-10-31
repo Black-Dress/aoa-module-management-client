@@ -1,61 +1,62 @@
 <template>
-  <el-header>
-    <el-row>
-      <h1 style="text-align: left">AoA station management</h1>
-    </el-row>
-    <el-divider></el-divider>
-  </el-header>
-  <el-main>
-    <el-row class="main_row">
-      <el-col :span="4"><p style="font-weight: 600">CLIENT_ID:</p></el-col>
-      <el-col :span="3" style="text-align: left; max-width: 200px">
-        <p>{{ this.client.clientId }}</p>
-      </el-col>
-      <el-col :span="2" style="text-align: left">
-        <el-button @click="editIdDialogVisible = true" text>
-          <el-icon>
-            <Edit/>
-          </el-icon>
-        </el-button>
-      </el-col>
-    </el-row>
-    <el-row :gutter="5">
-      <el-col :span="3">
-        <el-select v-model="cur_url" placeholder="URL">
-          <el-option v-for="item in this.client.urls" :key="item.name" :label="item.name" :value="item"/>
-        </el-select>
-      </el-col>
-      <el-col :span="14">
-        <el-input v-model="cur_url.value" disabled/>
-      </el-col>
-      <el-col :span="2">
-        <el-button @click="addUrlDialogVisible = true">
-          <el-icon>
-            <plus></plus>
-          </el-icon>
-        </el-button>
-      </el-col>
-      <el-col :span="2">
-        <el-button @click="rm_url">
-          <el-icon>
-            <Minus/>
-          </el-icon>
-        </el-button>
-      </el-col>
-      <el-col :span="2" style="max-width: 32px">
-        <el-button v-if="!this.status" id="start" type="primary" @click="connect(cur_url.value)"> connect</el-button>
-        <el-button v-if="this.status" id="end" type="danger" @click="disconnect()">disconnect</el-button>
-      </el-col>
-    </el-row>
-    <el-divider></el-divider>
-    <el-row class="main_row">
-      <!--suppress JSValidateTypes -->
-      <prism-editor :key="code" class="code" :readonly="true" :model-value="code"
-                    :highlight="highlighter"
-                    line-numbers/>
-    </el-row>
-  </el-main>
-
+  <el-container>
+    <el-header>
+      <el-row>
+        <h1 style="text-align: left">AoA station management</h1>
+      </el-row>
+      <el-divider></el-divider>
+    </el-header>
+    <el-main>
+      <el-row class="main_row">
+        <el-col :span="4"><p style="font-weight: 600">CLIENT_ID:</p></el-col>
+        <el-col :span="3" style="text-align: left; max-width: 200px">
+          <p>{{ this.client.clientId }}</p>
+        </el-col>
+        <el-col :span="2" style="text-align: left">
+          <el-button @click="editIdDialogVisible = true" text>
+            <el-icon>
+              <Edit/>
+            </el-icon>
+          </el-button>
+        </el-col>
+      </el-row>
+      <el-row :gutter="5">
+        <el-col :span="3">
+          <el-select v-model="cur_url" placeholder="URL">
+            <el-option v-for="item in this.client.urls" :key="item.name" :label="item.name" :value="item"/>
+          </el-select>
+        </el-col>
+        <el-col :span="14">
+          <el-input v-model="cur_url.value" disabled/>
+        </el-col>
+        <el-col :span="2">
+          <el-button @click="addUrlDialogVisible = true">
+            <el-icon>
+              <plus></plus>
+            </el-icon>
+          </el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-button @click="rm_url">
+            <el-icon>
+              <Minus/>
+            </el-icon>
+          </el-button>
+        </el-col>
+        <el-col :span="2" style="max-width: 32px">
+          <el-button v-if="!this.status" id="start" type="primary" @click="connect(cur_url.value)"> connect</el-button>
+          <el-button v-if="this.status" id="end" type="danger" @click="disconnect()">disconnect</el-button>
+        </el-col>
+      </el-row>
+      <el-divider></el-divider>
+      <el-row class="main_row">
+        <!--suppress JSValidateTypes -->
+        <prism-editor :key="code" class="code" :readonly="true" :model-value="code"
+                      :highlight="highlighter"
+                      line-numbers/>
+      </el-row>
+    </el-main>
+  </el-container>
   <el-dialog v-model="addUrlDialogVisible" title="add new connection" width="300px" @close="dialog_cancel">
     <el-row>
       <el-col :span="4"><p>name</p></el-col>

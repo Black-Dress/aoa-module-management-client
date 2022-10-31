@@ -5,32 +5,32 @@
         <el-menu default-active="/" id="menu" :router="true">
           <el-menu-item index="/">
             <el-icon>
-              <compass />
+              <compass/>
             </el-icon>
             <span>Dashboard</span>
           </el-menu-item>
           <el-menu-item index="station">
             <el-icon>
-              <document />
+              <document/>
             </el-icon>
             <span>stations</span>
           </el-menu-item>
           <el-menu-item index="tag">
             <el-icon>
-              <position />
+              <position/>
             </el-icon>
             <span>tags</span>
           </el-menu-item>
           <el-menu-item index="data">
             <el-icon>
-              <DataBoard />
+              <DataBoard/>
             </el-icon>
             <span>data</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>
-        <div style="width: 100%"><router-view></router-view></div>
+        <router-view></router-view>
       </el-container>
     </el-container>
   </div>
@@ -68,7 +68,5 @@ export default {
 #menu {
   height: 600px;
 }
-.el-main {
-  height: 600px;
-}
+
 </style>

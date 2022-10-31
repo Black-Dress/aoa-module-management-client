@@ -56,11 +56,17 @@ export class mqttx {
     // 连接
     /**
      * mqtt 连接服务器函数
-     * @param url 连接地质
-     * @param s 连接成功回调
-     * @param f 连接失败回调
+     * @param url{string} 连接地质
+     * @param s{function} 连接成功回调
+     * @param f{function} 连接失败回调
      */
-    static connect(url = "ws://localhost:9001", s, f) {
+    static connect(
+        url = "ws://localhost:9001",
+        s = function () {
+        },
+        f = function () {
+        }
+    ) {
         mqttx.url = url;
         mqttx.client = mqtt.connect(mqttx.url, mqttx.options)
         mqttx.client.on("connect", () => {

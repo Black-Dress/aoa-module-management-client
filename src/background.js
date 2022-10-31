@@ -234,7 +234,6 @@ function locator_ctl(event, args) {
         cmd += `-t ${ip}`;
         exec(cmd, function (a, b, c) {
             if (a) console.error(c);
-            new Notification({title: `locator serve`, body: `${ip}  status:  ${status}`}).show();
         });
     } else {
         end(["aoa_locator", ip]);

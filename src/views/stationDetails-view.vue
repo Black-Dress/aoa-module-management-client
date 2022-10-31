@@ -71,8 +71,8 @@ export default {
   },
   created: function () {
     this.$mqttx.set_message_callback(this.ms);
-    this.station = JSON.parse(this.$route.query.station);
-    this.index = parseInt(this.$route.query.index);
+    this.index = this.$route.query.index
+    this.station = this.$mqttx.station_list[this.index]
     this.code = `station: ${this.station.id} \n`;
   },
   methods: {
