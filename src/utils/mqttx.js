@@ -39,14 +39,30 @@ export class mqttx {
             net: "192.168.1.101",
         },
     ];
-
+    /**
+     * 启动的基站数量
+     * @type {number}
+     */
     static active_station_num = 0;
+    /**
+     * 每个基站应该能够存储的数据数量，达到这个数据量之后上传数据
+     * @type {number}
+     */
     static msg_station_size = 3;
-    // 用于发送middle server的数据
+    /**
+     * 存储采集的数据，上传至服务器
+     * @type {[]}
+     */
     static msgs = [];
-    // 消息输出，按照基站id进行存储
+    /**
+     * 按照基站id进行存储
+     * @type {*}
+     */
     static stations = new Map();
-    // 消息输出，按照tag id 进行存储
+    /**
+     * 按照tag id 进行存储
+     * @type {*}
+     */
     static tags = new Map();
     // 默认回调函数
     static messages = function (topic, message) {
@@ -95,14 +111,14 @@ export class mqttx {
     }
 
     /**
-     * 断开连接
+     * 断开连接,重置所有的aoa_locator
      * @param callback 断开连接成功的回调
      */
     static disconnect(callback) {
-        if (mqttx.client !== null && mqttx.client.connected) {
-            this.client.end(true, {}, callback);
-            ipcRenderer.send("end_server")
-        }
+        mqttx.station_list.forEach(station => station.status = false)
+        if (mqttx.client === null || !mqttx.client.connected) return
+        this.client.end(true, {}, callback);
+        ipcRenderer.send("end_server")
     }
 
     // 订阅

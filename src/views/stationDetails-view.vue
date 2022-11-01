@@ -1,54 +1,60 @@
 <template>
-  <div>
-    <el-container>
-      <el-header>
-        <el-row :gutter="20">
-          <el-col :span="2" style="text-align: left">
-            <el-button @click="this.$router.back()" text style="margin-top: 4px">
-              <el-icon>
-                <ArrowLeft/>
-              </el-icon>
-            </el-button>
-          </el-col>
-          <el-col :span="18" style="text-align: left">
-            <h1>{{ this.station.id }} {{ this.station.position }}</h1>
-          </el-col>
-          <el-col :span="2" style="text-align: right">
-            <el-button @click="save_message_dialog_visible = true" type="primary" style="margin-right: 10px"> save
-            </el-button>
-          </el-col>
-          <el-col :span="2">
-            <el-switch v-model="this.station.status" inline-prompt @change="status_change"
-                       :before-change="before_status_change"/>
-          </el-col>
-        </el-row>
-        <el-divider></el-divider>
-      </el-header>
-      <el-main>
-        <prism-editor class="code" :model-value="code" :highlight="highlighter" line-numbers
-                      :readonly="true"></prism-editor>
-      </el-main>
-    </el-container>
-    <el-dialog v-model="save_message_dialog_visible" title="save message" width="300px">
-      <el-row>
-        <el-col>
-          <el-form>
-            <el-form-item label="name" label-width="20%">
-              <el-input v-model="file_name" :placeholder="`${new Date().toISOString().slice(0, 10)}.json`"></el-input>
-            </el-form-item>
-          </el-form>
+  <el-container>
+    <el-header>
+      <el-row :gutter="20">
+        <el-col :span="2" style="text-align: left">
+          <el-button @click="this.$router.back()" text style="margin-top: 4px">
+            <el-icon>
+              <ArrowLeft/>
+            </el-icon>
+          </el-button>
+        </el-col>
+        <el-col :span="18" style="text-align: left">
+          <h1>{{ this.station.name }}</h1>
+        </el-col>
+        <el-col :span="2" style="text-align: right">
+          <el-button @click="save_message_dialog_visible = true" type="primary" style="margin-right: 10px"> save
+          </el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-switch v-model="this.station.status" inline-prompt @change="status_change"
+                     :before-change="before_status_change"/>
         </el-col>
       </el-row>
-      <el-row :gutter="3">
-        <el-col :span="12">
-          <el-button @click="save_message_dialog_visible = false"> cancel</el-button>
-        </el-col>
-        <el-col :span="12">
-          <el-button type="primary" @click="dialogConfirm()">confirm</el-button>
-        </el-col>
-      </el-row>
-    </el-dialog>
-  </div>
+      <el-divider></el-divider>
+    </el-header>
+    <el-main>
+      <el-container>
+        <el-aside width="360px">
+          <prism-editor class="code" :model-value="code" :highlight="highlighter" line-numbers
+                        :readonly="true"></prism-editor>
+        </el-aside>
+        <el-main style="height: 500px">
+          aaa
+        </el-main>
+      </el-container>
+
+    </el-main>
+  </el-container>
+  <el-dialog v-model="save_message_dialog_visible" title="save message" width="300px">
+    <el-row>
+      <el-col>
+        <el-form>
+          <el-form-item label="name" label-width="20%">
+            <el-input v-model="file_name" :placeholder="`${new Date().toISOString().slice(0, 10)}.json`"></el-input>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
+    <el-row :gutter="3">
+      <el-col :span="12">
+        <el-button @click="save_message_dialog_visible = false"> cancel</el-button>
+      </el-col>
+      <el-col :span="12">
+        <el-button type="primary" @click="dialogConfirm()">confirm</el-button>
+      </el-col>
+    </el-row>
+  </el-dialog>
 </template>
 <script>
 import {PrismEditor} from "vue-prism-editor";
@@ -65,8 +71,9 @@ export default {
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
-      station: {id: "", status: false, position: {x: 0, y: 0, z: 0}},
+      station: {id: "", status: false, position: {x: 0, y: 0, z: 0}, name: ""},
       index: 0,
+      active_num: 0
     };
   },
   created: function () {
@@ -112,4 +119,9 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.code {
+  width: 95%;
+  height: 95%;
+}
+</style>

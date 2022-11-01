@@ -5,7 +5,7 @@ h1 {
 }
 
 .el-main {
-    height: 600px;
+    height: 550px;
 }
 
 .code {
@@ -18,15 +18,6 @@ h1 {
     padding: 5px;
     border-radius: 5px;
     max-height: 500px;
-}
-
-.card-container {
-    height: 450px;
-}
-
-.card {
-    height: 140px;
-    margin-bottom: 5px;
 }
 
 .el-col {
@@ -60,4 +51,8 @@ p {
 
 .el-row {
     margin-bottom: 10px;
+}
+
+.prism-editor__textarea:focus {
+    outline: none;
 }

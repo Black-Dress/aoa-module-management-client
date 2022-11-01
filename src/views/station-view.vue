@@ -21,7 +21,6 @@
           <el-card v-if="index(i,j) < this.total"
                    :body-style="{ padding: '0px' }"
                    class="card" shadow="hover"
-                   @click="to_station_detail(i,j)"
                    :class="this.stations[this.index(i,j)].status?'active':'inactive'"
           >
             <div style="padding: 10px">
@@ -37,15 +36,17 @@
                   </el-button>
                 </el-col>
               </el-row>
-              <el-row>
-                <code>{{ this.stations[this.index(i, j)].net }}</code>
-              </el-row>
-              <el-row>
-                <code>{{ this.stations[this.index(i, j)].id }}</code>
-              </el-row>
-              <el-row>
-                <code>{{ this.stations[this.index(i, j)].status ? "online" : "offline" }}</code>
-              </el-row>
+              <div @click="to_station_detail(i,j)">
+                <el-row>
+                  <code>{{ this.stations[this.index(i, j)].net }}</code>
+                </el-row>
+                <el-row>
+                  <code>{{ this.stations[this.index(i, j)].id }}</code>
+                </el-row>
+                <el-row>
+                  <code>{{ this.stations[this.index(i, j)].status ? "online" : "offline" }}</code>
+                </el-row>
+              </div>
             </div>
           </el-card>
         </el-col>

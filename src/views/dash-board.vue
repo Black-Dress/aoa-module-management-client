@@ -301,7 +301,9 @@ export default {
   },
 };
 </script>
-<style>
-
+<style scoped>
+.code {
+  max-height: 300px;
+}
 
 </style>
