@@ -77,10 +77,13 @@ export default {
     };
   },
   created: function () {
-    this.$mqttx.set_message_callback(this.ms);
     this.index = this.$route.query.index
     this.station = this.$mqttx.station_list[this.index]
     this.code = `station: ${this.station.id} \n`;
+    this.$mqttx.connect(store.cur_url.value, () => {
+      this.$mqttx.set_message_callback(this.ms)
+      this.$mqttx.subscribeStation(this.station.id)
+    })
   },
   methods: {
     /**

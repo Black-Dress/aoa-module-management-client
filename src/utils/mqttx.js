@@ -229,7 +229,11 @@ export class mqttx {
         this.unsubscribe(topic, callback);
     }
 
-    // 基站状态改变函数
+    /**
+     * 改变基站状态，启动基站服务
+     * @param index{number} 基站序列号
+     * @param status{boolean} 状态
+     */
     static station_status_ctl(index, status) {
         if (status && !mqttx.station_list[index].status) mqttx.active_station_num += 1;
         else mqttx.active_station_num -= 1;
