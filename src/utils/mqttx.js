@@ -237,6 +237,8 @@ export class mqttx {
     static station_status_ctl(index, status) {
         if (status && !mqttx.station_list[index].status) mqttx.active_station_num += 1;
         else mqttx.active_station_num -= 1;
+        mqttx.active_station_num = mqttx.active_station_num < 0 ? 0 : mqttx.active_station_num
+        console.log(mqttx.active_station_num)
         mqttx.station_list[index].status = status;
         ipcRenderer.send("locator_ctl", [mqttx.station_list[index].net, status]);
     }

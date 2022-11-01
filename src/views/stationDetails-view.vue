@@ -30,20 +30,19 @@
                         :readonly="true"></prism-editor>
         </el-aside>
         <el-main style="height: 500px">
-          <el-tabs class="demo-tabs">
-            <el-tab-pane label="azimuth">
-              <div id="azimuth"></div>
+          <el-tabs @tab-click="tab_click">
+            <el-tab-pane :label="chart_ids.azimuth">
             </el-tab-pane>
-            <el-tab-pane label="elevation">
-              <div id="elevation"></div>
+            <el-tab-pane :label="chart_ids.elevation">
             </el-tab-pane>
-            <el-tab-pane label="rssi">
-              <div id="rssi"></div>
+            <el-tab-pane :label="chart_ids.rssi">
             </el-tab-pane>
-            <el-tab-pane label="distance">
-              <div id="distance"></div>
+            <el-tab-pane :label="chart_ids.distance">
             </el-tab-pane>
           </el-tabs>
+          <div style="width: 400px;height: 400px" id="chart">
+            <aoa_chart :x="x" :xAxis="xAxis" :option="option"></aoa_chart>
+          </div>
         </el-main>
       </el-container>
 
@@ -74,10 +73,11 @@ import {PrismEditor} from "vue-prism-editor";
 import {highlight, languages} from "prismjs/components/prism-core";
 import {store} from "@/utils/store";
 import {ElMessage} from "element-plus";
-import * as echarts from 'echarts';
+import aoa_chart from "@/component/chart";
 
 export default {
   components: {
+    aoa_chart,
     PrismEditor,
   },
   data: function () {
@@ -87,11 +87,20 @@ export default {
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
       station: {id: "", status: false, position: {x: 0, y: 0, z: 0}, name: ""},
       index: 0,
-      active_num: 0,
       /**
-       * 图表对象数组，azimuth,elevation,rssi,distance
+       * 当前显示的标签页名称
        */
-      charts: new Map(),
+      active_label: "azimuth",
+      /**
+       * 图表对象配置
+       */
+      option: {
+        xAxis: {data: []},
+        yAxis: {type: 'value'},
+        series: [{data: [], type: 'line', smooth: true, areaStyle: {}}]
+      },
+      xAxis: [],
+      x: [],
       /**
        * 图表元素id
        */
@@ -100,8 +109,11 @@ export default {
         elevation: "elevation",
         rssi: "rssi",
         distance: "distance",
-        names: ["azimuth", "elevation", "rssi", "distance"],
+        sequence: "sequence",
+        names: ["azimuth", "elevation", "rssi", "distance", "sequence"],
       },
+      entities: new Map(),
+      entities_size: 1000,
     };
   },
   created: function () {
@@ -112,11 +124,22 @@ export default {
       this.$mqttx.set_message_callback(this.ms)
       this.$mqttx.subscribeStation(this.station.id)
     })
-  },
-  mounted: function () {
-    this.init_chart()
+    this.chart_ids.names.forEach(name => {
+      this.entities.set(name, [])
+    })
   },
   methods: {
+    /**
+     * 处理tab 标签点击时间
+     * @param tab 标签页
+     */
+    tab_click(tab) {
+      this.active_label = tab.props.label;
+      // this.option.series[0].data = this.entities.get(this.active_label)
+      // this.x = this.entities.get(this.active_label)
+      this.option.series[0].data = []
+      this.option.xAxis.data = []
+    },
     /**
      * 高亮代码函数
      * @param code 代码
@@ -133,14 +156,24 @@ export default {
     ms(topic, ms) {
       this.code += ms.toString() + "\n";
       const entity = JSON.parse(ms.split(" ").pop())
-      this.chart_ids.names.forEach(name => {
-        let option = this.charts.get(name).getOption();
-        option.xAxis.data.push(parseInt(entity.get("sequence")))
-        option.option.series[0].data.push(parseInt(entity.get(name)))
-        if (option.xAxis.data.length > 10) option.xAxis.data.shift()
-        if (option.series[0].data.length > 10) option.series[0].data.shift()
-      })
+      // this.chart_ids.names.forEach(name => {
+      //   this.entities.get(name).push(entity[name])
+      //   // while (this.entities.get(name).length > this.entities_size) this.entities.get(name).shift()
+      //
+      // })
+      // this.x.push(entity[this.active_label])
+      // while (this.x.length > this.entities_size) this.x.shift()
+      // this.xAxis.push(entity[this.chart_ids.sequence])
+      // this.x = this.entities.get(this.active_label)
+      // this.xAxis = this.entities.get(this.chart_ids.sequence)
+      // this.option.xAxis = this.entities.get(this.chart_ids.sequence)
+      // this.option.series[0].data = this.entities.get(this.active_label)
+      this.option.series[0].data.push(entity[this.active_label])
+      // while (this.option.series[0].data.length>this.entities_size) this.option.series[0].data.shift()
+      this.option.xAxis.data.push(entity[this.chart_ids.sequence])
+      // while ()
     },
+
     save(name = `${new Date().toISOString().slice(0, 10)}.json`) {
       let data = this.$mqttx.stations.get(this.station.id);
       if (data === undefined || data.length === 0) return;
@@ -158,28 +191,6 @@ export default {
     status_change(val) {
       this.$mqttx.station_status_ctl(this.index, val);
     },
-    /**
-     * 初始化 charts
-     */
-    init_chart() {
-      this.chart_ids.names.forEach(name => {
-        const chart = echarts.init(document.getElementById(name))
-        chart.setOption({
-          xAxis: {
-            data: []
-          },
-          yAxis: {type: 'value'},
-          series: [
-            {
-              data: [],
-              type: 'line',
-              smooth: true
-            }
-          ]
-        })
-        this.charts.set(name, echarts.init(document.getElementById(name)))
-      })
-    },
   },
 };
 </script>
@@ -187,20 +198,5 @@ export default {
 .code {
   width: 95%;
   height: 95%;
-}
-
-.el-tabs {
-  height: 100%;
-  width: 100%;
-}
-
-.el-tab-pane {
-  width: 100%;
-  height: 400px;
-}
-
-.el-tab-pane div {
-  height: 100%;
-  width: 100%;
 }
 </style>
