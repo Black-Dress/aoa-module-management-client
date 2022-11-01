@@ -45,17 +45,13 @@
           </div>
         </el-main>
       </el-container>
-
     </el-main>
   </el-container>
   <el-dialog v-model="save_message_dialog_visible" title="save message" width="300px">
     <el-row>
-      <el-col>
-        <el-form>
-          <el-form-item label="name" label-width="20%">
-            <el-input v-model="file_name" :placeholder="`${new Date().toISOString().slice(0, 10)}.json`"></el-input>
-          </el-form-item>
-        </el-form>
+      <el-col :span="4"><p>name</p></el-col>
+      <el-col :span="20">
+        <el-input v-model="file_name" :placeholder="`${new Date().toISOString().slice(0, 10)}.json`"></el-input>
       </el-col>
     </el-row>
     <el-row :gutter="3">
