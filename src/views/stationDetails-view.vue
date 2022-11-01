@@ -30,7 +30,20 @@
                         :readonly="true"></prism-editor>
         </el-aside>
         <el-main style="height: 500px">
-          aaa
+          <el-tabs class="demo-tabs">
+            <el-tab-pane label="azimuth">
+              <div id="azimuth"></div>
+            </el-tab-pane>
+            <el-tab-pane label="elevation">
+              <div id="elevation"></div>
+            </el-tab-pane>
+            <el-tab-pane label="rssi">
+              <div id="rssi"></div>
+            </el-tab-pane>
+            <el-tab-pane label="distance">
+              <div id="distance"></div>
+            </el-tab-pane>
+          </el-tabs>
         </el-main>
       </el-container>
 
@@ -61,6 +74,7 @@ import {PrismEditor} from "vue-prism-editor";
 import {highlight, languages} from "prismjs/components/prism-core";
 import {store} from "@/utils/store";
 import {ElMessage} from "element-plus";
+import * as echarts from 'echarts';
 
 export default {
   components: {
@@ -73,7 +87,21 @@ export default {
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
       station: {id: "", status: false, position: {x: 0, y: 0, z: 0}, name: ""},
       index: 0,
-      active_num: 0
+      active_num: 0,
+      /**
+       * 图表对象数组，azimuth,elevation,rssi,distance
+       */
+      charts: new Map(),
+      /**
+       * 图表元素id
+       */
+      chart_ids: {
+        azimuth: "azimuth",
+        elevation: "elevation",
+        rssi: "rssi",
+        distance: "distance",
+        names: ["azimuth", "elevation", "rssi", "distance"],
+      },
     };
   },
   created: function () {
@@ -84,6 +112,9 @@ export default {
       this.$mqttx.set_message_callback(this.ms)
       this.$mqttx.subscribeStation(this.station.id)
     })
+  },
+  mounted: function () {
+    this.init_chart()
   },
   methods: {
     /**
@@ -96,11 +127,19 @@ export default {
     },
     /**
      * 更新输入框的内容
-     * @param topic 主题
-     * @param ms 消息
+     * @param topic{string} 主题
+     * @param ms{string} 消息
      */
     ms(topic, ms) {
       this.code += ms.toString() + "\n";
+      const entity = JSON.parse(ms.split(" ").pop())
+      this.chart_ids.names.forEach(name => {
+        let option = this.charts.get(name).getOption();
+        option.xAxis.data.push(parseInt(entity.get("sequence")))
+        option.option.series[0].data.push(parseInt(entity.get(name)))
+        if (option.xAxis.data.length > 10) option.xAxis.data.shift()
+        if (option.series[0].data.length > 10) option.series[0].data.shift()
+      })
     },
     save(name = `${new Date().toISOString().slice(0, 10)}.json`) {
       let data = this.$mqttx.stations.get(this.station.id);
@@ -119,6 +158,28 @@ export default {
     status_change(val) {
       this.$mqttx.station_status_ctl(this.index, val);
     },
+    /**
+     * 初始化 charts
+     */
+    init_chart() {
+      this.chart_ids.names.forEach(name => {
+        const chart = echarts.init(document.getElementById(name))
+        chart.setOption({
+          xAxis: {
+            data: []
+          },
+          yAxis: {type: 'value'},
+          series: [
+            {
+              data: [],
+              type: 'line',
+              smooth: true
+            }
+          ]
+        })
+        this.charts.set(name, echarts.init(document.getElementById(name)))
+      })
+    },
   },
 };
 </script>
@@ -126,5 +187,20 @@ export default {
 .code {
   width: 95%;
   height: 95%;
+}
+
+.el-tabs {
+  height: 100%;
+  width: 100%;
+}
+
+.el-tab-pane {
+  width: 100%;
+  height: 400px;
+}
+
+.el-tab-pane div {
+  height: 100%;
+  width: 100%;
 }
 </style>
