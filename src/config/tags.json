@@ -1,11 +1,4 @@
-<<<<<<< HEAD
 [
-  {
-    "name": "one",
-    "id": "ble-pd-60A423C98C2C",
-    "status": false
-  }
+  { "name": "one", "id": "ble-pd-60A423C98C2C", "status": false },
+  { "name": "asdasd", "id": "asdasd", "status": "" }
 ]
-=======
-[{"name":"one","id":"ble-pd-60A423C98C2C","status":false},{"name":"asdasd","id":"asdasd","status":""}]
->>>>>>> f32b878bbcb6fe21bd5d2eb5089bb77ed9cb4356
