@@ -2,7 +2,7 @@ import * as mqtt from "mqtt";
 import {upload_aoa_raw_data} from "@/api/client";
 
 const ipcRenderer = window.require("electron").ipcRenderer;
-const MAX_LEN = 1000000;
+const MAX_LEN = 100000;
 
 export class mqttx {
     static options = {
@@ -207,7 +207,6 @@ export class mqttx {
         if (status && !mqttx.station_list[index].status) mqttx.active_station_num += 1;
         else mqttx.active_station_num -= 1;
         mqttx.active_station_num = mqttx.active_station_num < 0 ? 0 : mqttx.active_station_num
-        console.log(mqttx.active_station_num)
         mqttx.station_list[index].status = status;
         ipcRenderer.send("locator_ctl", [mqttx.station_list[index].net, status]);
     }
