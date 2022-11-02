@@ -16,18 +16,16 @@
       </el-row>
       <el-divider></el-divider>
     </el-header>
-    <el-main style="margin-top: 10px">
-      <el-row :gutter="10" v-for="(row, i) in this.tags[this.current_page]" :key="i">
-        <el-col v-for="(col, j) in row" :key="j" :span="6">
-          <el-card :body-style="{ padding: '0px' }" class="card" shadow="hover">
+    <el-main :key="tags.length">
+      <el-row :gutter="10" v-for="(a,i) in row_size" :key="i">
+        <el-col v-for="(b,j) in col_size" :key="j" :span="6">
+          <el-card :body-style="{ padding: '0px' }" class="card" shadow="hover" v-if="index(i,j)<tags.length">
             <div style="padding: 10px">
               <el-row justify="space-between" class="row">
-                <el-col :span="10" style="text-align: left">
-                  <el-button text @click="detail(col.id)" style="padding: 0 0 0 0">
-                    <h1>{{ col.name }}</h1>
-                  </el-button>
+                <el-col :span="12" style="text-align: left">
+                  <h1>{{ tags[index(i, j)].name }}</h1>
                 </el-col>
-                <el-col :span="3">
+                <el-col :span="12" style="text-align: right">
                   <el-button text @click="remove(i, j)">
                     <el-icon>
                       <Close/>
@@ -36,10 +34,10 @@
                 </el-col>
               </el-row>
               <el-row class="row">
-                <code> Tag Status: {{ col.status ? "online" : "offline" }} </code>
+                <code>{{ tags[index(i, j)].id }}</code>
               </el-row>
               <el-row class="row">
-                <code>Tag id: {{ col.id }}</code>
+                <code> {{ tags[index(i, j)].status ? "online" : "offline" }} </code>
               </el-row>
             </div>
           </el-card>
@@ -48,57 +46,105 @@
     </el-main>
     <el-footer>
       <el-row justify="center" style="margin-top: 10px">
-        <el-pagination layout="prev, pager, next" background :total="total" :page-size="page_size" :pager-count="7"
+        <el-pagination layout="prev, pager, next" background :total="tags.length" :page-size="page_size"
+                       :pager-count="7"
                        v-model:current-page="current_page"/>
       </el-row>
     </el-footer>
   </el-container>
+  <el-dialog v-model="addStationDialogVisible" title="add new tag">
+    <el-row>
+      <el-col :span="4"><p>id</p></el-col>
+      <el-col :span="20">
+        <el-input v-model="new_tag.id"></el-input>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="4"><p>name</p></el-col>
+      <el-col :span="20">
+        <el-input v-model="new_tag.name"></el-input>
+      </el-col>
+    </el-row>
+    <el-row :gutter="3">
+      <el-col :span="12">
+        <el-button @click="cancel">cancel</el-button>
+      </el-col>
+      <el-col :span="12">
+        <el-button type="primary" @click="confirm">confirm</el-button>
+      </el-col>
+    </el-row>
+  </el-dialog>
 </template>
 <script>
+import {ElMessage} from "element-plus";
+
 const ipcRenderer = window.require("electron").ipcRenderer;
 
 export default {
   data: function () {
     return {
-      tags: {
-        1: [[{name: "aa", id: "id-aa", status: false}, {}], [], []],
-      },
-      tag_list: [],
-      total: this.$mqttx.tag_list.length,
+      tags: [],
       current_page: 1,
       col_size: 4,
       row_size: 3,
+      addStationDialogVisible: false,
+      new_tag: {
+        name: "",
+        id: "",
+        status: ""
+      }
     };
   },
   computed: {
     page_size() {
       return this.col_size * this.row_size;
     },
+
   },
   created: function () {
-    this.tags = this.toTags(this.$mqttx.tag_list);
+    this.tags = this.$mqttx.tag_list
   },
   methods: {
+    cancel() {
+      this.new_tag = {
+        name: "",
+        id: "",
+        status: ""
+      }
+      this.addStationDialogVisible = false
+    },
+    confirm() {
+      if (this.new_tag.id === "" || this.new_tag.name === "") {
+        ElMessage({type: "error", message: "id or name could not be empty"})
+      }
+      if (this.tags.findIndex(tag => tag.id === this.new_tag.id) !== -1) {
+        ElMessage({type: "error", message: "tag id could not be repeated"})
+        return
+      }
+      this.tags.push(this.new_tag)
+      ipcRenderer.send("write", ["tags", JSON.stringify(this.tags)])
+      this.new_tag = {
+        name: "",
+        id: "",
+        status: ""
+      }
+      this.addStationDialogVisible = false
+    },
+    /**
+     * 通过 i j 计算出编号
+     * @param i row
+     * @param j col
+     * @returns {number} 在 tag list中的编号
+     */
+    index(i, j) {
+      return (this.current_page - 1) * this.page_size + i * this.col_size + j
+    },
     remove(i, j) {
-      this.tags[this.current_page][i].splice(j, 1);
-      this.$mqttx.tag_list.splice((this.current_page - 1) * this.page_size + i * this.col_size + j, 1);
-      ipcRenderer.send("write", ["tags", JSON.stringify(this.$mqttx.tag_list)]);
-      this.total -= 1;
+      this.tags.splice(this.index(i, j), 1);
+      ipcRenderer.send("write", ["tags", JSON.stringify(this.tags)]);
     },
     detail(id) {
       this.$router.push({name: "tag-details", query: {id: id}});
-    },
-    toTags(args) {
-      let res = {};
-      for (let i = 0; i * this.page_size < args.length; i += 1) {
-        res[i + 1] = [[], [], []];
-        let index = 0;
-        for (let j = 0; j < this.page_size && j + i * this.page_size < args.length; j += 1) {
-          if (j % 4 === 0 && j !== 0) index += 1;
-          res[i + 1][index].push(args[j + i * this.page_size]);
-        }
-      }
-      return res;
     },
   },
 };

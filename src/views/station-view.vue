@@ -16,8 +16,8 @@
       <el-divider></el-divider>
     </el-header>
     <el-main :key="stations.length">
-      <el-row class="row" :gutter="10" v-for="i in this.row_size" :key="i">
-        <el-col class="col" v-for="j in this.col_size" :key="j" :span="24/this.col_size">
+      <el-row class="row" :gutter="10" v-for="(a,i) in this.row_size" :key="i">
+        <el-col class="col" v-for="(b,j) in this.col_size" :key="j" :span="24/this.col_size">
           <el-card v-if="index(i,j) < stations.length"
                    :body-style="{ padding: '0px' }"
                    class="card" shadow="hover"
