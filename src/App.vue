@@ -1,37 +1,37 @@
 <template>
-  <div class="common-layout">
+  <div>
     <el-container>
       <el-aside width="200px">
         <el-menu default-active="/" id="menu" :router="true">
           <el-menu-item index="/">
             <el-icon>
-              <compass />
+              <compass/>
             </el-icon>
             <span>Dashboard</span>
           </el-menu-item>
           <el-menu-item index="station">
             <el-icon>
-              <document />
+              <document/>
             </el-icon>
             <span>stations</span>
           </el-menu-item>
           <el-menu-item index="tag">
             <el-icon>
-              <position />
+              <position/>
             </el-icon>
             <span>tags</span>
           </el-menu-item>
           <el-menu-item index="data">
             <el-icon>
-              <DataBoard />
+              <DataBoard/>
             </el-icon>
             <span>data</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main>
+      <el-container>
         <router-view></router-view>
-      </el-main>
+      </el-container>
     </el-container>
   </div>
 </template>
@@ -68,4 +68,5 @@ export default {
 #menu {
   height: 600px;
 }
+
 </style>

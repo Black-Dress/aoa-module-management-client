@@ -1,38 +1,58 @@
 h1 {
-  font-size: 20px;
-  line-height: 2;
-  margin: 0;
+    font-size: 20px;
+    line-height: 2;
+    margin: 0;
 }
-code {
-  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  padding: 5px;
-  border-radius: 5px;
-  max-height: 500px;
-  padding: 0 0 0 0;
-  margin-top: 3px;
+
+.el-main {
+    height: 550px;
 }
 
 .code {
-  background: #2d2d2d;
-  color: #ccc;
-  /* you must provide font-family font-size line-height. Example: */
-  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  padding: 5px;
-  border-radius: 5px;
-  max-height: 500px;
-}
-p {
-  margin: 0 0 0 0;
-}
-.card-container {
-  height: 450px;
+    background: #2d2d2d;
+    color: #ccc;
+    /* you must provide font-family font-size line-height. Example: */
+    font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 5px;
+    border-radius: 5px;
+    max-height: 500px;
 }
 
-.card {
-  height: 140px;
-  margin-bottom: 5px;
+.el-col {
+    display: block;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    float: left;
+    height: 36px;
+}
+
+p {
+    height: 18px;
+    padding: 0 0 0 0;
+}
+
+.el-col p {
+    margin-top: 9px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.el-col .el-button {
+    height: 32px;
+    margin-top: 2px;
+}
+
+.el-col .el-input {
+    height: 32px;
+    margin-top: 3px;
+}
+
+.el-row {
+    margin-bottom: 10px;
+}
+
+.prism-editor__textarea:focus {
+    outline: none;
 }
