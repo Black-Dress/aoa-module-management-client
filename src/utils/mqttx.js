@@ -64,12 +64,16 @@ export class mqttx {
      * @type {*}
      */
     static tags = new Map();
+    /**
+     * 激活的 tag id,能够发送数据的 tag id
+     * @type {*}
+     */
+    static active_tag = mqttx.tag_list[0].id
     // 默认回调函数
     static messages = function (topic, message) {
         console.log(topic, message);
     };
 
-    // 连接
     /**
      * mqtt 连接服务器函数
      * @param url{string} 连接地质
@@ -135,11 +139,6 @@ export class mqttx {
         });
     }
 
-    // 重新连接
-    static reconnect() {
-        this.client.reconnect(this.options);
-    }
-
     // 重新设置clientID
     static setId(id = "default-id") {
         this.options.clientId = id;
@@ -153,9 +152,6 @@ export class mqttx {
 
     // 消息到达时执行函数
     static message(topic, message) {
-        // if (this.stations[topic] == undefined) {
-        //   this.stations[topic] = [];
-        // }
         // 获取topic中包含的stationId 和 tagId
         const s = topic.split("/");
         const stationsId = s[s.length - 2];
@@ -167,7 +163,8 @@ export class mqttx {
         const i = JSON.parse(message.toString());
         mqttx.stations.get(stationsId).push(i);
         mqttx.tags.get(tagId).push(i);
-        mqttx.msgs.push(i);
+        // 只能够存储激活的tag数据
+        if (tagId === mqttx.active_tag) mqttx.msgs.push(i);
         // 执行注册的函数
         mqttx.messages(topic, `${stationsId}:${tagId} -> ${message.toString()}`);
         // 存储数据,按照id作为文件夹进行划分
@@ -196,37 +193,9 @@ export class mqttx {
         return "silabs/aoa/angle";
     }
 
-    // 订阅tag
-    static subscribeTag(tagId, callback = () => {
-    }) {
-        let topic = `${this.defaultTopic()}/+/${tagId}`;
-        this.subscribe(topic, callback);
-    }
-
-    // 取消订阅tag
-    static unsubscribeTag(tagId, callback = () => {
-    }) {
-        let topic = `${this.defaultTopic()}/+/${tagId}`;
-        this.unsubscribe(topic, callback);
-    }
-
     // 默认订阅
     static defaultSubscribe(callback) {
         this.subscribe(`${this.defaultTopic()}/#`, callback);
-    }
-
-    // 订阅基站
-    static subscribeStation(stationId, callback = () => {
-    }) {
-        let topic = `${this.defaultTopic()}/${stationId}/+`;
-        this.subscribe(topic, callback);
-    }
-
-    // 取消订阅基站
-    static unSubscribeStation(stationId, callback = () => {
-    }) {
-        let topic = `${this.defaultTopic()}/${stationId}/+`;
-        this.unsubscribe(topic, callback);
     }
 
     /**

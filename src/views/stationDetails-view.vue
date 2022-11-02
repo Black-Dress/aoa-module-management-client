@@ -116,10 +116,7 @@ export default {
     this.index = this.$route.query.index
     this.station = this.$mqttx.station_list[this.index]
     this.code = `station: ${this.station.id} \n`;
-    this.$mqttx.connect(store.cur_url.value, () => {
-      this.$mqttx.set_message_callback(this.ms)
-      this.$mqttx.subscribeStation(this.station.id)
-    })
+    this.$mqttx.set_message_callback(this.ms)
     this.chart_ids.names.forEach(name => {
       this.entities.set(name, [])
     })
@@ -131,8 +128,6 @@ export default {
      */
     tab_click(tab) {
       this.active_label = tab.props.label;
-      // this.option.series[0].data = this.entities.get(this.active_label)
-      // this.x = this.entities.get(this.active_label)
       this.option.series[0].data = []
       this.option.xAxis.data = []
     },
@@ -150,24 +145,11 @@ export default {
      * @param ms{string} 消息
      */
     ms(topic, ms) {
+      if (!topic.includes(this.station.id)) return
       this.code += ms.toString() + "\n";
       const entity = JSON.parse(ms.split(" ").pop())
-      // this.chart_ids.names.forEach(name => {
-      //   this.entities.get(name).push(entity[name])
-      //   // while (this.entities.get(name).length > this.entities_size) this.entities.get(name).shift()
-      //
-      // })
-      // this.x.push(entity[this.active_label])
-      // while (this.x.length > this.entities_size) this.x.shift()
-      // this.xAxis.push(entity[this.chart_ids.sequence])
-      // this.x = this.entities.get(this.active_label)
-      // this.xAxis = this.entities.get(this.chart_ids.sequence)
-      // this.option.xAxis = this.entities.get(this.chart_ids.sequence)
-      // this.option.series[0].data = this.entities.get(this.active_label)
       this.option.series[0].data.push(entity[this.active_label])
-      // while (this.option.series[0].data.length>this.entities_size) this.option.series[0].data.shift()
       this.option.xAxis.data.push(entity[this.chart_ids.sequence])
-      // while ()
     },
 
     save(name = `${new Date().toISOString().slice(0, 10)}.json`) {
@@ -179,11 +161,18 @@ export default {
       this.save(this.file_name);
       this.save_message_dialog_visible = false;
     },
+    /**
+     * 状态更新前的判断
+     * @returns {UnwrapRef<boolean>}
+     */
     before_status_change() {
       if (!store.main_connect_status) ElMessage({type: "error", message: "please connect mqtt in dashboard"});
       return store.main_connect_status;
     },
-    // 状态转换，是否开启AoA线程
+    /**
+     * aoa_locator 程序控制
+     * @param val 状态
+     */
     status_change(val) {
       this.$mqttx.station_status_ctl(this.index, val);
     },

@@ -17,8 +17,8 @@
       <el-divider></el-divider>
     </el-header>
     <el-main :key="tags.length">
-      <el-row :gutter="10" v-for="(a,i) in row_size" :key="i">
-        <el-col v-for="(b,j) in col_size" :key="j" :span="6">
+      <el-row class="row" :gutter="10" v-for="(a,i) in row_size" :key="i">
+        <el-col class="col" v-for="(b,j) in col_size" :key="j" :span="24/this.col_size">
           <el-card :body-style="{ padding: '0px' }" class="card" shadow="hover" v-if="index(i,j)<tags.length">
             <div style="padding: 10px">
               <el-row justify="space-between" class="row">
@@ -33,12 +33,14 @@
                   </el-button>
                 </el-col>
               </el-row>
-              <el-row class="row">
-                <code>{{ tags[index(i, j)].id }}</code>
-              </el-row>
-              <el-row class="row">
-                <code> {{ tags[index(i, j)].status ? "online" : "offline" }} </code>
-              </el-row>
+              <div @click="detail(i,j)">
+                <el-row class="row">
+                  <code>{{ tags[index(i, j)].id }}</code>
+                </el-row>
+                <el-row class="row">
+                  <code> {{ tags[index(i, j)].status ? "online" : "offline" }} </code>
+                </el-row>
+              </div>
             </div>
           </el-card>
         </el-col>
@@ -139,18 +141,34 @@ export default {
     index(i, j) {
       return (this.current_page - 1) * this.page_size + i * this.col_size + j
     },
+    /**
+     * 删除 指定位置的tag
+     * @param i row
+     * @param j col
+     */
     remove(i, j) {
       this.tags.splice(this.index(i, j), 1);
       ipcRenderer.send("write", ["tags", JSON.stringify(this.tags)]);
     },
-    detail(id) {
-      this.$router.push({name: "tag-details", query: {id: id}});
+    /**
+     * 跳转至 指定页面
+     * @param i row
+     * @param j col
+     */
+    detail(i, j) {
+      this.$router.push({name: "tag-details", query: {index: this.index(i, j)}});
     },
   },
 };
 </script>
 <style scoped>
 .row {
-  margin-top: 5px;
+  height: auto;
 }
+
+.col {
+  height: 140px;
+  margin: 0 0 0 0;
+}
+
 </style>
