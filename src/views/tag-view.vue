@@ -19,7 +19,8 @@
     <el-main :key="tags.length">
       <el-row class="row" :gutter="10" v-for="(a,i) in row_size" :key="i">
         <el-col class="col" v-for="(b,j) in col_size" :key="j" :span="24/this.col_size">
-          <el-card :body-style="{ padding: '0px' }" class="card" shadow="hover" v-if="index(i,j)<tags.length">
+          <el-card :body-style="{ padding: '0px' }" class="card" shadow="hover"
+                   :class="this.tags[this.index(i,j)].status?'active':'inactive'" v-if="index(i,j)<tags.length">
             <div style="padding: 10px">
               <el-row justify="space-between" class="row">
                 <el-col :span="12" style="text-align: left">
@@ -170,5 +171,14 @@ export default {
   height: 140px;
   margin: 0 0 0 0;
 }
+
+.active {
+  background: #ccffff;
+}
+
+.inactive {
+  background: #FFFAFA;
+}
+
 
 </style>
