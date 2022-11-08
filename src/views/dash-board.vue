@@ -226,11 +226,11 @@ export default {
      */
     check_client_id(name) {
       validateId(name, (res) => {
-        if (res.code !== 200) {
+        if (res.data['code'] !== 200) {
           ElMessage({type: "error", message: res.msg});
           return;
         }
-        this.clientId = res.data;
+        this.client.clientId = res.data['data'];
         this.name_check_status = true;
       });
     },

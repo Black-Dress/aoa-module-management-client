@@ -9,19 +9,19 @@
             </el-icon>
             <span>Dashboard</span>
           </el-menu-item>
-          <el-menu-item index="station">
+          <el-menu-item index="/station">
             <el-icon>
               <document/>
             </el-icon>
             <span>stations</span>
           </el-menu-item>
-          <el-menu-item index="tag">
+          <el-menu-item index="/tag">
             <el-icon>
               <position/>
             </el-icon>
             <span>tags</span>
           </el-menu-item>
-          <el-menu-item index="data">
+          <el-menu-item index="/data">
             <el-icon>
               <DataBoard/>
             </el-icon>

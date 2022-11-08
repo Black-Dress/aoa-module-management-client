@@ -1,1 +1,1 @@
-{"clientId":"asdasd","urls":[{"name":"default","value":"ws://localhost:9001"},{"name":"emq","value":"mqtt://emq.mqtt.io:1883"},{"name":"aaa","value":"aaa"},{"name":"bbb","value":"asdasd"}],"name":"aaa","project":"aaaa","position":"aaaa","contact":"aaa","remark":"aaa"}
+{"clientId":"a_#{50}","urls":[{"name":"default","value":"ws://localhost:9001"},{"name":"emq","value":"mqtt://emq.mqtt.io:1883"},{"name":"aaa","value":"aaa"},{"name":"bbb","value":"asdasd"}],"name":"aaa","project":"aaaa","position":"aaaa","contact":"aaa","remark":"aaa"}
