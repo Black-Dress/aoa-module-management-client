@@ -147,7 +147,8 @@ export default {
         this.code = "";
         for (let index = 0; index < arg.length; index++) {
           const element = arg[index];
-          this.code += element + "\n";
+          // console.log(element)
+          this.code += JSON.stringify(element) + "\n";
         }
       });
       ipcRenderer.send("read", ["data_detail", this.files[index].path]);

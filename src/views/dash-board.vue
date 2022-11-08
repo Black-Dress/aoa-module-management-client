@@ -2,7 +2,7 @@
   <el-container>
     <el-header>
       <el-row>
-        <h1 style="text-align: left">AoA station management</h1>
+        <h1 style="text-align: left">BUPT AoA station management</h1>
       </el-row>
       <el-divider></el-divider>
     </el-header>

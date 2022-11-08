@@ -50,28 +50,7 @@ export default {
     });
     ipcRenderer.send("read", ["stations"]);
     ipcRenderer.send("read", ["tags"]);
-    // let stations = [];
-    // let tags = [];
-    // for (let index = 0; index < 100; index++) {
-    //   stations.push({
-    //     id: index.toString(),
-    //     name: "别称" + index.toString(),
-    //     positon: {
-    //       x: 1,
-    //       y: 1,
-    //       z: 1,
-    //     },
-    //     status: true,
-    //     net: "192.168.1.101",
-    //   });
-    //   tags.push({
-    //     name: "aa" + index.toString(),
-    //     id: index.toString(),
-    //     status: true,
-    //   });
-    // }
-    // ipcRenderer.send("write", ["stations", JSON.stringify(stations)]);
-    // ipcRenderer.send("write", ["tags", JSON.stringify(tags)]);
+    this.$router.push("/")
   },
   methods: {},
 };

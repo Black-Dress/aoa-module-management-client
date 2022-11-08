@@ -49,15 +49,6 @@ app.on("activate", () => {
 });
 
 app.on("ready", async () => {
-    // if (isDevelopment && !process.env.IS_TEST) {
-    //   // Install Vue Devtools
-    //   try {
-    //     await installExtension(VUEJS3_DEVTOOLS);
-    //     await installExtension({ id: "ljjemllljcmogpfapbkkighbhhppjdbg", electron: ">=1.2.1" });
-    //   } catch (e) {
-    //     console.error("Vue Devtools failed to install:", e.toString());
-    //   }
-    // }
     //注册事件
     ipcMain.on("read", readHandle);
     ipcMain.on("write", writeHandle);
@@ -226,7 +217,7 @@ function start_mosquitto() {
  */
 function locator_ctl(event, args) {
     const ip = args[0], status = args[1]
-    if (status && check_status(["aoa_locator", ip]).length === 0) {
+    if (status) {
         console.log(`aoa_locator ${ip} start`)
         const exec = require("child_process").exec;
         let cmd = "./aoa_locator/exe/aoa_locator ";

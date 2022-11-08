@@ -185,7 +185,8 @@ export class mqttx {
 
     // 存储数据
     static save(data, name) {
-        ipcRenderer.send("write", ["data", name, data]);
+        // console.log(data)
+        ipcRenderer.send("write", ["data", name, data.toString()]);
     }
 
     // 默认主题
@@ -204,6 +205,7 @@ export class mqttx {
      * @param status{boolean} 状态
      */
     static station_status_ctl(index, status) {
+        console.log(status)
         if (status && !mqttx.station_list[index].status) mqttx.active_station_num += 1;
         else mqttx.active_station_num -= 1;
         mqttx.active_station_num = mqttx.active_station_num < 0 ? 0 : mqttx.active_station_num
