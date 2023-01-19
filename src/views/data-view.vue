@@ -5,35 +5,35 @@
         <el-col :span="10" style="text-align: left">
           <h1>mqtt messages</h1>
         </el-col>
-        <el-divider> </el-divider>
+        <el-divider></el-divider>
       </el-row>
     </el-header>
     <el-main>
       <el-table :data="files" row-key="name" style="width: 100%" height="500">
-        <el-table-column fixed prop="name" label="Name" />
-        <el-table-column prop="time" label="Time" />
-        <el-table-column prop="size" label="Size" />
+        <el-table-column fixed prop="name" label="Name"/>
+        <el-table-column prop="time" label="Time"/>
+        <el-table-column prop="size" label="Size"/>
         <el-table-column
-          :filters="category"
-          :filter-method="filter_station"
-          prop="station"
-          label="station"
+            :filters="category"
+            :filter-method="filter_station"
+            prop="station"
+            label="station"
         />
         <el-table-column fixed="right" label="operations">
           <template #default="scope">
             <el-button
-              text
-              type="primary"
-              size="small"
-              @click="remove(scope.$index)"
+                text
+                type="primary"
+                size="small"
+                @click="remove(scope.$index)"
             >
               remove
             </el-button>
             <el-button
-              text
-              type="primary"
-              size="small"
-              @click="detail(scope.$index)"
+                text
+                type="primary"
+                size="small"
+                @click="detail(scope.$index)"
             >
               detail
             </el-button>
@@ -48,12 +48,12 @@
         <el-row :gutter="2">
           <el-col :span="2" style="text-align: left; max-width: 44px">
             <el-button
-              @click="detailDialogVisible = false"
-              text
-              style="margin-top: 4px"
+                @click="detailDialogVisible = false"
+                text
+                style="margin-top: 4px"
             >
               <el-icon>
-                <ArrowLeft />
+                <ArrowLeft/>
               </el-icon>
             </el-button>
           </el-col>
@@ -65,20 +65,21 @@
       </el-header>
       <el-main>
         <prism-editor
-          class="code"
-          :model-value="code"
-          :highlight="highlighter"
-          line-numbers
-          :readonly="true"
+            class="code"
+            :model-value="code"
+            :highlight="highlighter"
+            line-numbers
+            :readonly="true"
         ></prism-editor>
       </el-main>
     </el-container>
   </el-dialog>
 </template>
 <script>
-import { PrismEditor } from "vue-prism-editor";
-import { highlight, languages } from "prismjs/components/prism-core";
-import { ElMessage } from "element-plus";
+import {PrismEditor} from "vue-prism-editor";
+import {highlight, languages} from "prismjs/components/prism-core";
+import {ElMessage} from "element-plus";
+
 const ipcRenderer = window.require("electron").ipcRenderer;
 export default {
   components: {
@@ -116,7 +117,7 @@ export default {
         s.add(element.station);
       }
       s.forEach((k, v) => {
-        res.push({ text: k, value: v });
+        res.push({text: k, value: v});
       });
       return res;
     },
@@ -133,7 +134,7 @@ export default {
       return highlight(code, languages.plaintext, "bash");
     },
     alert_delete() {
-      ElMessage({ type: "success", message: "delete success" });
+      ElMessage({type: "success", message: "delete success"});
     },
     remove(index) {
       ipcRenderer.send("delete", ["data", this.files[index].path]);
@@ -146,13 +147,14 @@ export default {
         this.code = "";
         for (let index = 0; index < arg.length; index++) {
           const element = arg[index];
-          this.code += element + "\n";
+          // console.log(element)
+          this.code += JSON.stringify(element) + "\n";
         }
       });
       ipcRenderer.send("read", ["data_detail", this.files[index].path]);
     },
     filter_station(value, row) {
-      return row.station == value;
+      return row.station === value;
     },
   },
 };

@@ -1,1 +1,26 @@
-{"clientId":"asdasd","urls":[{"name":"default","value":"ws://localhost:9001"},{"name":"emq","value":"mqtt://emq.mqtt.io:1883"},{"name":"aaa","value":"aaa"},{"name":"bbb","value":"asdasd"}],"name":"aaa","project":"aaaa","position":"aaaa","contact":"aaa","remark":"aaa"}
+{
+  "clientId": "309_AoA",
+  "urls": [
+    {
+      "name": "default",
+      "value": "ws://localhost:9001"
+    },
+    {
+      "name": "emq",
+      "value": "mqtt://emq.mqtt.io:1883"
+    },
+    {
+      "name": "309 server",
+      "value": "aaa"
+    },
+    {
+      "name": "aliyun server",
+      "value": "asdasd"
+    }
+  ],
+  "name": "309_A0A",
+  "project": "project",
+  "position": "309",
+  "contact": "15773333333",
+  "remark": "remark"
+}

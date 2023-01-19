@@ -9,23 +9,29 @@
             </el-icon>
             <span>Dashboard</span>
           </el-menu-item>
-          <el-menu-item index="station">
+          <el-menu-item index="/station">
             <el-icon>
               <document />
             </el-icon>
             <span>stations</span>
           </el-menu-item>
-          <el-menu-item index="tag">
+          <el-menu-item index="/tag">
             <el-icon>
               <position />
             </el-icon>
             <span>tags</span>
           </el-menu-item>
-          <el-menu-item index="data">
+          <el-menu-item index="/data">
             <el-icon>
               <DataBoard />
             </el-icon>
             <span>data</span>
+          </el-menu-item>
+          <el-menu-item index="/error">
+            <el-icon>
+              <View/>
+            </el-icon>
+            <span>error</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
@@ -53,6 +59,7 @@ export default {
     });
     ipcRenderer.send("read", ["stations"]);
     ipcRenderer.send("read", ["tags"]);
+    this.$router.push("/")
   },
   methods: {},
 };

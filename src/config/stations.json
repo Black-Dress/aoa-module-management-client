@@ -1,5 +1,24 @@
 [
-  { "id": "ble-pd-84FD27EEE466", "name": "天选唯一", "position": { "x": 299.10788, "y": 643.1715, "z": 0 }, "status": false, "net": "192.168.0.101" },
-  { "id": "ble-pd-84FD27EEE468", "name": "天选唯二", "position": { "x": 277.0, "y": 369.0, "z": -0.5 }, "status": false, "net": "192.168.0.100" },
-  { "id": "ble-pd-84FD27EEE474", "name": "天选唯三", "position": { "x": 358.33286, "y": 379.1773, "z": -0.5 }, "status": false, "net": "192.168.0.101" }
+  {
+    "id": "ble-pd-84FD27EEE466",
+    "name": "west",
+    "position": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "status": false,
+    "net": "192.168.0.146"
+  },
+  {
+    "id": "ble-pd-84FD27EEE468",
+    "name": "east",
+    "position": {
+      "x": -1,
+      "y": 1,
+      "z": -0.5
+    },
+    "status": false,
+    "net": "192.168.0.125"
+  }
 ]

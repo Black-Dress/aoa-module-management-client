@@ -1,4 +1,12 @@
 [
-  { "name": "one", "id": "ble-pd-60A423C98C2C", "status": false },
-  { "name": "asdasd", "id": "asdasd", "status": "" }
+  {
+    "name": "tag_a",
+    "id": "ble-pd-60A423C98C2C",
+    "status": false
+  },
+  {
+    "name": "tag_b",
+    "id": "ble-pd-60A423C98447",
+    "status": false
+  }
 ]
