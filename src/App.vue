@@ -27,6 +27,12 @@
             </el-icon>
             <span>data</span>
           </el-menu-item>
+          <el-menu-item index="/error">
+            <el-icon>
+              <View/>
+            </el-icon>
+            <span>error</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>
