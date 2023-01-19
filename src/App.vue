@@ -5,25 +5,25 @@
         <el-menu default-active="/" id="menu" :router="true">
           <el-menu-item index="/">
             <el-icon>
-              <compass/>
+              <compass />
             </el-icon>
             <span>Dashboard</span>
           </el-menu-item>
           <el-menu-item index="station">
             <el-icon>
-              <document/>
+              <document />
             </el-icon>
             <span>stations</span>
           </el-menu-item>
           <el-menu-item index="tag">
             <el-icon>
-              <position/>
+              <position />
             </el-icon>
             <span>tags</span>
           </el-menu-item>
           <el-menu-item index="data">
             <el-icon>
-              <DataBoard/>
+              <DataBoard />
             </el-icon>
             <span>data</span>
           </el-menu-item>
@@ -47,6 +47,9 @@ export default {
     });
     ipcRenderer.once("stations", (event, data) => {
       this.$mqttx.station_list = data;
+      data.forEach(element => {
+        this.$mqttx.station_map[element["id"]] = element
+      });
     });
     ipcRenderer.send("read", ["stations"]);
     ipcRenderer.send("read", ["tags"]);
@@ -68,5 +71,4 @@ export default {
 #menu {
   height: 600px;
 }
-
 </style>
