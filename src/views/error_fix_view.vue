@@ -57,7 +57,14 @@
               </el-row>
             </el-col>
             <el-col :span="10" class="a">
-              <el-button type="primary" style="margin-top: 150px; width: 100px; height: 100px; border-radius: 50px">start</el-button>
+              <el-row>
+                <el-col :span="24" class="d"><el-button type="primary" style="width: 100px; height: 100px; border-radius: 50px">start</el-button></el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="24" class="d">
+                  <p style="text-align: center">current record times: {{ this.record_times }}</p>
+                </el-col>
+              </el-row>
             </el-col>
           </el-row>
         </div>
@@ -79,6 +86,7 @@
       </el-row>
     </el-footer>
   </el-container>
+  <el-diaolog> </el-diaolog>
 </template>
 
 <script>
@@ -87,7 +95,8 @@ export default {
     return {
       active: 0,
       slected_station: {},
-      slected_tags: [],
+      slected_tags: [{}, {}],
+      record_times: 0,
     };
   },
   created: function () {
@@ -124,5 +133,9 @@ export default {
 }
 .c {
   height: 70px;
+}
+.d {
+  height: 120px;
+  margin-top: 100px;
 }
 </style>
