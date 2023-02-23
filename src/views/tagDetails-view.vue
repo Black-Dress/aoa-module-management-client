@@ -1,7 +1,7 @@
 <template>
 
   <el-container>
-    <el-header>
+    <el-header style="height: 110px">
       <el-row :gutter="2">
         <el-col :span="2" style="text-align: left;">
           <el-button @click="this.$router.back()" text style="margin-top: 4px">
@@ -18,6 +18,10 @@
           <el-switch v-model="tag.status" style="margin-left: 24px" inline-prompt :before-change="before_status_change"
                      @change="status_change"/>
         </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="10"><h3 >current locate precision</h3></el-col>
+        <el-col :span="4"><h4 :class="precision">{{ precision }}</h4></el-col>
       </el-row>
       <el-divider></el-divider>
     </el-header>
@@ -84,6 +88,7 @@ export default {
         id: "aa-id",
         status: false,
       },
+      precision: "good",
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
@@ -196,5 +201,17 @@ export default {
 .code {
   width: 95%;
   height: 95%;
+}
+
+.good{
+  color: #00FF00
+}
+
+.not_good {
+  background: #ADFF2F
+}
+
+.bad {
+  background: #DC143C
 }
 </style>
