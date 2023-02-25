@@ -86,7 +86,6 @@
       </el-row>
     </el-footer>
   </el-container>
-  <el-diaolog> </el-diaolog>
 </template>
 
 <script>

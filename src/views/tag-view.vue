@@ -8,7 +8,7 @@
         <el-col :span="4">
           <el-button type="primary" @click="addStationDialogVisible = true">
             <el-icon>
-              <plus/>
+              <plus />
             </el-icon>
           </el-button>
         </el-col>
@@ -16,10 +16,15 @@
       <el-divider></el-divider>
     </el-header>
     <el-main :key="tags.length">
-      <el-row class="row" :gutter="10" v-for="(a,i) in row_size" :key="i">
-        <el-col class="col" v-for="(b,j) in col_size" :key="j" :span="24/this.col_size">
-          <el-card :body-style="{ padding: '0px' }" class="card" shadow="hover"
-                   :class="this.tags[this.index(i,j)].status?'active':'inactive'" v-if="index(i,j)<tags.length">
+      <el-row class="row" :gutter="10" v-for="(a, i) in row_size" :key="i">
+        <el-col class="col" v-for="(b, j) in col_size" :key="j" :span="24 / this.col_size">
+          <el-card
+            :body-style="{ padding: '0px' }"
+            class="card"
+            shadow="hover"
+            :class="this.tags[this.index(i, j)].status ? 'active' : 'inactive'"
+            v-if="index(i, j) < tags.length"
+          >
             <div style="padding: 10px">
               <el-row justify="space-between" class="row">
                 <el-col :span="12" style="text-align: left">
@@ -28,12 +33,12 @@
                 <el-col :span="12" style="text-align: right">
                   <el-button text @click="remove(i, j)">
                     <el-icon>
-                      <Close/>
+                      <Close />
                     </el-icon>
                   </el-button>
                 </el-col>
               </el-row>
-              <div @click="detail(i,j)">
+              <div @click="detail(i, j)">
                 <el-row class="row">
                   <code>{{ tags[index(i, j)].id }}</code>
                 </el-row>
@@ -48,9 +53,7 @@
     </el-main>
     <el-footer>
       <el-row justify="center" style="margin-top: 10px">
-        <el-pagination layout="prev, pager, next" background :total="tags.length" :page-size="page_size"
-                       :pager-count="7"
-                       v-model:current-page="current_page"/>
+        <el-pagination layout="prev, pager, next" background :total="tags.length" :page-size="page_size" :pager-count="7" v-model:current-page="current_page" />
       </el-row>
     </el-footer>
   </el-container>
@@ -78,7 +81,7 @@
   </el-dialog>
 </template>
 <script>
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
 
 const ipcRenderer = window.require("electron").ipcRenderer;
 
@@ -93,44 +96,43 @@ export default {
       new_tag: {
         name: "",
         id: "",
-        status: ""
-      }
+        status: "",
+      },
     };
   },
   computed: {
     page_size() {
       return this.col_size * this.row_size;
     },
-
   },
   created: function () {
-    this.tags = this.$mqttx.tag_list
+    this.tags = this.$mqttx.tag_list;
   },
   methods: {
     cancel() {
       this.new_tag = {
         name: "",
         id: "",
-        status: ""
-      }
-      this.addStationDialogVisible = false
+        status: "",
+      };
+      this.addStationDialogVisible = false;
     },
     confirm() {
       if (this.new_tag.id === "" || this.new_tag.name === "") {
-        ElMessage({type: "error", message: "id or name could not be empty"})
+        ElMessage({ type: "error", message: "id or name could not be empty" });
       }
-      if (this.tags.findIndex(tag => tag.id === this.new_tag.id) !== -1) {
-        ElMessage({type: "error", message: "tag id could not be repeated"})
-        return
+      if (this.tags.findIndex((tag) => tag.id === this.new_tag.id) !== -1) {
+        ElMessage({ type: "error", message: "tag id could not be repeated" });
+        return;
       }
-      this.tags.push(this.new_tag)
-      ipcRenderer.send("write", ["tags", JSON.stringify(this.tags)])
+      this.tags.push(this.new_tag);
+      ipcRenderer.send("write", ["tags", JSON.stringify(this.tags)]);
       this.new_tag = {
         name: "",
         id: "",
-        status: ""
-      }
-      this.addStationDialogVisible = false
+        status: "",
+      };
+      this.addStationDialogVisible = false;
     },
     /**
      * 通过 i j 计算出编号
@@ -139,7 +141,7 @@ export default {
      * @returns {number} 在 tag list中的编号
      */
     index(i, j) {
-      return (this.current_page - 1) * this.page_size + i * this.col_size + j
+      return (this.current_page - 1) * this.page_size + i * this.col_size + j;
     },
     /**
      * 删除 指定位置的tag
@@ -156,7 +158,7 @@ export default {
      * @param j col
      */
     detail(i, j) {
-      this.$router.push({name: "tag-details", query: {index: this.index(i, j)}});
+      this.$router.push({ name: "tag-details", query: { index: this.index(i, j) } });
     },
   },
 };
@@ -176,8 +178,6 @@ export default {
 }
 
 .inactive {
-  background: #FFFAFA;
+  background: #fffafa;
 }
-
-
 </style>
