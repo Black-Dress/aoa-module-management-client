@@ -19,9 +19,9 @@
                      @change="status_change"/>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row v-if="tag.status">
         <el-col :span="10"><h3 >current locate precision</h3></el-col>
-        <el-col :span="4"><h4 :class="precision">{{ precision }}</h4></el-col>
+        <el-col :span="4"><h4 :class="precision[this.$mqttx.percision]">{{ precision[this.$mqttx.percision] }}</h4></el-col>
       </el-row>
       <el-divider></el-divider>
     </el-header>
@@ -88,7 +88,11 @@ export default {
         id: "aa-id",
         status: false,
       },
-      precision: "good",
+      precision: {
+        0:"bad",
+        1:"not bad",
+        2:"good"
+      },
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
@@ -137,6 +141,17 @@ export default {
     })
   },
   methods: {
+    /**
+     * 创建测试数据
+     */
+    // create_test_data(){
+    //   let data = new Array();
+    //   for (let i = 0; i < 1000; i++) {
+    //     data.push({
+    //       azimuth: 0
+    //     })
+    //   }
+    // },
     /**
      * 处理tab 标签点击时间
      * @param tab 标签页

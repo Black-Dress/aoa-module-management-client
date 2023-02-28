@@ -69,6 +69,11 @@ export class mqttx {
      * @type {*}
      */
     static active_tag = mqttx.tag_list[0].id
+    /**
+     * 当前的定位精度
+     * @type {number}
+     */
+    static percision = 1
     // 默认回调函数
     static messages = function (topic, message) {
         console.log(topic, message);
@@ -178,7 +183,7 @@ export class mqttx {
         }
         // 判断是否需要发送数据
         if (mqttx.msgs.length >= mqttx.active_station_num * mqttx.msg_station_size) {
-            upload_aoa_raw_data(mqttx.msgs)
+            this.percision = upload_aoa_raw_data(mqttx.msgs)
             mqttx.msgs = [];
         }
     }

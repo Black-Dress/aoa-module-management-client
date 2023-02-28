@@ -47,9 +47,10 @@ export function upload_aoa_raw_data(msgs,
         .then((res) => {
             if (res.data.code !== 200) {
                 ElMessage({type: "error", message: `upload aoa data failed: ${res.data.msg}`});
-                return;
+                return res.data;
             }
             s(res);
         })
         .catch(e);
+    return 0;
 }
