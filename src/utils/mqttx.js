@@ -39,7 +39,6 @@ export class mqttx {
             net: "192.168.1.101",
         },
     ];
-    static station_map = new Map();
     /**
      * 启动的基站数量
      * @type {number}
@@ -69,7 +68,12 @@ export class mqttx {
      * 激活的 tag id,能够发送数据的 tag id
      * @type {*}
      */
-    static active_tag = mqttx.tag_list[0].id;
+    static active_tag = mqttx.tag_list[0].id
+    /**
+     * 当前的定位精度
+     * @type {number}
+     */
+    static percision = 1
     // 默认回调函数
     static messages = function (topic, message) {
         console.log(topic, message);
@@ -81,11 +85,15 @@ export class mqttx {
      * @param s{function} 连接成功回调
      * @param f{function} 连接失败回调
      */
-    static connect(url = "ws://localhost:9001", s = function () {
-    }, f = function () {
-    }) {
+    static connect(
+        url = "ws://localhost:9001",
+        s = function () {
+        },
+        f = function () {
+        }
+    ) {
         mqttx.url = url;
-        mqttx.client = mqtt.connect(mqttx.url, mqttx.options);
+        mqttx.client = mqtt.connect(mqttx.url, mqttx.options)
         mqttx.client.on("connect", () => {
             s();
             this.client.on("message", mqttx.message);
@@ -95,11 +103,11 @@ export class mqttx {
         });
         mqttx.sleep(300).then(() => {
             if (mqttx.client.connected === false) {
-                f();
+                f()
                 // 重新启动 mosquitto
-                ipcRenderer.send("mosquitto_ctl", [true]);
+                ipcRenderer.send("mosquitto_ctl", [true])
             }
-        });
+        })
     }
 
     /**
@@ -116,10 +124,10 @@ export class mqttx {
      * @param callback 断开连接成功的回调
      */
     static disconnect(callback) {
-        mqttx.station_list.forEach((station) => (station.status = false));
-        if (mqttx.client === null || !mqttx.client.connected) return;
+        mqttx.station_list.forEach(station => station.status = false)
+        if (mqttx.client === null || !mqttx.client.connected) return
         this.client.end(true, {}, callback);
-        ipcRenderer.send("end_server");
+        ipcRenderer.send("end_server")
     }
 
     // 订阅
@@ -180,7 +188,7 @@ export class mqttx {
         }
         // 判断是否需要发送数据
         if (mqttx.msgs.length >= 6) {
-            upload_aoa_raw_data(mqttx.msgs);
+            upload_aoa_raw_data(mqttx.msgs,(res)=>{this.percision = res.data.data});
             console.log(mqttx.msgs);
             mqttx.msgs = [];
         }
