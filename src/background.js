@@ -145,6 +145,10 @@ function writeHandle(event, arg) {
             write("./src/config/tags.json", arg[1], () => {
             });
             break;
+        case "error":
+            write("./src/config/errors.json", arg[1], () => {
+            });
+            break;
     }
 }
 

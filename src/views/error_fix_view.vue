@@ -82,7 +82,7 @@
             </el-col>
           </el-row>
         </div>
-        <div v-if="active === 3" class="main"><h1>complete</h1></div>
+        <div v-if="active === 3" class="main"><el-button @click="upload">push</el-button></div>
       </el-container>
     </el-main>
     <el-footer>
@@ -129,6 +129,7 @@
 <script>
 import {store} from "@/utils/store";
 import {ElMessage} from "element-plus";
+import {upload_error_fix_data} from "@/api/client.js"
 
 const ipcRenderer = window.require("electron").ipcRenderer;
 export default {
@@ -208,7 +209,14 @@ export default {
         this.record_times += 1
         this.upload_files.push(this.$mqttx.msgs)
       }, 10000)
-
+    },
+    /**
+     * 上传误差文件
+     */
+    upload(){
+      upload_error_fix_data(this.upload_files,()=>{
+        ElMessage({type:"success",message:"upload success"})
+      })
     },
     s() {
       // 自动订阅主题

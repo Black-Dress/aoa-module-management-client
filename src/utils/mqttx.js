@@ -188,7 +188,7 @@ export class mqttx {
         }
         // 判断是否需要发送数据
         if (mqttx.msgs.length >= 6) {
-            this.percision = upload_aoa_raw_data(mqttx.msgs);
+            upload_aoa_raw_data(mqttx.msgs,(res)=>{this.percision = res.data.data});
             console.log(mqttx.msgs);
             mqttx.msgs = [];
         }

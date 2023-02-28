@@ -139,19 +139,25 @@ export default {
       this.station_line_index[val.id] = index
       this.option.series.push({data: [], type: 'line', smooth: true, areaStyle: {}})
     })
+    this.create_test_data()
   },
   methods: {
     /**
      * 创建测试数据
      */
-    // create_test_data(){
-    //   let data = new Array();
-    //   for (let i = 0; i < 1000; i++) {
-    //     data.push({
-    //       azimuth: 0
-    //     })
-    //   }
-    // },
+    create_test_data(){
+      for (let i = 0; i < 150; i++) {
+        let a = {
+          azimuth: 80+Math.random()*90,
+          elevation:90+Math.random()*5,
+          rssi:100+Math.random()*20,
+          distance:20+Math.random()*12,
+          sequence:i
+        }
+        this.option.series[0].data.push(a[this.active_label])
+        this.code+=JSON.stringify(a)
+      }
+    },
     /**
      * 处理tab 标签点击时间
      * @param tab 标签页
