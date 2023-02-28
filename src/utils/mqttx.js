@@ -6,7 +6,7 @@ const MAX_LEN = 100000;
 
 export class mqttx {
     static options = {
-        clientId: "AoA-module-management",
+        clientId: "aoa_client",
         clean: true,
         reconnectPeriod: 0,
         connectTimeout: 1000,
@@ -43,7 +43,7 @@ export class mqttx {
      * 启动的基站数量
      * @type {number}
      */
-    static active_station_num = 0;
+    static active_station_num = 2;
     /**
      * 每个基站应该能够存储的数据数量，达到这个数据量之后上传数据
      * @type {number}
@@ -166,6 +166,11 @@ export class mqttx {
         if (!mqttx.tags.has(tagId)) mqttx.tags.set(tagId, []);
         // 存储消息
         const i = JSON.parse(message.toString());
+        i["cId"] = mqttx.options.clientId;
+        // console.log(mqttx.station_map);
+        i["x"] = mqttx.station_map[stationsId]["position"].x;
+        i["y"] = mqttx.station_map[stationsId]["position"].y;
+        i["z"] = mqttx.station_map[stationsId]["position"].z;
         mqttx.stations.get(stationsId).push(i);
         mqttx.tags.get(tagId).push(i);
         // 只能够存储激活的tag数据
@@ -182,16 +187,16 @@ export class mqttx {
             mqttx.tags.set(tagId, []);
         }
         // 判断是否需要发送数据
-        if (mqttx.msgs.length >= mqttx.active_station_num * mqttx.msg_station_size) {
-            this.percision = upload_aoa_raw_data(mqttx.msgs)
+        if (mqttx.msgs.length >= 6) {
+            this.percision = upload_aoa_raw_data(mqttx.msgs);
+            console.log(mqttx.msgs);
             mqttx.msgs = [];
         }
     }
 
     // 存储数据
     static save(data, name) {
-        // console.log(data)
-        ipcRenderer.send("write", ["data", name, data.toString()]);
+        ipcRenderer.send("write", ["data", name, data]);
     }
 
     // 默认主题
@@ -210,12 +215,20 @@ export class mqttx {
      * @param status{boolean} 状态
      */
     static station_status_ctl(index, status) {
-        console.log(status)
         if (status && !mqttx.station_list[index].status) mqttx.active_station_num += 1;
         else mqttx.active_station_num -= 1;
-        mqttx.active_station_num = mqttx.active_station_num < 0 ? 0 : mqttx.active_station_num
+        mqttx.active_station_num = mqttx.active_station_num < 0 ? 0 : mqttx.active_station_num;
         mqttx.station_list[index].status = status;
         ipcRenderer.send("locator_ctl", [mqttx.station_list[index].net, status]);
     }
 
+    /**
+     * 通过id 改变基站状态
+     * @param id 基站id
+     * @param status 状态
+     */
+    static station_status_ctl_by_id(id, status) {
+        let index = this.station_list.findIndex((item) => item.id === id)
+        this.station_status_ctl(index, status)
+    }
 }

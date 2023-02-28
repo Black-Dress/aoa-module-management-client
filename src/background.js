@@ -58,7 +58,7 @@ app.on("ready", async () => {
     ipcMain.on("end_server", () => {
         end(["mosquitto"]);
         end(["aoa_locator"]);
-    })
+    });
     await createWindow();
     // 启动项目的时候启动服务
     start_mosquitto();
@@ -95,9 +95,8 @@ function readHandle(event, arg) {
             break;
         // 读取数据文件目录
         case "data": {
-            let list = [];
-            readFileList("./src/data", [], list);
-            event.sender.send("data", list);
+            let res = readFileList("./src/data", []);
+            event.sender.send("data", res);
             break;
         }
         // 读数据文件细节
@@ -111,6 +110,13 @@ function readHandle(event, arg) {
         case "tags":
             readFile("./src/config/tags.json", (err, data) => event.sender.send("tags", JSON.parse(data.toString("utf-8"))));
             break;
+        // 读取误差修正存在的文件，通过arg[1] 指定基站名称进行读取
+        case "error_files": {
+            let res = readFileList("./src/error/" + arg[1], [])
+            event.sender.send("data", res)
+            break
+        }
+
     }
 }
 
@@ -163,7 +169,8 @@ function deleteHandle(event, arg) {
 }
 
 // 读取数据文件
-function readFileList(dir, res, list) {
+function readFileList(dir, res) {
+    if (!require("fs").existsSync(dir)) return res
     const state = statSync(dir);
     if (!state.isDirectory()) {
         const a = dir.split("/");
@@ -174,17 +181,16 @@ function readFileList(dir, res, list) {
             path: dir,
             station: a[a.length - 2],
         };
-        list.push(item);
-        return item;
+        res.push(item);
+        return res;
     }
     const files = readdirSync(dir);
     for (let index = 0; index < files.length; index++) {
         const element = files[index];
-        res.push(readFileList(`${dir}/${element}`, [], list));
+        res = res.concat(readFileList(`${dir}/${element}`, []))
     }
     return res;
 }
-
 
 /**
  * mosquitto 服务管理函数，用于启动和停止mosquitto服务
@@ -192,15 +198,15 @@ function readFileList(dir, res, list) {
  * @param args 参数
  */
 function mosquitto_ctl_handle(event, args) {
-    if (args[0]) start_mosquitto()
-    else end(["mosquitto"])
+    if (args[0]) start_mosquitto();
+    else end(["mosquitto"]);
 }
 
 /**
  * 启动 mosquitto 服务
  */
 function start_mosquitto() {
-    console.log("start mosquitto")
+    console.log("start mosquitto");
     const exec = require("child_process").exec;
     const cmd = process.platform === "win32" ? ".\\mosquitto\\mosquitto.exe -c .\\mosquitto\\mosquitto.conf" : "mosquitto -c ./mosquitto/mosquitto.conf";
     // 启动mqtt
@@ -216,12 +222,13 @@ function start_mosquitto() {
  * @returns {string} 基站状态
  */
 function locator_ctl(event, args) {
-    const ip = args[0], status = args[1]
+    const ip = args[0],
+        status = args[1];
     if (status) {
-        console.log(`aoa_locator ${ip} start`)
+        console.log(`aoa_locator ${ip} start`);
         const exec = require("child_process").exec;
         let cmd = "./aoa_locator/exe/aoa_locator ";
-        if (process.platform === "win32") cmd += ".exe";
+        if (process.platform === "win32") cmd = ".\\aoa_locator\\exe\\aoa_locator.exe ";
         cmd += `-t ${ip}`;
         exec(cmd, function (a, b, c) {
             if (a) console.error(c);
@@ -229,7 +236,6 @@ function locator_ctl(event, args) {
     } else {
         end(["aoa_locator", ip]);
     }
-
 }
 
 /**
@@ -251,9 +257,9 @@ function check_status(args) {
             cmd += `| ${ctl} ${element}`;
         });
         const res = es(cmd).toString();
-        return res.split("\n")
+        return res.split("\n");
     } catch (e) {
-        console.error(decode(e.stderr, "cp936"))
+        console.error(decode(e.stderr, "cp936"));
     }
     return [];
 }
@@ -263,10 +269,10 @@ function check_status(args) {
  * @param args 关键字数组
  */
 function end(args) {
-    console.log(`end server ${args}`)
+    console.log(`end server ${args}`);
     try {
         const es = require("child_process").execSync;
-        const res = check_status(args)
+        const res = check_status(args);
         for (let index = 0; index < res.length; index++) {
             const element = res[index];
             if (element === undefined || element === "") continue;
