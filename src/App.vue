@@ -54,7 +54,7 @@ export default {
     ipcRenderer.once("stations", (event, data) => {
       this.$mqttx.station_list = data;
       data.forEach(element => {
-        this.$mqttx.station_map[element["id"]] = element
+        this.$mqttx.stations[element["id"]] = element
       });
     });
     ipcRenderer.send("read", ["stations"]);

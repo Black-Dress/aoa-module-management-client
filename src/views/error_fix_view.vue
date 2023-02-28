@@ -82,7 +82,7 @@
             </el-col>
           </el-row>
         </div>
-        <div v-if="active === 3" class="main">complete</div>
+        <div v-if="active === 3" class="main"><h1>complete</h1></div>
       </el-container>
     </el-main>
     <el-footer>

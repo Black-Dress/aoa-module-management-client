@@ -19,7 +19,7 @@
                      @change="status_change"/>
         </el-col>
       </el-row>
-      <el-row v-if="tag.status">
+      <el-row v-if="this.tag.status">
         <el-col :span="10"><h3 >current locate precision</h3></el-col>
         <el-col :span="4"><h4 :class="precision[this.$mqttx.percision]">{{ precision[this.$mqttx.percision] }}</h4></el-col>
       </el-row>
