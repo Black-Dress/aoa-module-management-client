@@ -7,31 +7,31 @@
             <el-icon>
               <compass/>
             </el-icon>
-            <span>Dashboard</span>
+            <span>导航</span>
           </el-menu-item>
           <el-menu-item index="/station">
             <el-icon>
               <document/>
             </el-icon>
-            <span>stations</span>
+            <span>基站</span>
           </el-menu-item>
           <el-menu-item index="/tag">
             <el-icon>
               <position/>
             </el-icon>
-            <span>tags</span>
+            <span>标签</span>
           </el-menu-item>
           <el-menu-item index="/data">
             <el-icon>
               <DataBoard/>
             </el-icon>
-            <span>data</span>
+            <span>数据</span>
           </el-menu-item>
           <el-menu-item index="/error">
             <el-icon>
               <View/>
             </el-icon>
-            <span>error</span>
+            <span>误差</span>
           </el-menu-item>
         </el-menu>
       </el-aside>

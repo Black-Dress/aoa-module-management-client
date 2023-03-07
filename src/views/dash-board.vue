@@ -2,13 +2,13 @@
   <el-container>
     <el-header>
       <el-row>
-        <h1 style="text-align: left">BUPT AoA station management</h1>
+        <h1 style="text-align: left">BUPT 蓝牙基站管理系统</h1>
       </el-row>
       <el-divider></el-divider>
     </el-header>
     <el-main>
       <el-row class="main_row">
-        <el-col :span="4"><p style="font-weight: 600">CLIENT_ID:</p></el-col>
+        <el-col :span="4"><p style="font-weight: 600">基站ID:</p></el-col>
         <el-col :span="3" style="text-align: left; max-width: 200px">
           <p>{{ this.client.clientId }}</p>
         </el-col>
@@ -44,8 +44,8 @@
           </el-button>
         </el-col>
         <el-col :span="2" style="max-width: 32px">
-          <el-button v-if="!this.status" id="start" type="primary" @click="connect(cur_url.value)"> connect</el-button>
-          <el-button v-if="this.status" id="end" type="danger" @click="disconnect()">disconnect</el-button>
+          <el-button v-if="!this.status" id="start" type="primary" @click="connect(cur_url.value)"> 连接</el-button>
+          <el-button v-if="this.status" id="end" type="danger" @click="disconnect()">断开</el-button>
         </el-col>
       </el-row>
       <el-divider></el-divider>
@@ -57,31 +57,31 @@
       </el-row>
     </el-main>
   </el-container>
-  <el-dialog v-model="addUrlDialogVisible" title="add new connection" width="300px" @close="dialog_cancel">
+  <el-dialog v-model="addUrlDialogVisible" title="添加新的链接" width="300px" @close="dialog_cancel">
     <el-row>
-      <el-col :span="4"><p>name</p></el-col>
+      <el-col :span="4"><p>名称</p></el-col>
       <el-col :span="20">
         <el-input v-model="this.new_url.name"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="4"><p>url</p></el-col>
+      <el-col :span="4"><p>链接</p></el-col>
       <el-col :span="20">
         <el-input v-model="this.new_url.value"></el-input>
       </el-col>
     </el-row>
     <el-row :gutter="3">
       <el-col :span="12">
-        <el-button @click="dialog_cancel">cancel</el-button>
+        <el-button @click="dialog_cancel">取消</el-button>
       </el-col>
       <el-col :span="12">
-        <el-button type="primary" @click="add_url_confirm()">confirm</el-button>
+        <el-button type="primary" @click="add_url_confirm()">确认</el-button>
       </el-col>
     </el-row>
   </el-dialog>
   <el-dialog v-model="editIdDialogVisible" title="UPDATE CLIENT" width="450px" @close="dialog_cancel">
     <el-row>
-      <el-col class="dialog-col" :span="4"><p>clientId</p></el-col>
+      <el-col class="dialog-col" :span="4"><p>基站ID</p></el-col>
       <el-col :span="17">
         <el-input v-model="this.client.clientId"></el-input>
       </el-col>
@@ -99,41 +99,41 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="4"><p>name</p></el-col>
+      <el-col :span="4"><p>名称</p></el-col>
       <el-col :span="20">
         <el-input v-model="this.client.name"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="4"><p>position</p></el-col>
+      <el-col :span="4"><p>位置</p></el-col>
       <el-col :span="20">
         <el-input v-model="this.client.position"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="4"><p>project</p></el-col>
+      <el-col :span="4"><p>项目</p></el-col>
       <el-col :span="20">
         <el-input v-model="this.client.project"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="4"><p>contact</p></el-col>
+      <el-col :span="4"><p>联系方式</p></el-col>
       <el-col :span="20">
         <el-input v-model="this.client.contact"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="4"><p>remark</p></el-col>
+      <el-col :span="4"><p>备注</p></el-col>
       <el-col :span="20">
         <el-input v-model="this.client.remark"></el-input>
       </el-col>
     </el-row>
     <el-row style="margin-top: 10px">
       <el-col :span="12">
-        <el-button @click="dialog_cancel">cancel</el-button>
+        <el-button @click="dialog_cancel">取消</el-button>
       </el-col>
       <el-col :span="12">
-        <el-button type="primary" @click="upload_client">confirm</el-button>
+        <el-button type="primary" @click="upload_client">确认</el-button>
       </el-col>
     </el-row>
   </el-dialog>

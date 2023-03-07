@@ -48,7 +48,7 @@ export class mqttx {
      * 每个基站应该能够存储的数据数量，达到这个数据量之后上传数据
      * @type {number}
      */
-    static msg_station_size = 3;
+    static msg_station_size = 2;
     /**
      * 存储采集的数据，上传至服务器
      * @type {[]}

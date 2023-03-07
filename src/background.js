@@ -6,6 +6,7 @@ import {createProtocol} from "vue-cli-plugin-electron-builder/lib";
 // import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import {mkdir, readdirSync, readFile, rm, statSync, writeFile} from "original-fs";
 import {decode} from "iconv-lite";
+import {Menu} from "electron";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 // Scheme must be registered before the app is ready
@@ -29,7 +30,7 @@ async function createWindow() {
         // Load the index.html when not in development
         await win.loadURL("app://./index.html");
     }
-    // Menu.setApplicationMenu(null)
+    Menu.setApplicationMenu(null)
 }
 
 // 项目结束
