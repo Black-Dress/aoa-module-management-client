@@ -3,39 +3,39 @@
     <el-header>
       <el-row>
         <el-col :span="10" style="text-align: left">
-          <h1>error fix</h1>
+          <h1>误差修正</h1>
         </el-col>
         <el-divider></el-divider>
       </el-row>
     </el-header>
     <el-main>
       <el-steps :active="active" finish-status="success" align-center>
-        <el-step title="station"/>
-        <el-step title="tags"/>
-        <el-step title="start"/>
+        <el-step title="基站选择"/>
+        <el-step title="标签选择"/>
+        <el-step title="开始测量"/>
       </el-steps>
       <el-container style="margin-top: 20px">
         <div v-if="active === 0" class="main">
           <el-table :data="this.$mqttx.station_list" highlight-current-row @current-change="stations_change">
-            <el-table-column prop="id" label="id" width="195"/>
-            <el-table-column prop="name" label="name" width="195"/>
-            <el-table-column prop="net" label="net" width="195"/>
-            <el-table-column prop="status" label="status" width="195"/>
+            <el-table-column prop="id" label="基站ID" width="195"/>
+            <el-table-column prop="name" label="基站名称" width="195"/>
+            <el-table-column prop="net" label="基站IP" width="195"/>
+            <el-table-column prop="status" label="基站状态" width="195"/>
           </el-table>
         </div>
         <div v-if="active === 1" class="main">
           <el-table :data="this.$mqttx.tag_list" highlight-current-row @selection-change="tags_change">
             <el-table-column type="selection" width="50"/>
-            <el-table-column prop="id" label="id" width="230"/>
-            <el-table-column prop="name" label="name" width="230"/>
-            <el-table-column prop="status" label="status" width="230"/>
+            <el-table-column prop="id" label="标签ID" width="230"/>
+            <el-table-column prop="name" label="标签名称" width="230"/>
+            <el-table-column prop="status" label="标签状态" width="230"/>
           </el-table>
         </div>
         <div v-if="active === 2" class="main">
           <el-row :gutter="20">
             <el-col :span="14" class="a">
               <el-row>
-                <el-col><p>station</p></el-col>
+                <el-col><p>已选择基站</p></el-col>
               </el-row>
               <el-row>
                 <el-col class="b">
@@ -46,7 +46,7 @@
               </el-row>
               <el-divider/>
               <el-row>
-                <el-col><p>tags</p></el-col>
+                <el-col><p>已选择标签</p></el-col>
               </el-row>
               <el-row>
                 <el-col v-for="(o, i) in this.selected_tags.length" :key="o" class="c">
@@ -70,19 +70,28 @@
                 <el-col :span="24" class="d">
                   <el-button type="primary" style="width: 100px; height: 100px; border-radius: 50px"
                              @click="start">
-                    start
+                    开始测量
                   </el-button>
                 </el-col>
               </el-row>
               <el-row>
                 <el-col :span="24" class="d">
-                  <p style="text-align: center">current record times: {{ this.record_times }}</p>
+                  <p style="text-align: center">目前已测量次数: {{ this.record_times }}</p>
                 </el-col>
               </el-row>
             </el-col>
           </el-row>
         </div>
-        <div v-if="active === 3" class="main"><el-button @click="upload">push</el-button></div>
+        <div v-if="active === 3" class="main">
+          <el-table :data="this.upload_file" table-layout="fixed">
+            <el-table-column type="selection"/>
+            <el-table-column prop="time" label="采集时间"/>
+            <el-table-column prop="size" label="采集大小"/>
+          </el-table>
+          <el-button @click="upload" style="margin-top: 30px" type="primary">上传</el-button>
+
+
+        </div>
       </el-container>
     </el-main>
     <el-footer>
@@ -104,21 +113,21 @@
       </el-row>
     </el-footer>
   </el-container>
-  <el-dialog v-model="add_tags_position" title="add position" width="400px">
+  <el-dialog v-model="add_tags_position" title="添加位置" width="400px">
     <el-row>
-      <el-col :span="6"><p>tag_x</p></el-col>
+      <el-col :span="6"><p>标签X</p></el-col>
       <el-col :span="18">
         <el-input v-model="selected_tag.position.x"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="6"><p>tag_y</p></el-col>
+      <el-col :span="6"><p>标签Y</p></el-col>
       <el-col :span="18">
         <el-input v-model="selected_tag.position.y"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="6"><p>tag_z</p></el-col>
+      <el-col :span="6"><p>标签Z</p></el-col>
       <el-col :span="18">
         <el-input v-model="selected_tag.position.z"></el-input>
       </el-col>
@@ -143,10 +152,15 @@ export default {
       add_tags_position: false,
       status: "start",
       files: [],
-      upload_files: [],
+      upload_file: [],
     };
   },
   created: function () {
+    let a = {
+      time: new Date().getTime(),
+      size: 1023
+    }
+    this.upload_file.push(a)
   },
   computed: {
     cur_url: {
@@ -207,15 +221,23 @@ export default {
         this.$mqttx.station_status_ctl_by_id(this.selected_station.id, false)
         this.status = "start"
         this.record_times += 1
-        this.upload_files.push(this.$mqttx.msgs)
+        this.upload_file.push({
+          "time": new Date().getTime(),
+          "size": this.$mqttx.msgs.length,
+          "data": this.$mqttx.msgs
+        })
       }, 10000)
     },
     /**
      * 上传误差文件
      */
-    upload(){
-      upload_error_fix_data(this.upload_files,()=>{
-        ElMessage({type:"success",message:"upload success"})
+    upload() {
+      let data = []
+      this.upload_file.forEach(item => {
+        data.push(item.data)
+      })
+      upload_error_fix_data(data, () => {
+        ElMessage({type: "success", message: "upload success"})
       })
     },
     s() {

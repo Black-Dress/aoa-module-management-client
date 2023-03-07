@@ -3,23 +3,23 @@
     <el-header>
       <el-row>
         <el-col :span="10" style="text-align: left">
-          <h1>mqtt messages</h1>
+          <h1>消息数据</h1>
         </el-col>
         <el-divider></el-divider>
       </el-row>
     </el-header>
     <el-main>
       <el-table :data="files" row-key="name" style="width: 100%" height="500">
-        <el-table-column fixed prop="name" label="Name"/>
-        <el-table-column prop="time" label="Time"/>
-        <el-table-column prop="size" label="Size"/>
+        <el-table-column fixed prop="name" label="名称"/>
+        <el-table-column prop="time" label="时间"/>
+        <el-table-column prop="size" label="大小"/>
         <el-table-column
             :filters="category"
             :filter-method="filter_station"
             prop="station"
-            label="station"
+            label="基站"
         />
-        <el-table-column fixed="right" label="operations">
+        <el-table-column fixed="right" label="操作">
           <template #default="scope">
             <el-button
                 text
@@ -27,7 +27,7 @@
                 size="small"
                 @click="remove(scope.$index)"
             >
-              remove
+              删除
             </el-button>
             <el-button
                 text
@@ -35,7 +35,7 @@
                 size="small"
                 @click="detail(scope.$index)"
             >
-              detail
+              细节
             </el-button>
           </template>
         </el-table-column>

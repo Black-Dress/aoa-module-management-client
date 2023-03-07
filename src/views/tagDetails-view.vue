@@ -11,7 +11,7 @@
           </el-button>
         </el-col>
         <el-col :span="16" style="text-align: left">
-          <h1>TAG: {{ this.tag.id }}</h1>
+          <h1>标签: {{ this.tag.id }}</h1>
         </el-col>
         <el-col :span="6" style="text-align: right">
           <el-button @click="save_message_dialog_visible = true" type="primary"> 保存</el-button>
@@ -19,8 +19,8 @@
                      @change="status_change"/>
         </el-col>
       </el-row>
-      <el-row v-if="this.tag.status">
-        <el-col :span="10"><h3 >current locate precision</h3></el-col>
+      <el-row v-if="this.tag.status" >
+        <el-col :span="4"><h3 >当前定位精度:</h3></el-col>
         <el-col :span="4"><h4 :class="precision[this.$mqttx.percision]">{{ precision[this.$mqttx.percision] }}</h4></el-col>
       </el-row>
       <el-divider></el-divider>
@@ -49,11 +49,11 @@
       </el-container>
     </el-main>
   </el-container>
-  <el-dialog v-model="save_message_dialog_visible" title="save message" width="300px">
+  <el-dialog v-model="save_message_dialog_visible" title="保存数据" width="300px">
     <el-row>
       <el-col>
         <el-form>
-          <el-form-item label="name" label-width="20%">
+          <el-form-item label="名称" label-width="20%">
             <el-input v-model="file_name" :placeholder="`${new Date().toISOString().slice(0, 10)}.json`"></el-input>
           </el-form-item>
         </el-form>
@@ -61,10 +61,10 @@
     </el-row>
     <el-row :gutter="3">
       <el-col :span="12">
-        <el-button @click="save_message_dialog_visible = false"> cancel</el-button>
+        <el-button @click="save_message_dialog_visible = false">取消</el-button>
       </el-col>
       <el-col :span="12">
-        <el-button type="primary" @click="dialogConfirm()">confirm</el-button>
+        <el-button type="primary" @click="dialogConfirm()">确认</el-button>
       </el-col>
     </el-row>
   </el-dialog>
@@ -148,7 +148,7 @@ export default {
     create_test_data(){
       for (let i = 0; i < 150; i++) {
         let a = {
-          azimuth: 80+Math.random()*90,
+          azimuth: 80+Math.random()*2,
           elevation:90+Math.random()*5,
           rssi:100+Math.random()*20,
           distance:20+Math.random()*12,
