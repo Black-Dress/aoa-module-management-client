@@ -1,7 +1,7 @@
 <template>
 
   <el-container>
-    <el-header>
+    <el-header style="height: 110px">
       <el-row :gutter="2">
         <el-col :span="2" style="text-align: left;">
           <el-button @click="this.$router.back()" text style="margin-top: 4px">
@@ -18,6 +18,10 @@
           <el-switch v-model="tag.status" style="margin-left: 24px" inline-prompt :before-change="before_status_change"
                      @change="status_change"/>
         </el-col>
+      </el-row>
+      <el-row v-if="this.tag.status">
+        <el-col :span="10"><h3 >current locate precision</h3></el-col>
+        <el-col :span="4"><h4 :class="precision[this.$mqttx.percision]">{{ precision[this.$mqttx.percision] }}</h4></el-col>
       </el-row>
       <el-divider></el-divider>
     </el-header>
@@ -84,6 +88,11 @@ export default {
         id: "aa-id",
         status: false,
       },
+      precision: {
+        0:"bad",
+        1:"not bad",
+        2:"good"
+      },
       code: "",
       save_message_dialog_visible: false,
       file_name: `${new Date().toISOString().slice(0, 10)}.json`,
@@ -130,8 +139,25 @@ export default {
       this.station_line_index[val.id] = index
       this.option.series.push({data: [], type: 'line', smooth: true, areaStyle: {}})
     })
+    this.create_test_data()
   },
   methods: {
+    /**
+     * 创建测试数据
+     */
+    create_test_data(){
+      for (let i = 0; i < 150; i++) {
+        let a = {
+          azimuth: 80+Math.random()*90,
+          elevation:90+Math.random()*5,
+          rssi:100+Math.random()*20,
+          distance:20+Math.random()*12,
+          sequence:i
+        }
+        this.option.series[0].data.push(a[this.active_label])
+        this.code+=JSON.stringify(a)
+      }
+    },
     /**
      * 处理tab 标签点击时间
      * @param tab 标签页
@@ -196,5 +222,17 @@ export default {
 .code {
   width: 95%;
   height: 95%;
+}
+
+.good{
+  color: #00FF00
+}
+
+.not_good {
+  background: #ADFF2F
+}
+
+.bad {
+  background: #DC143C
 }
 </style>

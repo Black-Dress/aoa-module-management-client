@@ -47,9 +47,25 @@ export function upload_aoa_raw_data(msgs,
         .then((res) => {
             if (res.data.code !== 200) {
                 ElMessage({type: "error", message: `upload aoa data failed: ${res.data.msg}`});
-                return;
             }
             s(res);
         })
         .catch(e);
+}
+
+/**
+ * 上传错误修正代码
+ * @param msgs 错误修正的二维数组
+ * @param s 成功回调
+ * @param e 失败回调
+ */
+export function upload_error_fix_data(msgs, s = function () {
+}, e = function () {
+}) {
+    service.post("/client/upload/aoa/error_fix", msgs).then((res) => {
+        if (res.data.code !== 2000) {
+            ElMessage({type: "error", message: `upload aoa data failed: ${res.data.msg}`});
+        }
+        s(res)
+    }).catch(e)
 }
