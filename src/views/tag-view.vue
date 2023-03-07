@@ -3,7 +3,7 @@
     <el-header>
       <el-row justify="space-between">
         <el-col :span="6" style="text-align: left">
-          <h1>AoA tags</h1>
+          <h1>蓝牙标签</h1>
         </el-col>
         <el-col :span="4">
           <el-button type="primary" @click="addStationDialogVisible = true">
@@ -54,25 +54,25 @@
       </el-row>
     </el-footer>
   </el-container>
-  <el-dialog v-model="addStationDialogVisible" title="add new tag">
+  <el-dialog v-model="addStationDialogVisible" title="添加新蓝牙标签">
     <el-row>
-      <el-col :span="4"><p>id</p></el-col>
+      <el-col :span="4"><p>标签ID</p></el-col>
       <el-col :span="20">
         <el-input v-model="new_tag.id"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="4"><p>name</p></el-col>
+      <el-col :span="4"><p>标签名称</p></el-col>
       <el-col :span="20">
         <el-input v-model="new_tag.name"></el-input>
       </el-col>
     </el-row>
     <el-row :gutter="3">
       <el-col :span="12">
-        <el-button @click="cancel">cancel</el-button>
+        <el-button @click="cancel">取消</el-button>
       </el-col>
       <el-col :span="12">
-        <el-button type="primary" @click="confirm">confirm</el-button>
+        <el-button type="primary" @click="confirm">确认</el-button>
       </el-col>
     </el-row>
   </el-dialog>

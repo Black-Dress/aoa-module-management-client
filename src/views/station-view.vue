@@ -3,7 +3,7 @@
     <el-header>
       <el-row justify="space-between">
         <el-col :span="6" style="text-align: left">
-          <h1>AoA stations</h1>
+          <h1>蓝牙基站</h1>
         </el-col>
         <el-col :span="4">
           <el-button type="primary" @click="addStationDialogVisible = true">
@@ -60,49 +60,49 @@
       </el-row>
     </el-footer>
   </el-container>
-  <el-dialog v-model="addStationDialogVisible" title="add new station" width="400px">
+  <el-dialog v-model="addStationDialogVisible" title="添加基站" width="400px">
     <el-row>
-      <el-col :span="4"><p>id</p></el-col>
+      <el-col :span="4"><p>基站ID</p></el-col>
       <el-col :span="20">
         <el-input v-model="new_station.id"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="4"><p>name</p></el-col>
+      <el-col :span="4"><p>基站名称</p></el-col>
       <el-col :span="20">
         <el-input v-model="new_station.name"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="4"><p>net</p></el-col>
+      <el-col :span="4"><p>网络IP</p></el-col>
       <el-col :span="20">
         <el-input v-model="new_station.net"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="6"><p>station_x</p></el-col>
+      <el-col :span="6"><p>X坐标</p></el-col>
       <el-col :span="18">
         <el-input v-model="new_station.position.x"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="6"><p>station_y</p></el-col>
+      <el-col :span="6"><p>Y坐标</p></el-col>
       <el-col :span="18">
         <el-input v-model="new_station.position.y"></el-input>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="6"><p>station_z</p></el-col>
+      <el-col :span="6"><p>Z坐标</p></el-col>
       <el-col :span="18">
         <el-input v-model="new_station.position.z"></el-input>
       </el-col>
     </el-row>
     <el-row :gutter="3">
       <el-col :span="12">
-        <el-button @click="cancel">cancel</el-button>
+        <el-button @click="cancel">取消</el-button>
       </el-col>
       <el-col :span="12">
-        <el-button type="primary" @click="confirm"> confirm</el-button>
+        <el-button type="primary" @click="confirm"> 确认</el-button>
       </el-col>
     </el-row>
   </el-dialog>

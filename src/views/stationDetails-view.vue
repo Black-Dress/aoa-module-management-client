@@ -13,7 +13,7 @@
           <h1>{{ this.station.name }}</h1>
         </el-col>
         <el-col :span="2" style="text-align: right">
-          <el-button @click="save_message_dialog_visible = true" type="primary" style="margin-right: 10px"> save
+          <el-button @click="save_message_dialog_visible = true" type="primary" style="margin-right: 10px"> 保存
           </el-button>
         </el-col>
         <el-col :span="2">

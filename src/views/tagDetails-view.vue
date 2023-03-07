@@ -14,7 +14,7 @@
           <h1>TAG: {{ this.tag.id }}</h1>
         </el-col>
         <el-col :span="6" style="text-align: right">
-          <el-button @click="save_message_dialog_visible = true" type="primary"> save</el-button>
+          <el-button @click="save_message_dialog_visible = true" type="primary"> 保存</el-button>
           <el-switch v-model="tag.status" style="margin-left: 24px" inline-prompt :before-change="before_status_change"
                      @change="status_change"/>
         </el-col>
